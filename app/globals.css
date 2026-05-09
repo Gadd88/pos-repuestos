@@ -1,0 +1,145 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Updated color tokens for neobrutalist design with high contrast black/white/red/gray palette */
+  --background: oklch(1 0 0); /* Pure white */
+  --foreground: oklch(0 0 0); /* Pure black */
+  --card: oklch(0.95 0 0); /* Light gray for cards */
+  --card-foreground: oklch(0 0 0); /* Black text on cards */
+  --popover: oklch(1 0 0); /* White popover */
+  --popover-foreground: oklch(0 0 0); /* Black popover text */
+  --primary: oklch(0.55 0.22 29); /* Bold red for primary actions */
+  --primary-foreground: oklch(1 0 0); /* White text on red */
+  --secondary: oklch(0.5 0 0); /* Medium gray */
+  --secondary-foreground: oklch(1 0 0); /* White text on gray */
+  --muted: oklch(0.95 0 0); /* Light gray for muted elements */
+  --muted-foreground: oklch(0.5 0 0); /* Medium gray text */
+  --accent: oklch(1 0 0); /* White accent */
+  --accent-foreground: oklch(0 0 0); /* Black accent text */
+  --destructive: oklch(0.55 0.22 29); /* Red for destructive actions */
+  --destructive-foreground: oklch(1 0 0); /* White text on red */
+  --border: oklch(0.05 0 0); /* Medium gray borders for thick neobrutalist style */
+  --input: oklch(1 0 0); /* White input backgrounds */
+  --ring: oklch(0.55 0.22 29); /* Red focus rings */
+  --chart-1: oklch(0.55 0.22 29); /* Red for charts */
+  --chart-2: oklch(0.5 0 0); /* Gray for secondary chart elements */
+  --chart-3: oklch(0 0 0); /* Black for additional chart elements */
+  --chart-4: oklch(1 0 0); /* White for chart backgrounds */
+  --chart-5: oklch(0.95 0 0); /* Light gray for muted chart elements */
+  --radius: 0.25rem; /* Smaller radius for sharper neobrutalist edges */
+  --sidebar: oklch(0.95 0 0); /* Light gray sidebar */
+  --sidebar-foreground: oklch(0 0 0); /* Black sidebar text */
+  --sidebar-primary: oklch(0.5 0 0); /* Gray primary sidebar elements */
+  --sidebar-primary-foreground: oklch(1 0 0); /* White primary sidebar text */
+  --sidebar-accent: oklch(0.55 0.22 29); /* Red sidebar accents */
+  --sidebar-accent-foreground: oklch(1 0 0); /* White sidebar accent text */
+  --sidebar-border: oklch(0.5 0 0); /* Gray sidebar borders */
+  --sidebar-ring: oklch(0.55 0.22 29); /* Red sidebar focus */
+  --font-open-sans: "Open Sans", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
+}
+
+.dark {
+  /* Dark mode with inverted high contrast palette */
+  --background: oklch(0 0 0); /* Pure black background */
+  --foreground: oklch(1 0 0); /* Pure white text */
+  --card: oklch(0.1 0 0); /* Very dark gray cards */
+  --card-foreground: oklch(1 0 0); /* White card text */
+  --popover: oklch(0 0 0); /* Black popover */
+  --popover-foreground: oklch(1 0 0); /* White popover text */
+  --primary: oklch(0.55 0.22 29); /* Same bold red */
+  --primary-foreground: oklch(1 0 0); /* White text on red */
+  --secondary: oklch(0.3 0 0); /* Dark gray */
+  --secondary-foreground: oklch(1 0 0); /* White text on dark gray */
+  --muted: oklch(0.1 0 0); /* Very dark gray for muted */
+  --muted-foreground: oklch(0.7 0 0); /* Light gray muted text */
+  --accent: oklch(0 0 0); /* Black accent */
+  --accent-foreground: oklch(1 0 0); /* White accent text */
+  --destructive: oklch(0.55 0.22 29); /* Same red for destructive */
+  --destructive-foreground: oklch(1 0 0); /* White text on red */
+  --border: oklch(0.5 0 0); /* Medium gray borders */
+  --input: oklch(0.1 0 0); /* Very dark input backgrounds */
+  --ring: oklch(0.55 0.22 29); /* Red focus rings */
+  --chart-1: oklch(0.55 0.22 29); /* Red charts */
+  --chart-2: oklch(0.7 0 0); /* Light gray secondary */
+  --chart-3: oklch(1 0 0); /* White additional elements */
+  --chart-4: oklch(0 0 0); /* Black chart backgrounds */
+  --chart-5: oklch(0.1 0 0); /* Dark gray muted */
+  --sidebar: oklch(0.05 0 0); /* Very dark sidebar */
+  --sidebar-foreground: oklch(1 0 0); /* White sidebar text */
+  --sidebar-primary: oklch(0.55 0.22 29); /* Red primary sidebar */
+  --sidebar-primary-foreground: oklch(1 0 0); /* White primary text */
+  --sidebar-accent: oklch(0.3 0 0); /* Dark gray accents */
+  --sidebar-accent-foreground: oklch(1 0 0); /* White accent text */
+  --sidebar-border: oklch(0.3 0 0); /* Dark gray borders */
+  --sidebar-ring: oklch(0.55 0.22 29); /* Red focus */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Added font family mappings for neobrutalist typography */
+  --font-sans: var(--font-open-sans);
+  --font-heading: var(--font-montserrat);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Added neobrutalist typography and spacing utilities */
+  .neo-heading {
+    @apply font-black text-foreground tracking-tight;
+  }
+
+  .neo-card {
+    @apply bg-card border-4 border-border shadow-[4px_4px_0px_0px_theme(colors.border)];
+  }
+
+  .neo-button {
+    @apply border-4 border-border shadow-[3px_3px_0px_0px_theme(colors.border)] transition-all duration-75 active:shadow-none active:translate-x-[3px] active:translate-y-[3px];
+  }
+}

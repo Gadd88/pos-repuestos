@@ -1,0 +1,150 @@
+import Link from "next/link";
+import { Button } from "../ui/button";
+import { Edit, Trash2 } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { ProductoType } from "@/lib/types";
+import { useAuthStore } from "@/lib/stores/auth-store";
+
+type ProductCardStockType = {
+    producto: ProductoType;
+    onDelete: (id: ProductoType["id"]) => void;
+};
+
+export const ProductCardStock = ({
+    producto,
+    onDelete,
+}: ProductCardStockType) => {
+
+    const { usuario } = useAuthStore()
+
+    return (
+        <div key={producto.id} className="neo-card p-4 bg-background">
+            <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 space-y-2">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
+                        <div>
+                            <h3
+                                className="neo-heading text-lg"
+                                style={{
+                                    fontFamily: "var(--font-montserrat)",
+                                }}
+                            >
+                                {producto.nombre}
+                            </h3>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span>
+                                {producto.stock <= 2 && producto.stock > 0 ? (
+                                    <Badge
+                                        variant="secondary"
+                                        className="bg-yellow-400 text-black border-black"
+                                    >
+                                        STOCK BAJO
+                                    </Badge>
+                                ) : producto.stock === 0 ? (
+                                    <Badge variant="destructive">
+                                        SIN STOCK
+                                    </Badge>
+                                ) : (
+                                    <Badge
+                                        variant="outline"
+                                        className="bg-green-700 text-white"
+                                    >
+                                        EN STOCK
+                                    </Badge>
+                                )}
+                            </span>
+                            <div
+                                className="neo-heading text-xl"
+                                style={{
+                                    fontFamily: "var(--font-montserrat)",
+                                }}
+                                >
+                                {producto.stock}un.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div className="flex items-center gap-6">
+                            <div>
+                                <span className="text-xs text-muted-foreground">
+                                    Precio Minorista
+                                </span>
+                                <div
+                                    className="neo-heading text-xl text-primary"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    ${producto.precio_venta_minorista}
+                                </div>
+                            </div>
+                            <div>
+                                <span className="text-xs text-muted-foreground">
+                                    Precio Mayorista
+                                </span>
+                                <div
+                                    className="neo-heading text-xl text-secondary"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    ${producto.precio_venta_mayorista}
+                                </div>
+                            </div>
+                            {/* <div>
+                                <span className="text-xs text-muted-foreground">
+                                    Stock
+                                </span>
+                                <div
+                                    className="neo-heading text-xl"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    {producto.stock}
+                                </div>
+                            </div> */}
+                        </div>
+
+                        {
+                            usuario?.rol === "admin" && (
+                                <div className="flex items-center justify-between gap-2">
+                                    <Link
+                                        href={`/admin/productos/${producto.id}/editar`}
+                                    >
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="neo-button font-semibold bg-transparent"
+                                            style={{
+                                                fontFamily: "var(--font-montserrat)",
+                                            }}
+                                        >
+                                            <Edit className="w-4 h-4 mr-1" />
+                                            EDITAR
+                                        </Button>
+                                    </Link>
+                                    <Button
+                                        variant="destructive"
+                                        size="sm"
+                                        onClick={() => onDelete(producto.id)}
+                                        className="neo-button font-semibold"
+                                        style={{
+                                            fontFamily: "var(--font-montserrat)",
+                                        }}
+                                    >
+                                        <Trash2 className="w-4 h-4 mr-1" />
+                                        ELIMINAR
+                                    </Button>
+                                </div>
+                            )
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
