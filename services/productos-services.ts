@@ -63,10 +63,10 @@ export const editarProductoService = async (
 };
 
 export const eliminarProductoService = async (id: ProductoType["id"]): Promise<boolean> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos/${id}`, {
+    const response = await fetch(`/api/productos/${id}`, {
         method: "DELETE"
     });
-    const result = await response.json();
+    // const result = await response.json();
 
     if (!response.ok) {
         const errorText = await response.text()
@@ -74,7 +74,7 @@ export const eliminarProductoService = async (id: ProductoType["id"]): Promise<b
         throw new Error(`Error: ${response.status}:${errorText}`);
     }
 
-    return result;
+    return true;
 };
 
 export const obtenerProductoPorId = async (id: ProductoType["id"]): Promise<ProductoType> => {
