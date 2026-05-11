@@ -4,12 +4,14 @@ import { useAuthStore } from "@/lib/stores/auth-store"
 import { Button } from "@/components/ui/button"
 import { LogOut, Package, Plus, Home } from "lucide-react"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 
 export function AdminHeader() {
   const { logout } = useAuthStore()
 
   const handleLogout = () => {
     logout()
+    redirect("/login")
   }
 
   return (
