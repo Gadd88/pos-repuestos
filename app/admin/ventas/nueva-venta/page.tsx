@@ -17,6 +17,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { useCarritoState } from "@/lib/stores/carrito-store";
 import { Carrito } from "@/components/carrito/carrito";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { toast } from "sonner";
 
 export default function NuevaVenta() {
     const [query, setQuery] = useState("");
@@ -25,7 +26,6 @@ export default function NuevaVenta() {
     const { agregarItemCarrito, carrito } = useCarritoState();
     const { productos, isLoading, listarProductos } = useProductosStore();
     const { usuario } = useAuthStore();
-   
 
     useEffect(() => {
         listarProductos();
@@ -113,14 +113,22 @@ export default function NuevaVenta() {
                                             size="sm"
                                             variant="outline"
                                             className="neo-button h-8 w-8 p-0 bg-sky-400 border-sky-400 cursor-pointer"
-                                            onClick={() =>
-                                                agregarItemCarrito(producto)
-                                            }
+                                            onClick={() => {
+                                                producto.stock > 0
+                                                    ? agregarItemCarrito(
+                                                          producto,
+                                                      )
+                                                    : toast.error(
+                                                          "Producto sin stock suficiente",
+                                                      );
+                                            }}
                                         >
                                             <Plus className="w-4 h-4" />
                                         </Button>
                                     </TableCell>
-                                    <TableCell className="border-e-2">{producto?.nombre}</TableCell>
+                                    <TableCell className="border-e-2">
+                                        {producto?.nombre}
+                                    </TableCell>
                                     {/* <TableCell>{producto.quantity}</TableCell> */}
                                     {usuario?.rol == "admin" && (
                                         <TableCell className="text-center border-e-2">

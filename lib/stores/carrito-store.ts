@@ -24,7 +24,7 @@ export const useCarritoState = create<CarritoState>((set, get) => ({
         const itemsCarrito = get().carrito;
         const itemExists = itemsCarrito.find((item) => item.id === producto.id);
         if (itemExists) {
-            if (itemExists.cantidad <= itemExists.stockMaximo)
+            if (itemExists.cantidad <= itemExists.stockMaximo - 1)
                 set({
                     carrito: itemsCarrito.map((item) =>
                         item.id === producto.id

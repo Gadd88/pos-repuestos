@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-// import { useAuthStore } from "@/lib/stores/auth-store";
 import { useProductosStore } from "@/lib/stores/products-store";
 import { Button } from "@/components/ui/button";
 import { AdminHeader } from "@/components/admin/admin-header";

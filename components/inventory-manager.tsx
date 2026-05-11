@@ -7,10 +7,9 @@ import React, {
 } from "react";
 import { useProductosStore } from "@/lib/stores/products-store";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { ProductDeleteDialog } from "@/components/producto/product-delete-dialog";
-import { Plus, Search, Edit, Trash2, Package, Loader2 } from "lucide-react";
+import { Plus, Package, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { ProductCardStock } from "./producto/product-card-stock";
 import { InputBusqueda } from "./input-busqueda";
