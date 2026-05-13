@@ -52,18 +52,20 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse> {
     const { id } = await params;
+    console.log("🔴 DELETE ID recibido para eliminación:", id);
 
     if (!id) return NextResponse.json({ error: "ID no proporcionado" }, { status: 400 });
 
     try {
         const docRef = adminDb.collection(COLLECTION_NAME).doc(id);
         const docSnap = await docRef.get();
+        console.log("🔴 DELETE Documento encontrado:", docSnap);
         if (!docSnap.exists) return NextResponse.json({ error: "El producto no existe" }, { status: 404 });
 
         await docRef.delete();
         return NextResponse.json({ success: true }, { status: 200 });
     } catch (error: any) {
-        console.error("Error en DELETE", error);
+        console.error("🔴 Error en DELETE handler:", error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }

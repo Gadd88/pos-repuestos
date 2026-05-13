@@ -13,6 +13,7 @@ export default async function EditProductPage({
     params,
 }: EditProductPageProps) {
     const { id } = await params;
+    console.log(id)
 
     const producto = await obtenerProductoPorId(id)
 

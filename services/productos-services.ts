@@ -2,7 +2,7 @@ import { ProductoType } from "@/lib/types";
 
 export const fetchProductos = async () => {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos`, { next: { revalidate: 120 } });
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos`, { next: { revalidate: 180 } });
         const productos: ProductoType[] = await response.json();
         return productos.filter(producto => producto.activo !== false);
     } catch (error) {
@@ -79,7 +79,7 @@ export const eliminarProductoService = async (id: ProductoType["id"]): Promise<b
 
 export const obtenerProductoPorId = async (id: ProductoType["id"]): Promise<ProductoType> => {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos/${id}`, { next: { revalidate: 120 } });
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos/${id}`);
         const producto = await response.json();
         return producto as ProductoType;
     } catch (error) {
