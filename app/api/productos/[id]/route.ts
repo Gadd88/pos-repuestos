@@ -47,7 +47,7 @@ export async function PUT(
     }
 }
 
-export async function PATCH(
+export async function DELETE(
     _: Request,
     { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse> {
@@ -60,8 +60,7 @@ export async function PATCH(
         const docSnap = await docRef.get();
         if (!docSnap.exists) return NextResponse.json({ error: "El producto no existe" }, { status: 404 });
 
-        await docRef.update({ activo: false, eliminadoEn: FieldValue.serverTimestamp() });
-
+        await docRef.delete();
         return NextResponse.json({ success: true }, { status: 200 });
     } catch (error: any) {
         console.error("Error en DELETE", error);
