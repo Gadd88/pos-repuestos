@@ -47,7 +47,6 @@ export function VentaDetalleModal({ venta, onClose }: VentaDetalleModalProps) {
               { label: "FECHA", value: new Date(venta.creadoEn).toLocaleDateString("es-AR", { day: "2-digit", month: "long", year: "numeric" }) },
               { label: "ITEMS", value: `${venta.items.length} producto${venta.items.length !== 1 ? "s" : ""}` },
               { label: "TOTAL VENTA", value: `$${venta.total.toLocaleString("es-AR")}` },
-              { label: "GANANCIA", value: `$${ganancia.toLocaleString("es-AR")}`, highlight: ganancia >= 0 ? "green" : "red" },
               ...(usuario?.rol === "admin" ? [{ label: "GANANCIA", value: `$${ganancia.toLocaleString("es-AR")}`, highlight: ganancia >= 0 ? "green" : "red" }] : [])
             ].map(({ label, value, highlight }) => (
               <div key={label} className="neo-card p-4 bg-card">

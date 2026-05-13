@@ -13,6 +13,7 @@ import {
     Receipt,
 } from "lucide-react";
 import Link from "next/link";
+import { Badge } from "../ui/badge";
 
 export function AdminDashboard() {
     const { productos, isLoading, listarProductos, obtenerProductosBajoStock } =
@@ -24,10 +25,9 @@ export function AdminDashboard() {
 
     const productosBajoStock = obtenerProductosBajoStock();
     const valorTotal = productos?.reduce(
-            (sum, product) =>
-                sum + product.precio_venta_minorista * product.stock,
-            0,
-        );
+        (sum, product) => sum + product.precio_venta_minorista * product.stock,
+        0,
+    );
     const stockTotal = productos?.reduce(
         (sum, product) => sum + product.stock,
         0,
@@ -160,7 +160,7 @@ export function AdminDashboard() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="neo-card p-6 space-y-4 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200">
                             <div className="flex items-center gap-3">
                                 <Package className="w-8 h-8 text-sky-500" />
@@ -200,10 +200,10 @@ export function AdminDashboard() {
                                 </h2>
                             </div>
                             <p className="text-muted-foreground">
-                                {productosBajoStock.length > 0
-                                    ? `${productosBajoStock.length} productos necesitan re-stock`
-                                    : "Todos los productos en stock"}
+                                Revisa el histórico de ventas realizadas y sus
+                                detalles
                             </p>
+
                             <Link href="/admin/ventas">
                                 <Button
                                     className="w-full neo-button font-bold bg-green-600"
@@ -215,32 +215,43 @@ export function AdminDashboard() {
                                 </Button>
                             </Link>
                         </div>
-
-                        <Link
-                            href="/admin/productos/agregar"
-                            className="neo-card p-6 space-y-4 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200"
-                        >
-                            <div className="flex items-center gap-3">
-                                <Plus className="w-8 h-8 text-primary" />
-                                <h2
-                                    className="neo-heading text-xl"
-                                    style={{
-                                        fontFamily: "var(--font-montserrat)",
-                                    }}
-                                >
-                                    Agregar Producto
-                                </h2>
-                            </div>
-                            <p className="text-muted-foreground">
-                                Agrega nuevos productos a tu inventario
-                            </p>
-                            <Button
-                                className="w-full neo-button font-bold"
-                                style={{ fontFamily: "var(--font-montserrat)" }}
+                    </div>
+                    <div className="neo-card p-6 space-y-4 max-h-64">
+                        <div className="flex items-center gap-3">
+                            <AlertTriangle className="w-8 h-8 text-yellow-500" />
+                            <h2
+                                className="neo-heading text-xl"
+                                style={{
+                                    fontFamily: "var(--font-montserrat)",
+                                }}
                             >
-                                Agregar Producto
-                            </Button>
-                        </Link>
+                                Productos con Bajo Stock
+                            </h2>
+                        </div>
+
+                        {productosBajoStock.length > 0 ? (
+                                <ul className="text-sm text-muted-foreground mb-4 overflow-auto flex flex-wrap gap-1">
+                                    {productosBajoStock.map((prod) => (
+                                        <li
+                                            key={prod.id}
+                                            className="font-semibold"
+                                        >
+                                            <Badge
+                                                variant="secondary"
+                                                className="bg-yellow-400 text-black border-black"
+                                            >
+                                                {prod.nombre} - {" "}
+                                                {prod.stock}u.
+                                            </Badge>
+                                        </li>
+                                    ))}
+                                </ul>
+                        ) : (
+                            <p className="text-muted-foreground">
+                                Todos los productos con stock mínimo o
+                                suficiente.
+                            </p>
+                        )}
                     </div>
                 </div>
             </main>

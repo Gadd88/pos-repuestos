@@ -20,13 +20,13 @@ export function AdminHeader() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/admin" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-red-500 neo-button"></div>
+              <div className="w-8 h-8 bg-sky-500 neo-button"></div>
               <span className="neo-heading text-xl" style={{ fontFamily: "var(--font-montserrat)" }}>
                 POS - RepuestoStock
               </span>
             </Link>
             <nav className="hidden md:flex items-center gap-4">
-              <Link href="/admin">
+              {/* <Link href="/admin">
                 <Button
                   variant="ghost"
                   className="neo-button font-semibold bg-transparent"
@@ -35,7 +35,7 @@ export function AdminHeader() {
                   <Home className="w-4 h-4 mr-2" />
                   DASHBOARD
                 </Button>
-              </Link>
+              </Link> */}
               <Link href="/admin/stock">
                 <Button
                   variant="ghost"
@@ -57,17 +57,16 @@ export function AdminHeader() {
                 </Button>
               </Link>
             </nav>
-            <div className="neo-card flex items-center gap-4">
               <Button
                 onClick={handleLogout}
-                variant="outline"
-                className="neo-button font-semibold bg-transparent"
+                variant="ghost"
+                className="neo-button font-semibold bg-red-500"
                 style={{ fontFamily: "var(--font-montserrat)" }}
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                LOGOUT
               </Button>
-            </div>
+            {/* <div className="neo-card flex items-center gap-4">
+            </div> */}
           </div>
         </div>
       </div>

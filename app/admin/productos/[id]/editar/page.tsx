@@ -1,3 +1,4 @@
+import { AdminHeader } from "@/components/admin/admin-header";
 import { ProductForm } from "@/components/producto/product-form";
 import { useProductosStore } from "@/lib/stores/products-store";
 import { obtenerProductoPorId } from "@/services/productos-services";
@@ -17,5 +18,8 @@ export default async function EditProductPage({
 
     if(!id || !producto) redirect('/admin/stock')
 
-    return <ProductForm productoId={id} productoData={producto} />;
+    return <>
+    <AdminHeader />
+    <ProductForm productoId={id} productoData={producto} />;
+    </>
 }
