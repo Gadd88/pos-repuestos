@@ -47,7 +47,7 @@ export async function PUT(
     }
 }
 
-export async function DELETE(
+export async function PATCH(
     _: Request,
     { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse> {
@@ -57,9 +57,7 @@ export async function DELETE(
 
     try {
         const docRef = adminDb.collection(COLLECTION_NAME).doc(id);
-        console.log("ID del producto a eliminar:", id);
         const docSnap = await docRef.get();
-        console.log("Documento a eliminar:", docSnap.data());
         if (!docSnap.exists) return NextResponse.json({ error: "El producto no existe" }, { status: 404 });
 
         await docRef.update({ activo: false, eliminadoEn: FieldValue.serverTimestamp() });
