@@ -1,7 +1,7 @@
 import { AdminHeader } from "@/components/admin/admin-header";
 import { ProductForm } from "@/components/producto/product-form";
-import { useProductosStore } from "@/lib/stores/products-store";
 import { obtenerProductoPorId } from "@/services/productos-services";
+import { useProductosStore } from "@/lib/stores/products-store";
 import { redirect } from "next/navigation";
 
 interface EditProductPageProps {
@@ -13,11 +13,13 @@ export default async function EditProductPage({
     params,
 }: EditProductPageProps) {
     const { id } = await params;
+    
     console.log(id)
-
+    
     const producto = await obtenerProductoPorId(id)
 
-    if(!id || !producto) redirect('/admin/stock')
+    console.log(producto)
+    // if(!id || !producto) redirect('/admin/stock')
 
     return <>
     <AdminHeader />

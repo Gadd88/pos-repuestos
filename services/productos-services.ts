@@ -64,7 +64,7 @@ export const editarProductoService = async (
 };
 
 export const eliminarProductoService = async (id: ProductoType["id"]): Promise<boolean> => {
-    const response = await fetch(`/api/productos/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos/${id}`, {
         method: "DELETE",
         credentials: "include",
         headers:{
