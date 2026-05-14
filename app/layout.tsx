@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     title: "POS - Inventario de Repuestos",
     description: "Sistema de inventario y control de stock para locales de repuestos de motos",
     generator: "Matias Saade",
+    manifest: "/manifest.json",
 }
 
 export default function RootLayout({

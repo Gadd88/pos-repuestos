@@ -2,13 +2,13 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { ProductForm } from "@/components/producto/product-form";
 import { getProductoById } from "@/lib/db/productos";
 
-// interface EditProductPageProps {
-//     params: Promise<{ id: string }>;
-// }
-// export const dynamic = "force-dynamic";
+interface EditProductPageProps {
+    params: Promise<{ id: string }>;
+}
+export const dynamic = "force-dynamic";
 
-export default async function EditProductPage({ params }: { params: { id: string } }) {
-    const id = params.id;
+export default async function EditProductPage({ params }: EditProductPageProps) {
+    const { id } = await params;
     const producto = await getProductoById(id);
 
     console.log(producto);
