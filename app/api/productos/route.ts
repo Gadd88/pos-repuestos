@@ -10,8 +10,6 @@ export async function GET() {
 
     try {
         const productosRef = adminDb.collection(COLLECTION_NAME);
-        // const q = query(productosRef, orderBy("nombre", "asc"));
-        // const snapshot = await getDocs(q);
         const snapshot = await productosRef.orderBy("nombre", "asc").get();
 
         const productosList = snapshot.docs.map((doc) => ({

@@ -14,11 +14,10 @@ export const ProductCardStock = ({
     producto,
     onDelete,
 }: ProductCardStockType) => {
-
-    const { usuario } = useAuthStore()
+    const { usuario } = useAuthStore();
 
     return (
-        <div key={producto.id} className="neo-card p-4 bg-background">
+        <div className="neo-card p-4 bg-background">
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1 space-y-2">
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
@@ -59,7 +58,7 @@ export const ProductCardStock = ({
                                 style={{
                                     fontFamily: "var(--font-montserrat)",
                                 }}
-                                >
+                            >
                                 {producto.stock}un.
                             </div>
                         </div>
@@ -93,55 +92,40 @@ export const ProductCardStock = ({
                                     ${producto.precio_venta_mayorista}
                                 </div>
                             </div>
-                            {/* <div>
-                                <span className="text-xs text-muted-foreground">
-                                    Stock
-                                </span>
-                                <div
-                                    className="neo-heading text-xl"
+                        </div>
+
+                        {usuario?.rol === "admin" && (
+                            <div className="flex items-center justify-between gap-2">
+                                <Link
+                                    href={`/admin/productos/${producto.id}/editar`}
+                                >
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="neo-button font-semibold bg-transparent"
+                                        style={{
+                                            fontFamily:
+                                                "var(--font-montserrat)",
+                                        }}
+                                    >
+                                        <Edit className="w-4 h-4 mr-1" />
+                                        EDITAR
+                                    </Button>
+                                </Link>
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => onDelete(producto.id)}
+                                    className="neo-button font-semibold"
                                     style={{
                                         fontFamily: "var(--font-montserrat)",
                                     }}
                                 >
-                                    {producto.stock}
-                                </div>
-                            </div> */}
-                        </div>
-
-                        {
-                            usuario?.rol === "admin" && (
-                                <div className="flex items-center justify-between gap-2">
-                                    <Link
-                                        href={`/admin/productos/${producto.id}/editar`}
-                                    >
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="neo-button font-semibold bg-transparent"
-                                            style={{
-                                                fontFamily: "var(--font-montserrat)",
-                                            }}
-                                        >
-                                            <Edit className="w-4 h-4 mr-1" />
-                                            EDITAR
-                                        </Button>
-                                    </Link>
-                                    <Button
-                                        variant="destructive"
-                                        size="sm"
-                                        onClick={() => onDelete(producto.id)}
-                                        className="neo-button font-semibold"
-                                        style={{
-                                            fontFamily: "var(--font-montserrat)",
-                                        }}
-                                    >
-                                        <Trash2 className="w-4 h-4 mr-1" />
-                                        ELIMINAR
-                                    </Button>
-                                </div>
-                            )
-                        }
-
+                                    <Trash2 className="w-4 h-4 mr-1" />
+                                    ELIMINAR
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -1,10 +1,10 @@
-import { request } from "http";
 import { NextRequest, NextResponse } from "next/server";
 
 
 export const middleware = (req: NextRequest, res: NextResponse) => {
 
     const session = req.cookies.get('session')
+    console.log("SESSION EN MIDDLEWARE:", session)
 
     console.log(`METODO: ${req.method}, URL:${req.url}`)
 

@@ -13,17 +13,19 @@ import { Plus, Package, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { ProductCardStock } from "./producto/product-card-stock";
 import { InputBusqueda } from "./input-busqueda";
-import { useShallow } from 'zustand/react/shallow'
+import { useShallow } from "zustand/react/shallow";
 import { ProductoType } from "@/lib/types";
 import { useAuthStore } from "@/lib/stores/auth-store";
 
 export function InventoryManager() {
-    const { productos, isLoading, error, listarProductos } = useProductosStore(useShallow((state) => ({
-        productos: state.productos,
-        isLoading: state.isLoading,
-        error: state.error,
-        listarProductos: state.listarProductos
-    })));
+    const { productos, isLoading, error, listarProductos } = useProductosStore(
+        useShallow((state) => ({
+            productos: state.productos,
+            isLoading: state.isLoading,
+            error: state.error,
+            listarProductos: state.listarProductos,
+        })),
+    );
     const { usuario } = useAuthStore();
 
     // const [searchTerm, setSearchTerm] = useState("");
@@ -31,7 +33,9 @@ export function InventoryManager() {
     const [isPending, startTransition] = useTransition();
     const deferredQuery = useDeferredValue(query);
 
-    const [deleteProductId, setDeleteProductId] = useState<ProductoType['id'] | null>(null);
+    const [deleteProductId, setDeleteProductId] = useState<
+        ProductoType["id"] | null
+    >(null);
 
     useEffect(() => {
         listarProductos();
@@ -43,7 +47,8 @@ export function InventoryManager() {
         });
     };
 
-    const filteredProducts = productos?.filter(producto => producto.nombre.toLowerCase().includes(deferredQuery.toLowerCase()),
+    const filteredProducts = productos?.filter((producto) =>
+        producto.nombre.toLowerCase().includes(deferredQuery.toLowerCase()),
     );
 
     if (isLoading) {
@@ -82,19 +87,19 @@ export function InventoryManager() {
                                 Administra tu stock de productos
                             </p>
                         </div>
-                        {
-                            usuario?.rol === "admin" && (
-                                <Link href="/admin/productos/agregar">
-                                    <Button
-                                        className="neo-button font-bold w-full min-h-16"
-                                        style={{ fontFamily: "var(--font-montserrat)" }}
-                                    >
-                                        <Plus className="w-4 h-4 mr-2" />
-                                        AGREGAR NUEVO PRODUCTO
-                                    </Button>
-                                </Link>
-                            )
-                        }
+                        {usuario?.rol === "admin" && (
+                            <Link href="/admin/productos/agregar">
+                                <Button
+                                    className="neo-button font-bold w-full min-h-16"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    AGREGAR NUEVO PRODUCTO
+                                </Button>
+                            </Link>
+                        )}
                     </div>
 
                     {error && (
@@ -114,15 +119,15 @@ export function InventoryManager() {
                         />
 
                         <div className="space-y-4">
-                            {filteredProducts.map((producto) => (
-                                <ProductCardStock
-                                    key={producto.id}
-                                    producto={producto}
-                                    onDelete={setDeleteProductId}
-                                />
-                            ))}
-
-                            {filteredProducts.length === 0 && (
+                            {filteredProducts.length > 0 ? (
+                                filteredProducts.map((producto) => (
+                                    <ProductCardStock
+                                        key={producto.id}
+                                        producto={producto}
+                                        onDelete={setDeleteProductId}
+                                    />
+                                ))
+                            ) : (
                                 <div className="text-center py-12">
                                     <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                                     <h3

@@ -8,9 +8,10 @@ import { UsuarioType } from "../types";
 interface AuthState {
     user: User | null;
     usuario: UsuarioType | null;
-    loading: true | false;
+    loading: boolean;
     error: string | null;
     setUser: (user: User | null) => void;
+    setUsuario: (usuario: UsuarioType | null) => void;
     setLoading: (arg: boolean) => void;
     loginEmail: (email: string, pass: string) => Promise<void>;
     logout: () => void
@@ -21,8 +22,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     usuario: null,
     loading: true,
     error: null,
-    
+
     setUser: (user) => set({ user, loading: false }),
+    setUsuario: (usuario) => set({ usuario }),
 
     setLoading: (arg) => set({ loading: arg }),
 
@@ -33,7 +35,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             const userDoc = await getDoc(doc(db, "usuarios", userCredentials.user.uid));
             const token = await userCredentials.user.getIdToken()
             Cookie.set('session', token, {expires: 7})
-            set({ loading: false, usuario: userDoc.data() as UsuarioType });
+            set({ loading: false, user: userCredentials.user, usuario: userDoc.data() as UsuarioType });
         } catch (err: any) {
             set({ error: err.message, loading: false });
             throw err;
