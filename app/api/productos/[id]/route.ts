@@ -3,8 +3,6 @@ import { FieldValue } from "firebase-admin/firestore";
 import { ProductoType } from "@/lib/types";
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
-
 const COLLECTION_NAME = "productos"
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }): Promise<ProductoType[] | NextResponse> {
