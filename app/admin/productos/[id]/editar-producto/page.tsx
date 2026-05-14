@@ -7,7 +7,7 @@ import { getProductoById } from "@/lib/db/productos";
 // }
 // export const dynamic = "force-dynamic";
 
-export default async function EditProductPage({ params }) {
+export default async function EditProductPage({ params }: { params: { id: string } }) {
     const id = params.id;
     const producto = await getProductoById(id);
 
