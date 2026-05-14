@@ -1,8 +1,5 @@
 import { AdminHeader } from "@/components/admin/admin-header";
 import { ProductForm } from "@/components/producto/product-form";
-import { obtenerProductoPorId } from "@/services/productos-services";
-import { useProductosStore } from "@/lib/stores/products-store";
-import { redirect } from "next/navigation";
 import { getProductoById } from "@/lib/db/productos";
 
 interface EditProductPageProps {
