@@ -7,6 +7,7 @@ const COLLECTION_NAME = "productos"
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }): Promise<ProductoType[] | NextResponse> {
     const { id } = await params
+    console.log("🔵 GET ID recibido:", id);
 
     try {
         const productoRef = await adminDb.collection(COLLECTION_NAME).doc(id).get();
@@ -46,7 +47,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-    _: Request,
+    req: Request,
     { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse> {
     const { id } = await params;

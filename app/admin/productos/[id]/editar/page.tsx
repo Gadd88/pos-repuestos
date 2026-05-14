@@ -19,7 +19,7 @@ export default async function EditProductPage({
     const producto = await obtenerProductoPorId(id)
 
     // console.log(producto)
-    if(!id || !producto) redirect('/admin/stock')
+    // if(!id || !producto) redirect('/admin/stock')
 
     return <>
     <AdminHeader />
