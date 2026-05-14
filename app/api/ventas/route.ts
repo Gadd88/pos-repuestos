@@ -47,17 +47,23 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 productosRefs.map((ref) => tx.get(ref))
             );
 
+            const productosMap = new Map(
+                productosSnaps.map((snap) => [snap.id, snap])
+            );
+
             // validaciones y cálculos
             let total = 0;
             let totalGastado = 0;
 
-            const productosData = productosSnaps.map((snap, i) => {
-                if (!snap.exists) {
-                    throw new Error(`Producto no encontrado: ID - ${items[i].id}`);
+            const productosData = items.map((item) => {
+                const snap = productosMap.get(item.id)
+                if (!snap || !snap.exists) {
+                    throw new Error(`Producto no encontrado: ID - ${item.nombre}`);
                 }
                 const producto = snap.data()!;
-                if (producto.stock < items[i].cantidad) {
-                    throw new Error(`Sin stock suficiente: PRODUCTO - ${items[i].nombre}`);
+                const ref = snap.ref;
+                if (producto.stock < item.cantidad) {
+                    throw new Error(`Sin stock suficiente: PRODUCTO - ${item.nombre}`);
                 }
 
                 const precio_unitario: number =
@@ -65,10 +71,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
                         ? producto.precio_venta_mayorista
                         : producto.precio_venta_minorista;
 
-                total += precio_unitario * items[i].cantidad;
-                totalGastado += items[i].precio_compra * items[i].cantidad;
+                total += precio_unitario * item.cantidad;
+                totalGastado += item.precio_compra * item.cantidad;
 
-                return { ref: productosRefs[i], data: { ...producto, precio_unitario, total, stock: producto.stock as number } };
+                return { ref, data: { ...producto, precio_unitario, total, stock: producto.stock as number } };
             });
 
             // 2. LUEGO TODAS LAS ESCRITURAS

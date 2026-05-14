@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     description: "Sistema de inventario y control de stock para locales de repuestos de motos",
     generator: "Matias Saade",
     manifest: "/manifest.json",
+    // themeColor: "#0ea5e9",
 }
 
 export default function RootLayout({

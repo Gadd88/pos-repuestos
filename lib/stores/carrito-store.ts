@@ -63,12 +63,12 @@ export const useCarritoState = create<CarritoState>((set, get) => ({
             );
             set({ carrito: nuevoCarrito });
         }
-        toast.success("Cantidad editada")
+        // toast.success("Cantidad editada")
     },
     eliminarItem: (id) => {
         const nuevoCarrito = get().carrito.filter((item) => item.id !== id);
         set({ carrito: nuevoCarrito });
-        toast.warning("Item eliminado")
+        // toast.warning("Item eliminado")
     },
     vaciarCarrito: () => {
         set({carrito: []})
