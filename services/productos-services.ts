@@ -82,13 +82,13 @@ export const eliminarProductoService = async (id: ProductoType["id"]): Promise<b
     return true;
 };
 
-export const obtenerProductoPorId = async (id: ProductoType["id"]): Promise<ProductoType> => {
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos/${id}`);
-        const producto = await response.json();
-        return producto as ProductoType;
-    } catch (error) {
-        console.error("Error al obtener el producto por ID", error);
-        throw error;
-    }
-}
+// export const obtenerProductoPorId = async (id: ProductoType["id"]): Promise<ProductoType> => {
+//     try {
+//         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos/${id}`);
+//         const producto = await response.json();
+//         return producto as ProductoType;
+//     } catch (error) {
+//         console.error("Error al obtener el producto por ID", error);
+//         throw error;
+//     }
+// }

@@ -1,23 +1,22 @@
 import { adminDb } from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import { ProductoType } from "@/lib/types";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getProductoById } from "@/lib/db/productos";
 
 const COLLECTION_NAME = "productos"
 
-export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }): Promise<ProductoType[] | NextResponse> {
-    const { id } = await params
-    console.log("🔵 GET ID recibido:", id);
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  
+    const { id } = await params;
+  
+    const producto = await getProductoById(id);
 
-    try {
-        const productoRef = await adminDb.collection(COLLECTION_NAME).doc(id).get();
+  if (!producto) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
 
-        if (!productoRef.exists) return NextResponse.json("Producto no encontrado", { status: 404 })
-
-        return NextResponse.json(JSON.parse(JSON.stringify(productoRef.data())), { status: 200 })
-    } catch (error) {
-        return NextResponse.json({ error: `Ocurrió un error en el servidor, ${error}` }, { status: 500 })
-    }
+  return NextResponse.json(producto);
 }
 
 export async function PUT(
