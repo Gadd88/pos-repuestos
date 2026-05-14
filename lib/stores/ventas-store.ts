@@ -24,7 +24,7 @@ export const useVentaStore = create<VentaState>((set, get) => ({
             // const ventasOrdenadas = listaVentas.sort((a, b) => b.id - a.id)
             set({ventas: listaVentas, isLoading:false, error: null})
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     },
     generarVenta: async (ventaData) => {

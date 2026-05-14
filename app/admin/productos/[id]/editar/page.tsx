@@ -14,12 +14,12 @@ export default async function EditProductPage({
 }: EditProductPageProps) {
     const { id } = await params;
     
-    console.log(id)
+    // console.log(id)
     
     const producto = await obtenerProductoPorId(id)
 
-    console.log(producto)
-    // if(!id || !producto) redirect('/admin/stock')
+    // console.log(producto)
+    if(!id || !producto) redirect('/admin/stock')
 
     return <>
     <AdminHeader />

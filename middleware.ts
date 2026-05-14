@@ -11,9 +11,9 @@ export const middleware = (req: NextRequest, res: NextResponse) => {
         return NextResponse.redirect(new URL('/login', req.url))
     }
 
-    if (req.nextUrl.pathname.startsWith('/api') && !session) {
-        return NextResponse.redirect(new URL('/login', req.url))
-    }
+    // if (req.nextUrl.pathname.startsWith('/api') && !session) {
+    //     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    // }
 
     if (req.nextUrl.pathname === '/login' && session) {
         return NextResponse.redirect(new URL('/admin', req.url))
@@ -24,5 +24,6 @@ export const middleware = (req: NextRequest, res: NextResponse) => {
 }
 
 export const config = {
-    matcher: ['/admin/:path*', '/login', '/api/:path*']
+    matcher: ['/admin/:path*', '/login']
+    // , '/api/:path*'
 }

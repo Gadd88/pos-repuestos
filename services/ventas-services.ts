@@ -27,7 +27,7 @@ export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta
         items
     }
 
-    console.log("Datos a enviar para crear venta:", ventaDataToSend);
+    // console.log("Datos a enviar para crear venta:", ventaDataToSend);
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ventas`, {
         method: "POST",

@@ -27,7 +27,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest, res: NextResponse) {
     const ventaData = await req.json();
-    console.log(ventaData)
+    // console.log(ventaData)
 
     const { items } = ventaData as { items: ItemCarrito[] }
     const { tipo_venta } = ventaData as { tipo_venta: 'minorista' | 'mayorista' }
