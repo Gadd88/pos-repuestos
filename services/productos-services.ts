@@ -41,6 +41,7 @@ export const editarProductoService = async (
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos/${id}`, {
             method: "PUT",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -64,9 +65,13 @@ export const editarProductoService = async (
 
 export const eliminarProductoService = async (id: ProductoType["id"]): Promise<boolean> => {
     const response = await fetch(`/api/productos/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        credentials: "include",
+        headers:{
+            "Content-Type": "application/json",
+        }
     });
-    // const result = await response.json();
+
 
     if (!response.ok) {
         const errorText = await response.text()

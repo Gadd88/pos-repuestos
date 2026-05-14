@@ -4,9 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 export const middleware = (req: NextRequest, res: NextResponse) => {
 
     const session = req.cookies.get('session')
-    console.log("SESSION EN MIDDLEWARE:", session)
-
-    console.log(`METODO: ${req.method}, URL:${req.url}`)
+    
+    console.log(`METODO: ${req.method}, URL:${req.url}, PATHNAME:${req.nextUrl.pathname}, SESSION_EXISTS: ${!!session}`);
 
     if (req.nextUrl.pathname.startsWith('/admin') && !session) {
         console.log("MIDDLEWARE LOG: Redirigiendo /admin a /login (sin sesión)");
