@@ -32,15 +32,11 @@ export const AuthInitializer = ({
                 if (userDoc.exists()) {
                     setUsuario(userDoc.data() as UsuarioType);
                 }
-                // cookies().set("session", token, { path: "/", maxAge: 7 * 24 * 60 * 60, sameSite: "lax", secure: true }); PARA SERVIDOR
-                // document.cookie = `session=${token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax; Secure`; // PARA CLIENTE
             } else {
-                // cookies().delete("session", { path: "/" });
                 await fetch("/api/auth/session", {
                     method: "DELETE",
                 })
                 setUsuario(null);
-                // document.cookie = `session=; path=/; max-age=0; SameSite=Lax; Secure`;
             }
             setUser(user);
         });
