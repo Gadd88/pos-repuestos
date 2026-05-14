@@ -8,18 +8,22 @@ export const middleware = (req: NextRequest, res: NextResponse) => {
 
     console.log(`METODO: ${req.method}, URL:${req.url}`)
 
-    if(req.nextUrl.pathname.startsWith('/admin') && !session){
+    if (req.nextUrl.pathname.startsWith('/admin') && !session) {
+        console.log("MIDDLEWARE LOG: Redirigiendo /admin a /login (sin sesión)");
         return NextResponse.redirect(new URL('/login', req.url))
     }
 
-    if(req.nextUrl.pathname === '/api' && !session){
+    if (req.nextUrl.pathname.startsWith('/api') && !session) {
+        console.log("MIDDLEWARE LOG: Redirigiendo /api/* a /login (sin sesión)");
         return NextResponse.redirect(new URL('/login', req.url))
     }
 
-    if(req.nextUrl.pathname === '/login' && session){
+    if (req.nextUrl.pathname === '/login' && session) {
+        console.log("MIDDLEWARE LOG: Redirigiendo /login a /admin (con sesión)");
         return NextResponse.redirect(new URL('/admin', req.url))
     }
 
+    console.log("MIDDLEWARE LOG: Continuando a la siguiente ruta o handler.");
 
     return NextResponse.next()
 }
