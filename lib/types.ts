@@ -7,6 +7,7 @@ export type ProductoType = {
     precio_venta_minorista: number
     precio_venta_mayorista: number
     activo: boolean
+    negocioId: string
     creadoEn: Date
     actualizadoEn: Date
 }
@@ -29,6 +30,7 @@ export type VentaType = {
     cliente?: string
     vendedor_nombre: string
     vendedor_id: string
+    negocioId: string
     creadoEn: Date
     actualizadoEn: Date
 }
@@ -37,6 +39,8 @@ export type UsuarioType = {
     id: string
     nombre: string
     email: string
+    negocioId: string
+    nombreNegocio: string
     rol: 'admin' | 'vendedor'
 }
 

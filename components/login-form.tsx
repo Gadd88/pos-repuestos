@@ -22,7 +22,7 @@ export function LoginForm() {
             await loginEmail(email, password);
             router.push('/admin')
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     };
 
@@ -86,7 +86,7 @@ export function LoginForm() {
                         INGRESANDO..
                     </>
                 ) : (
-                    "INGRESO ADMIN"
+                    "INGRESAR"
                 )}
             </Button>
         </form>

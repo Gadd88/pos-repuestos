@@ -213,12 +213,12 @@ export const Carrito = () => {
                                       </div>
 
                                       <div className="flex justify-between items-center border-t-2 border-border pt-3">
-                                          <div className="neo-button flex gap-2 items-center justify-between p-2 bg-sky-600 shrink-0">
+                                          <div className="neo-button flex gap-2 items-center justify-between p-2 bg-transparent shrink-0">
                                               <label
-                                                  className="cursor-pointer uppercase text-white"
+                                                  className="cursor-pointer uppercase neo-heading"
                                                   htmlFor="esMayorista"
                                               >
-                                                  Venta Mayorista
+                                                  Mayorista
                                               </label>
                                               <input
                                                   id="esMayorista"
@@ -232,27 +232,29 @@ export const Carrito = () => {
                                                   }
                                               />
                                           </div>
-                                          <span
-                                              className="neo-heading text-lg"
-                                              style={{
-                                                  fontFamily:
-                                                      "var(--font-montserrat)",
-                                              }}
-                                          >
-                                              TOTAL
-                                          </span>
-                                          <span
-                                              className="neo-heading text-2xl text-primary"
-                                              style={{
-                                                  fontFamily:
-                                                      "var(--font-montserrat)",
-                                              }}
-                                          >
-                                              $
-                                              {totalVenta.toLocaleString(
-                                                  "es-AR",
-                                              )}
-                                          </span>
+                                          <div className="flex flex-col items-center w-full">
+                                            <span
+                                                className="neo-heading text-lg"
+                                                style={{
+                                                    fontFamily:
+                                                        "var(--font-montserrat)",
+                                                }}
+                                            >
+                                                TOTAL
+                                            </span>
+                                            <span
+                                                className="neo-heading text-xl"
+                                                style={{
+                                                    fontFamily:
+                                                        "var(--font-montserrat)",
+                                                }}
+                                            >
+                                                $
+                                                {totalVenta.toLocaleString(
+                                                    "es-AR",
+                                                )}
+                                            </span>
+                                          </div>
                                       </div>
                                       <div className="grid grid-cols-2 gap-2">
                                           <button

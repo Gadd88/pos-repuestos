@@ -1,16 +1,19 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
+import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario";
 
 import { ProductoType } from "@/lib/types";
 
 const COLLECTION_NAME = "productos"
 
-export async function GET() {
+export async function GET(req: Request) {
+
+    const { negocioId } = await obtenerUsuarioDesdeRequest(req)
 
     try {
         const productosRef = adminDb.collection(COLLECTION_NAME);
-        const snapshot = await productosRef.orderBy("nombre", "asc").get();
+        const snapshot = await productosRef.orderBy("nombre", "asc").where("negocioId", "==", negocioId).get();
 
         const productosList = snapshot.docs.map((doc) => ({
             id: doc.id,
@@ -27,15 +30,23 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+    const { negocioId, rol } = await obtenerUsuarioDesdeRequest(req)
+
     try {
         const body = await req.json();
         const ahora = FieldValue.serverTimestamp();
 
         const newProducto = {
             ...body,
+            negocioId,
             creadoEn: ahora,
             actualizadoEn: ahora
         };
+
+        if (rol !== "admin") {
+            return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
+        }
+
         const docRef = await adminDb.collection(COLLECTION_NAME).add(newProducto);
         const createdProducto = { id: docRef.id, ...body, creadoEn: new Date(), actualizadoEn: new Date() } as ProductoType;
         return NextResponse.json(createdProducto, { status: 201 });

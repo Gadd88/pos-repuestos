@@ -17,6 +17,7 @@ export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta
             nombre: producto.nombre,
             precio_compra: producto.precio_compra,
             precio_venta: ventaData.tipo_venta === "mayorista" ? producto.precio_venta_mayorista : producto.precio_venta_minorista,
+            negocioId: producto.negocioId,
             cantidad: producto.cantidad || 1
         };
     };

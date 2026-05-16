@@ -7,7 +7,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 
 export function AdminHeader() {
-  const { logout } = useAuthStore()
+  const { logout, usuario } = useAuthStore()
   const router = useRouter()
 
   const handleLogout = async () => {
@@ -23,20 +23,10 @@ export function AdminHeader() {
             <Link href="/admin" className="flex items-center gap-2">
               <div className="w-8 h-8 bg-sky-500 neo-button"></div>
               <span className="neo-heading text-xl" style={{ fontFamily: "var(--font-montserrat)" }}>
-                POS - RepuestoStock
+                {usuario?.nombreNegocio || "Mi negocio"}
               </span>
             </Link>
             <nav className="hidden md:flex items-center gap-4">
-              {/* <Link href="/admin">
-                <Button
-                  variant="ghost"
-                  className="neo-button font-semibold bg-transparent"
-                  style={{ fontFamily: "var(--font-montserrat)" }}
-                >
-                  <Home className="w-4 h-4 mr-2" />
-                  DASHBOARD
-                </Button>
-              </Link> */}
               <Link href="/admin/stock">
                 <Button
                   variant="ghost"

@@ -11,7 +11,6 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     const { id } = await params;
     const producto = await getProductoById(id);
 
-    console.log(producto);
     if (!producto)
         return (
             <div className="min-h-screen bg-background">

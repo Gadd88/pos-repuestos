@@ -93,9 +93,7 @@ export function VentasTable() {
                                             "font-bold text-sm sm:text-base flex items-center gap-1",
                                             ganancia >= 0 ? "text-green-600" : "text-destructive"
                                         )}>
-                                            <span className="sm:hidden text-[10px] text-muted-foreground block uppercase font-bold">Ganancia</span>
                                             <div className="flex items-center gap-1">
-                                                {ganancia >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                                                 ${ganancia.toLocaleString("es-AR")}
                                             </div>
                                         </div>

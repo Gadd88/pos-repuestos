@@ -23,7 +23,16 @@ export default async function LoginPage() {
                 POS - RepuestoStock
               </span>
             </Link>
-            <Link href="/">
+            <Link href="/registro">
+              <Button
+                variant="outline"
+                className="neo-button font-semibold bg-transparent"
+                style={{ fontFamily: "var(--font-montserrat)" }}
+              >
+                Registrarse
+              </Button>
+            </Link>
+            {/* <Link href="/">
               <Button
                 variant="outline"
                 className="neo-button font-semibold bg-transparent"
@@ -31,7 +40,7 @@ export default async function LoginPage() {
               >
                 VOLVER
               </Button>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </header>
@@ -40,11 +49,12 @@ export default async function LoginPage() {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-4">
             <h1 className="neo-heading text-4xl" style={{ fontFamily: "var(--font-montserrat)" }}>
-              ADMIN LOGIN
+              Inicia sesión en tu cuenta
             </h1>
             <p className="text-muted-foreground">Ingresa a tu sistema de stock</p>
           </div>
           <LoginForm />
+          <p>Aun no tienes cuenta? <Link href="/registro" className="text-primary hover:underline">Regístrate aquí</Link></p>
         </div>
       </main>
     </div>
