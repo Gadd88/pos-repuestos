@@ -10,10 +10,11 @@ interface VentaDetalleModalProps {
 }
 
 export function VentaDetalleModal({ venta, onClose }: VentaDetalleModalProps) {
-  if (!venta) return null
-
+  
   const { usuario } = useAuthStore()
-
+  
+  if (!venta) return null
+  
   const ganancia = venta.total - venta.totalGastado
 
   return (

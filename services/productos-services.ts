@@ -1,7 +1,7 @@
 import { ProductoType } from "@/lib/types";
 import { clientAuth } from "@/lib/firebase-client"
 
-const tokenUsuario = async (): Promise<string> => {
+export const tokenUsuario = async (): Promise<string> => {
     return new Promise((resolve, reject) => {
         const unsubscribe = clientAuth.onAuthStateChanged(async (user) => {
             unsubscribe();

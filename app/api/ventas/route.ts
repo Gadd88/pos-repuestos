@@ -1,4 +1,5 @@
 import { adminDb } from "@/lib/firebase-admin";
+import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario";
 import { ItemCarrito, VentaType } from "@/lib/types";
 import { FieldPath, FieldValue } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,10 +7,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 const COLLECTION_NAME = "ventas";
 
-export async function GET() {
+export async function GET(req: NextRequest, res: NextResponse) {
+    const { negocioId } = await obtenerUsuarioDesdeRequest(req)
+    
     try {
         const ventasRef = adminDb.collection(COLLECTION_NAME);
-        const snapshot = await ventasRef.orderBy("creadoEn", "desc").get();
+        const snapshot = await ventasRef.orderBy("creadoEn", "desc").where("negocioId", "==", negocioId).get();
 
         const ventasList = snapshot.docs.map((doc) => ({
             id: doc.id,
@@ -28,7 +31,7 @@ export async function GET() {
 export async function POST(req: NextRequest, res: NextResponse) {
     const ventaData = await req.json();
     // console.log(ventaData)
-
+    const { negocioId } = await obtenerUsuarioDesdeRequest(req)
     const { items } = ventaData as { items: ItemCarrito[] }
     const { tipo_venta } = ventaData as { tipo_venta: 'minorista' | 'mayorista' }
 
@@ -83,6 +86,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             tx.set(ventaRef, {
                 fecha: FieldValue.serverTimestamp(),
                 tipo_venta,
+                negocioId,
                 total: +total.toFixed(2),
                 totalGastado: +totalGastado.toFixed(2),
                 creadoEn: FieldValue.serverTimestamp(),

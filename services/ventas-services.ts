@@ -1,15 +1,22 @@
 import { ItemCarrito } from "@/lib/types";
+import { tokenUsuario } from "./productos-services";
 
 
 export const obtenerVentas = async () => {
+    const token = await tokenUsuario()
+    console.log(token)
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ventas`, {
         cache: "no-store",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     });
     const result = await response.json();
     return result;
 };
 
 export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta: string }) => {
+    const token = await tokenUsuario();
 
     const transformarProducto = (producto: ItemCarrito) => {
         return {
@@ -17,7 +24,6 @@ export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta
             nombre: producto.nombre,
             precio_compra: producto.precio_compra,
             precio_venta: ventaData.tipo_venta === "mayorista" ? producto.precio_venta_mayorista : producto.precio_venta_minorista,
-            negocioId: producto.negocioId,
             cantidad: producto.cantidad || 1
         };
     };
@@ -36,6 +42,7 @@ export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta
         method: "POST",
         headers: {
             "Content-type": "application/json",
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(ventaDataToSend),
     });
