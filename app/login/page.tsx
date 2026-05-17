@@ -23,7 +23,7 @@ export default async function LoginPage() {
                 POS - RepuestoStock
               </span>
             </Link>
-            <Link href="/registro">
+            {/* <Link href="/registro">
               <Button
                 variant="outline"
                 className="neo-button font-semibold bg-transparent"
@@ -31,7 +31,7 @@ export default async function LoginPage() {
               >
                 Registrarse
               </Button>
-            </Link>
+            </Link> */}
             {/* <Link href="/">
               <Button
                 variant="outline"
@@ -54,7 +54,7 @@ export default async function LoginPage() {
             <p className="text-muted-foreground">Ingresa a tu sistema de stock</p>
           </div>
           <LoginForm />
-          <p>Aun no tienes cuenta? <Link href="/registro" className="text-primary hover:underline">Regístrate aquí</Link></p>
+          {/* <p>Aun no tienes cuenta? <Link href="/registro" className="text-primary hover:underline">Regístrate aquí</Link></p> */}
         </div>
       </main>
     </div>
