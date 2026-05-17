@@ -4,7 +4,6 @@ import { tokenUsuario } from "./productos-services";
 
 export const obtenerVentas = async () => {
     const token = await tokenUsuario()
-    console.log(token)
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ventas`, {
         cache: "no-store",
         headers: {
