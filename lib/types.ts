@@ -37,6 +37,7 @@ export type VentaType = {
 
 export type UsuarioType = {
     id: string
+    uid?: string
     nombre: string
     email: string
     negocioId: string

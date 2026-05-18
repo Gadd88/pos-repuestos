@@ -11,13 +11,17 @@ import {
     AlertTriangle,
     Loader2,
     Receipt,
+    Users,
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
+import { useAuthStore } from "@/lib/stores/auth-store";
 
 export function AdminDashboard() {
     const { productos, isLoading, listarProductos, obtenerProductosBajoStock } =
         useProductosStore();
+
+    const { usuario } = useAuthStore()
 
     useEffect(() => {
         listarProductos();
@@ -78,7 +82,25 @@ export function AdminDashboard() {
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                    <div className={`grid grid-cols-2 ${usuario?.rol === "admin" ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-2`}>
+                        {
+                            usuario?.rol === "admin" && (
+                                <div className="neo-card p-2 lg:p-6 space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <Users className="w-8 h-8 text-purple-500" />
+                                        <h2 className="neo-heading text-xl">
+                                            Vendedores
+                                        </h2>
+                                    </div>
+
+                                    <Link href="/admin/usuarios">
+                                        <Button className="w-full neo-button font-bold bg-purple-600">
+                                            Gestionar
+                                        </Button>
+                                    </Link>
+                                </div>
+                            )
+                        }
                         <div className="neo-card p-2 lg:p-6 space-y-4">
                             <div className="flex items-center gap-3">
                                 <Package className="w-8 h-8 text-primary" />
@@ -119,7 +141,7 @@ export function AdminDashboard() {
                             </div>
                         </div>
 
-                        <div className="neo-card p-2 lg:p-6 space-y-4">
+                        {/* <div className="neo-card p-2 lg:p-6 space-y-4">
                             <div className="flex items-center gap-3">
                                 <TrendingUp className="w-8 h-8 text-green-600" />
                                 <div>
@@ -137,7 +159,7 @@ export function AdminDashboard() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="neo-card p-2 lg:p-6 space-y-4">
                             <div className="flex items-center gap-3">
@@ -216,6 +238,7 @@ export function AdminDashboard() {
                             </Link>
                         </div>
                     </div>
+
                     <div className="neo-card p-6 space-y-4 max-h-64">
                         <div className="flex items-center gap-3">
                             <AlertTriangle className="w-8 h-8 text-yellow-500" />
@@ -230,22 +253,18 @@ export function AdminDashboard() {
                         </div>
 
                         {productosBajoStock.length > 0 ? (
-                                <ul className="text-sm text-muted-foreground mb-4 overflow-auto flex flex-wrap gap-1">
-                                    {productosBajoStock.map((prod) => (
-                                        <li
-                                            key={prod.id}
-                                            className="font-semibold"
+                            <ul className="text-sm text-muted-foreground mb-4 overflow-auto flex flex-wrap gap-1">
+                                {productosBajoStock.map((prod) => (
+                                    <li key={prod.id} className="font-semibold">
+                                        <Badge
+                                            variant="secondary"
+                                            className="bg-yellow-400 text-black border-black"
                                         >
-                                            <Badge
-                                                variant="secondary"
-                                                className="bg-yellow-400 text-black border-black"
-                                            >
-                                                {prod.nombre} - {" "}
-                                                {prod.stock}u.
-                                            </Badge>
-                                        </li>
-                                    ))}
-                                </ul>
+                                            {prod.nombre} - {prod.stock}u.
+                                        </Badge>
+                                    </li>
+                                ))}
+                            </ul>
                         ) : (
                             <p className="text-muted-foreground">
                                 Todos los productos con stock mínimo o
