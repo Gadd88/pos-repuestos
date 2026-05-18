@@ -1,4 +1,3 @@
-import { AdminHeader } from "@/components/admin/admin-header";
 import { ProductForm } from "@/components/producto/product-form";
 import { getProductoById } from "@/lib/db/productos";
 
@@ -14,7 +13,6 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     if (!producto)
         return (
             <div className="min-h-screen bg-background">
-                <AdminHeader />
                 <main className="container mx-auto px-4 py-8">
                     <div className="text-center py-12">
                         <h1
@@ -33,7 +31,6 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
 
     return (
         <>
-            <AdminHeader />
             <ProductForm productoId={id} productoData={producto} />;
         </>
     );

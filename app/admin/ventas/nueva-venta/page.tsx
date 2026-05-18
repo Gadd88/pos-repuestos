@@ -1,8 +1,7 @@
 "use client";
 import { useDeferredValue, useEffect, useState, useTransition } from "react";
-import { Eye, Loader2, Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useVentaStore } from "@/lib/stores/ventas-store";
 import { useProductosStore } from "@/lib/stores/products-store";
 import {
     Table,
@@ -13,7 +12,6 @@ import {
     TableCell,
 } from "@/components/ui/table";
 import { InputBusqueda } from "@/components/input-busqueda";
-import { AdminHeader } from "@/components/admin/admin-header";
 import { useCarritoState } from "@/lib/stores/carrito-store";
 import { Carrito } from "@/components/carrito/carrito";
 import { useAuthStore } from "@/lib/stores/auth-store";
@@ -56,8 +54,7 @@ export default function NuevaVenta() {
 
     return (
         <>
-            <AdminHeader />
-            <main className="container mx-auto px-4 py-8">
+            <main className="container mx-auto px-4 py-8 min-h-screen">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <h1

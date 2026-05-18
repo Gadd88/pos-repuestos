@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AdminHeader } from "@/components/admin/admin-header";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useUsuarioStore } from "@/lib/stores/usuarios-store";
@@ -18,8 +17,6 @@ export default function UsuariosPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AdminHeader />
-
       <main className="container mx-auto px-4 py-8 space-y-6">
         <div className="flex justify-between md:items-center flex-col md:flex-row gap-4">
           <h1 className="neo-heading text-3xl">
