@@ -15,6 +15,7 @@ interface AuthState {
     setLoading: (arg: boolean) => void;
     loginEmail: (email: string, pass: string) => Promise<void>;
     logout: () => void
+    refreshSession: () => Promise<any>
 }
 
 const SESSION_COOKIE = `path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax; Secure`;
@@ -38,15 +39,19 @@ export const useAuthStore = create<AuthState>((set) => ({
             await userCredentials.user.getIdTokenResult();
             const userDoc = await getDoc(doc(db, "usuarios", userCredentials.user.uid));
             const token = await userCredentials.user.getIdToken()
-            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/session`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/session`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ token }),
             })
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error al iniciar sesión: ${errorText}`);
+            }
             // cookies().set("session", token, { path: "/", maxAge: 7 * 24 * 60 * 60, sameSite: "lax", secure: true }); PARA SERVIDOR
-            document.cookie = `session=${token}; ${SESSION_COOKIE}`;
+            // document.cookie = `session=${token}; ${SESSION_COOKIE}`;
             set({ loading: false, user: userCredentials.user, usuario: userDoc.data() as UsuarioType });
         } catch (err: any) {
             set({ error: err.message, loading: false });
@@ -67,4 +72,27 @@ export const useAuthStore = create<AuthState>((set) => ({
             console.error("Error al salir", err);
         }
     },
+    refreshSession: async () => {
+        try {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const token = await user.getIdToken(true); // 👈 fuerza refresh
+
+            const res = await fetch("/api/auth/refresh", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ token }),
+            });
+
+            const data = await res.json();
+
+            return data;
+
+        } catch (err) {
+            console.error("Error refreshing session", err);
+        }
+    }
 }));

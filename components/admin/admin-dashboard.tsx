@@ -11,13 +11,17 @@ import {
     AlertTriangle,
     Loader2,
     Receipt,
+    User
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
+import { useAuthStore } from "@/lib/stores/auth-store";
 
 export function AdminDashboard() {
     const { productos, isLoading, listarProductos, obtenerProductosBajoStock } =
         useProductosStore();
+
+    const { usuario } = useAuthStore();
 
     useEffect(() => {
         listarProductos();
@@ -66,16 +70,31 @@ export function AdminDashboard() {
                         </h1>
                     </div>
 
-                    <div className="neo-card p-2 space-y-2 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200">
+                    <div className={`neo-card p-2 grid ${usuario?.rol === "superadmin" ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200`}>
                         <Link href="/admin/ventas/nueva-venta">
                             <Button
-                                className="w-full neo-button font-bold flex justify-center items-center py-8"
+                                variant="ghost"
+                                className="w-full bg-sky-500 neo-button font-bold flex justify-center items-center py-6"
                                 style={{ fontFamily: "var(--font-montserrat)" }}
                             >
-                                <Plus className="w-8 h-8 text-white font-extrabold" />
+                                <Plus className="w-8 h-8 text-white font-black" />
                                 Nueva Venta
                             </Button>
                         </Link>
+                        {usuario?.rol === "superadmin" && (
+                            <Link href="/admin/super">
+                                <Button
+                                    variant="ghost"
+                                    className="w-full neo-button font-semibold bg-lime-500 py-6"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    <User className="w-8 h-8 text-white" />
+                                    Super Admin
+                                </Button>
+                            </Link>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
@@ -230,22 +249,18 @@ export function AdminDashboard() {
                         </div>
 
                         {productosBajoStock.length > 0 ? (
-                                <ul className="text-sm text-muted-foreground mb-4 overflow-auto flex flex-wrap gap-1">
-                                    {productosBajoStock.map((prod) => (
-                                        <li
-                                            key={prod.id}
-                                            className="font-semibold"
+                            <ul className="text-sm text-muted-foreground mb-4 overflow-auto flex flex-wrap gap-1">
+                                {productosBajoStock.map((prod) => (
+                                    <li key={prod.id} className="font-semibold">
+                                        <Badge
+                                            variant="secondary"
+                                            className="bg-yellow-400 text-black border-black"
                                         >
-                                            <Badge
-                                                variant="secondary"
-                                                className="bg-yellow-400 text-black border-black"
-                                            >
-                                                {prod.nombre} - {" "}
-                                                {prod.stock}u.
-                                            </Badge>
-                                        </li>
-                                    ))}
-                                </ul>
+                                            {prod.nombre} - {prod.stock}u.
+                                        </Badge>
+                                    </li>
+                                ))}
+                            </ul>
                         ) : (
                             <p className="text-muted-foreground">
                                 Todos los productos con stock mínimo o

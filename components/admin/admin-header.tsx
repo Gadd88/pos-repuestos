@@ -62,6 +62,20 @@ export function AdminHeader() {
                                         NUEVA VENTA
                                     </Button>
                                 </Link>
+                                {usuario?.rol === "superadmin" && (
+                                    <Link href="/admin/super">
+                                        <Button
+                                            variant="ghost"
+                                            className="neo-button font-semibold bg-lime-500"
+                                            style={{
+                                                fontFamily:
+                                                    "var(--font-montserrat)",
+                                            }}
+                                        >
+                                            Super Admin
+                                        </Button>
+                                    </Link>
+                                )}
                             </div>
                         </nav>
                         <Button

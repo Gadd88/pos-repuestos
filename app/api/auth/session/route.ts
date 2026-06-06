@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebase-admin";
+import { adminAuth, adminDb } from "@/lib/firebase-admin";
 import { cookies } from "next/headers";
 
 
@@ -17,8 +17,25 @@ export async function POST(req: NextRequest) {
         const decodedToken = await adminAuth.verifyIdToken(token);
         // console.log("🔵 Token verificado, UID:", decodedToken.uid);
 
+        const userId = decodedToken.uid;
+
+        const usuarioDoc = await adminDb.collection("usuarios").doc(decodedToken.uid).get();
+        const usuarioData = await usuarioDoc.data();
+
+        const negocioDoc = await adminDb.collection("negocios").doc(usuarioData?.negocioId).get()
+        const negocio = negocioDoc.data()
+
+         const sessionData = {
+            userId,
+            email: usuarioData?.email,
+            negocioId: usuarioData?.negocioId,
+            activo: negocio?.activo ?? false,
+            estado: negocio?.estado,
+            esSuperAdmin: usuarioData?.rol === "superadmin",
+        }
+
         // 🍪 Crear cookie segura
-        cookieStore.set("session", token, {
+        cookieStore.set("session", JSON.stringify(sessionData), {
             httpOnly: true,
             secure: true,
             sameSite: "lax",
@@ -27,8 +44,7 @@ export async function POST(req: NextRequest) {
         });
 
         return NextResponse.json({
-            success: true,
-            uid: decodedToken.uid,
+            success: true
         });
     } catch (error) {
         console.error("Error creando sesión:", error);
