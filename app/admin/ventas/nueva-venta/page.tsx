@@ -41,7 +41,7 @@ export default function NuevaVenta() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center py-12">
+            <div className="container flex items-center justify-center py-12">
                 <div className="text-center space-y-4">
                     <Loader2 className="h-8 w-8 animate-spin mx-auto" />
                     <p className="text-muted-foreground">
@@ -54,7 +54,7 @@ export default function NuevaVenta() {
 
     return (
         <>
-            <main className="container mx-auto px-4 py-8 min-h-screen">
+            <div className="container mx-auto px-4 py-8 min-h-screen">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <h1
@@ -149,7 +149,7 @@ export default function NuevaVenta() {
                         </TableBody>
                     </Table>
                 </div>
-            </main>
+            </div>
             <Carrito />
         </>
     );

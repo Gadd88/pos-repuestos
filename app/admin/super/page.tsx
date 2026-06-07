@@ -16,17 +16,12 @@ export default async function SuperAdminPage() {
     }
 
     return (
-        <>
-            <AdminHeader />
-            <main>
-                <div className="p-6 space-y-6">
-                    <p className="text-muted-foreground">
-                        Gestión de negocios registrados
-                    </p>
+        <div className="container p-6 space-y-6">
+            <p className="text-muted-foreground">
+                Gestión de negocios registrados
+            </p>
 
-                    <SuperAdminTabla />
-                </div>
-            </main>
-        </>
+            <SuperAdminTabla />
+        </div>
     );
 }

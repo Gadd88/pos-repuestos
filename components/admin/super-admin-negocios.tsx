@@ -57,7 +57,7 @@ export function SuperAdminTabla() {
                                     <TableCell className="border-e-2">
                                         {negocio.nombre}
                                     </TableCell>
-                                    <TableCell className="uppercase font-black text-center border-e-2">
+                                    <TableCell className="uppercase font-black text-center border-e-2 flex justify-center items-center">
                                         {negocio.activo ? <CheckCircle className="w-12 h-12 text-green-500" /> : <XCircle className="w-12 h-12 text-red-500" />}
                                     </TableCell>
                                     <TableCell className="text-center">

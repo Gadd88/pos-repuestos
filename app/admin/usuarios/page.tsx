@@ -16,8 +16,8 @@ export default function UsuariosPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-8 space-y-6">
+    <>
+      <div className="container mx-auto px-4 py-8 space-y-6">
         <div className="flex justify-between md:items-center flex-col md:flex-row gap-4">
           <h1 className="neo-heading text-3xl">
             Gestión de Vendedores
@@ -33,15 +33,17 @@ export default function UsuariosPage() {
         </div>
 
         {loading ? (
-          <p>Cargando usuarios...</p>
+          <div className="container">
+            <p>Cargando usuarios...</p>
+          </div>
         ) : (
           <UsuariosTabla />
         )}
-      </main>
+      </div>
 
       {openModal && (
         <UsuarioNuevoModal onClose={() => setOpenModal(false)} />
       )}
-    </div>
+    </>
   );
 }

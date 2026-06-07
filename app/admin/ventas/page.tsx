@@ -3,8 +3,7 @@ import { VentasTable } from "@/components/ventas/venta-table";
 export default function VentasPage() {
 
     return (
-        <div className="min-h-screen bg-background">
-            <main className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-4 py-8">
                 <div className="space-y-8">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
@@ -21,7 +20,6 @@ export default function VentasPage() {
                     </div>
                     <VentasTable />
                 </div>
-            </main>
-        </div>
+            </div>
     );
 }

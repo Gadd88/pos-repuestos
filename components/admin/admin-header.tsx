@@ -4,11 +4,12 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { Button } from "@/components/ui/button";
 import { LogOut, Package, Plus, Home } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export function AdminHeader() {
     const { logout, usuario } = useAuthStore();
     const router = useRouter();
+    const pathname = usePathname();
 
     const handleLogout = async () => {
         await logout();
@@ -22,66 +23,68 @@ export function AdminHeader() {
                     <div className="container mx-auto px-4 py-4">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center justify-between w-full gap-6">
-                                <nav className="flex items-center md:gap-8">
-                                    <Link
-                                        href="/admin"
-                                        className="flex items-center gap-2"
-                                    >
-                                        <div className="w-8 h-8 bg-sky-500 neo-button"></div>
-                                        <span
-                                            className="neo-heading text-xl"
-                                            style={{
-                                                fontFamily:
-                                                    "var(--font-montserrat)",
-                                            }}
+                                {pathname !== "/inactivo" && (
+                                    <nav className="flex items-center md:gap-8">
+                                        <Link
+                                            href="/admin"
+                                            className="flex items-center gap-2"
                                         >
-                                            {usuario?.nombreNegocio ||
-                                                "POS - RespuestoStock"}
-                                        </span>
-                                    </Link>
-                                    <div className="hidden md:flex items-center gap-4">
-                                        <Link href="/admin/stock">
-                                            <Button
-                                                variant="ghost"
-                                                className="neo-button font-semibold bg-transparent"
+                                            <div className="w-8 h-8 bg-sky-500 neo-button"></div>
+                                            <span
+                                                className="neo-heading text-xl"
                                                 style={{
                                                     fontFamily:
                                                         "var(--font-montserrat)",
                                                 }}
                                             >
-                                                <Package className="w-4 h-4 mr-2" />
-                                                INVENTARIO
-                                            </Button>
+                                                {usuario?.nombreNegocio ||
+                                                    "POS - RespuestoStock"}
+                                            </span>
                                         </Link>
-                                        <Link href="/admin/ventas/nueva-venta">
-                                            <Button
-                                                variant="ghost"
-                                                className="neo-button font-semibold bg-sky-500"
-                                                style={{
-                                                    fontFamily:
-                                                        "var(--font-montserrat)",
-                                                }}
-                                            >
-                                                <Plus className="w-4 h-4 mr-2" />
-                                                NUEVA VENTA
-                                            </Button>
-                                        </Link>
-                                        {usuario?.rol === "superadmin" && (
-                                            <Link href="/admin/super">
+                                        <div className="hidden md:flex items-center gap-4">
+                                            <Link href="/admin/stock">
                                                 <Button
                                                     variant="ghost"
-                                                    className="neo-button font-semibold bg-lime-500"
+                                                    className="neo-button font-semibold bg-transparent"
                                                     style={{
                                                         fontFamily:
                                                             "var(--font-montserrat)",
                                                     }}
                                                 >
-                                                    Super Admin
+                                                    <Package className="w-4 h-4 mr-2" />
+                                                    INVENTARIO
                                                 </Button>
                                             </Link>
-                                        )}
-                                    </div>
-                                </nav>
+                                            <Link href="/admin/ventas/nueva-venta">
+                                                <Button
+                                                    variant="ghost"
+                                                    className="neo-button font-semibold bg-sky-500"
+                                                    style={{
+                                                        fontFamily:
+                                                            "var(--font-montserrat)",
+                                                    }}
+                                                >
+                                                    <Plus className="w-4 h-4 mr-2" />
+                                                    NUEVA VENTA
+                                                </Button>
+                                            </Link>
+                                            {usuario?.rol === "superadmin" && (
+                                                <Link href="/admin/super">
+                                                    <Button
+                                                        variant="ghost"
+                                                        className="neo-button font-semibold bg-lime-500"
+                                                        style={{
+                                                            fontFamily:
+                                                                "var(--font-montserrat)",
+                                                        }}
+                                                    >
+                                                        Super Admin
+                                                    </Button>
+                                                </Link>
+                                            )}
+                                        </div>
+                                    </nav>
+                                )}
                                 <Button
                                     onClick={handleLogout}
                                     variant="ghost"
