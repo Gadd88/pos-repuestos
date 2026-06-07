@@ -5,7 +5,7 @@ export const middleware = (req: NextRequest, res: NextResponse) => {
 
     const session = req.cookies.get('session')
     const pathname = req.nextUrl.pathname
-    console.log(`METODO: ${req.method}, URL:${req.url}, PATHNAME:${req.nextUrl.pathname}, SESSION: ${!!session}`);
+    // console.log(`METODO: ${req.method}, URL:${req.url}, PATHNAME:${req.nextUrl.pathname}, SESSION: ${!!session}`);
 
     if (!session) {
         if (pathname === "/login") {
@@ -19,7 +19,7 @@ export const middleware = (req: NextRequest, res: NextResponse) => {
 
     try {
         sessionData = JSON.parse(session.value)
-        console.log(sessionData)
+        // console.log(sessionData)
     } catch (err) {
         console.error("Error parsing session data:", err);
         return NextResponse.redirect(new URL('/login', req.url))

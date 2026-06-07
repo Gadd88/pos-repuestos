@@ -12,7 +12,7 @@ export async function GET() {
 
   const sessionData = JSON.parse(session.value)
 
-  console.log("Session data:", sessionData)
+  // console.log("Session data:", sessionData)
 
   if (!sessionData?.esSuperAdmin) {
     return NextResponse.json({ error: "Acción no permitida" }, { status: 403 })
