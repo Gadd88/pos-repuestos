@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useProductosStore } from "@/lib/stores/products-store";
 import { Button } from "@/components/ui/button";
-import { AdminHeader } from "@/components/admin/admin-header";
 import {
     Package,
     Plus,
-    TrendingUp,
     AlertTriangle,
     Loader2,
     Receipt,
@@ -29,19 +27,21 @@ export function AdminDashboard() {
     }, []);
 
     const productosBajoStock = obtenerProductosBajoStock();
-    const valorTotal = productos?.reduce(
-        (sum, product) => sum + product.precio_venta_minorista * product.stock,
-        0,
+    const valorTotal = useMemo(
+        () =>
+            productos?.reduce(
+                (sum, product) =>
+                    sum + product.precio_venta_minorista * product.stock,
+                0,
+            ),
+        [productos],
     );
-    const stockTotal = productos?.reduce(
-        (sum, product) => sum + product.stock,
-        0,
-    );
+
+    const esAdmin = usuario?.rol === "admin";
 
     if (isLoading) {
         return (
             <div className="min-h-screen bg-background">
-                <AdminHeader />
                 <main className="container mx-auto px-4 py-8">
                     <div className="flex items-center justify-center py-12">
                         <div className="text-center space-y-4">
@@ -58,8 +58,6 @@ export function AdminDashboard() {
 
     return (
         <div className="min-h-screen bg-background">
-            <AdminHeader />
-
             <main className="container mx-auto px-4 py-8">
                 <div className="space-y-8">
                     <div>
@@ -98,7 +96,7 @@ export function AdminDashboard() {
                         )}
                     </div>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                    <div className={`grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-6`}>
                         <div className="neo-card p-2 lg:p-6 space-y-4">
                             <div className="flex items-center gap-3">
                                 <Package className="w-8 h-8 text-primary" />
@@ -139,27 +137,7 @@ export function AdminDashboard() {
                             </div>
                         </div>
 
-                        <div className="neo-card p-2 lg:p-6 space-y-4">
-                            <div className="flex items-center gap-3">
-                                <TrendingUp className="w-8 h-8 text-green-600" />
-                                <div>
-                                    <div
-                                        className="neo-heading text-xl text-green-600"
-                                        style={{
-                                            fontFamily:
-                                                "var(--font-montserrat)",
-                                        }}
-                                    >
-                                        {stockTotal}
-                                    </div>
-                                    <div className="text-sm text-muted-foreground">
-                                        Productos en Total
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="neo-card p-2 lg:p-6 space-y-4">
+                        <div className="neo-card p-2 lg:p-6 space-y-4 col-span-2 lg:col-auto">
                             <div className="flex items-center gap-3">
                                 <Package className="w-8 h-8 text-sky-500" />
                                 <div>
@@ -180,7 +158,28 @@ export function AdminDashboard() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div
+                        className={`grid grid-cols-1 ${!esAdmin ? "md:grid-cols-2" : "md:grid-cols-3"} gap-6`}
+                    >
+                        {usuario?.rol === "admin" && (
+                            <div className="neo-card p-2 lg:p-6 space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <Users className="w-8 h-8 text-purple-500" />
+                                    <h2 className="neo-heading text-xl">
+                                        Vendedores
+                                    </h2>
+                                </div>
+                                <p className="text-muted-foreground">
+                                    Administra tus vendedores
+                                </p>
+
+                                <Link href="/admin/usuarios">
+                                    <Button className="w-full neo-button font-bold bg-purple-600">
+                                        Gestionar
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
                         <div className="neo-card p-6 space-y-4 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200">
                             <div className="flex items-center gap-3">
                                 <Package className="w-8 h-8 text-sky-500" />
@@ -236,6 +235,7 @@ export function AdminDashboard() {
                             </Link>
                         </div>
                     </div>
+
                     <div className="neo-card p-6 space-y-4 max-h-64">
                         <div className="flex items-center gap-3">
                             <AlertTriangle className="w-8 h-8 text-yellow-500" />

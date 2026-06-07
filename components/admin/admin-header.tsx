@@ -36,7 +36,7 @@ export function AdminHeader() {
                                             }}
                                         >
                                             {usuario?.nombreNegocio ||
-                                                "Mi negocio"}
+                                                "POS - RespuestoStock"}
                                         </span>
                                     </Link>
                                     <div className="hidden md:flex items-center gap-4">
