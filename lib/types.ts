@@ -37,15 +37,24 @@ export type VentaType = {
 
 export type UsuarioType = {
     id: string
+    uid?: string
     nombre: string
     email: string
     negocioId: string
     nombreNegocio: string
-    rol: 'admin' | 'vendedor'
+    rol: 'admin' | 'vendedor' | 'superadmin'
 }
 
 export type ItemCarrito = ProductoType & {
     stockMaximo: number;
     cantidad: number;
     precio_venta?: number;
+}
+
+export type NegocioType = {
+    id: string
+    nombre: string
+    activo: boolean
+    adminId: string
+    creadoEn: Date
 }

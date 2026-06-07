@@ -135,6 +135,10 @@
     @apply font-black text-foreground tracking-tight;
   }
 
+  .neo-subheading {
+    @apply font-bold text-foreground tracking-tight;
+  }
+
   .neo-card {
     @apply bg-card border-4 border-border shadow-[4px_4px_0px_0px_theme(colors.border)];
   }

@@ -32,13 +32,13 @@ export const ProductCardStock = ({
                             </h3>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span>
+                            <span className="neo-subheading">
                                 {producto.stock <= 2 && producto.stock > 0 ? (
                                     <Badge
-                                        variant="secondary"
-                                        className="bg-yellow-400 text-black border-black"
+                                        variant="outline"
+                                        className="bg-yellow-400 text-black"
                                     >
-                                        STOCK BAJO
+                                        BAJO STOCK
                                     </Badge>
                                 ) : producto.stock === 0 ? (
                                     <Badge variant="destructive">
@@ -47,7 +47,7 @@ export const ProductCardStock = ({
                                 ) : (
                                     <Badge
                                         variant="outline"
-                                        className="bg-green-700 text-white"
+                                        className="bg-sky-700 text-white"
                                     >
                                         EN STOCK
                                     </Badge>
@@ -94,7 +94,8 @@ export const ProductCardStock = ({
                             </div>
                         </div>
 
-                        {usuario?.rol === "admin" && (
+                        {(usuario?.rol === "admin" ||
+                            usuario?.rol === "superadmin") && (
                             <div className="flex items-center justify-between gap-2">
                                 <Link
                                     href={`/admin/productos/${producto.id}/editar-producto`}

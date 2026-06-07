@@ -4,6 +4,8 @@ import { Montserrat, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthInitializer } from "@/components/auth-zustand";
 import { Toaster } from "sonner";
+import Footer from "@/components/footer";
+import { AdminHeader } from "@/components/admin/admin-header";
 
 const montserrat = Montserrat({
     subsets: ["latin"],
@@ -37,11 +39,15 @@ export default function RootLayout({
             lang="en"
             className={`${montserrat.variable} ${openSans.variable} antialiased`}
         >
-            <body className="min-h-screen bg-background font-sans">
+            <body className="min-h-screen bg-background font-sans flex flex-col">
                 <AuthInitializer>
+                    <AdminHeader />
                     <Toaster position="top-center"/>
-                    {children}
+                    <main className="flex flex-1">
+                        {children}
+                    </main>
                     <div id="modal" />
+                    <Footer />
                 </AuthInitializer>
             </body>
         </html>

@@ -34,21 +34,21 @@ export function VentasTable() {
     // Definimos el grid dinámicamente según el rol
     // Mobile: 2 cols (Fecha, Total) | Desktop Admin: 4 cols | Desktop User: 3 cols
     const gridLayout = isAdmin 
-        ? "grid-cols-[1fr_1fr_1fr_auto] md:grid-cols-[1.5fr_1fr_1fr_0.5fr]" 
-        : "grid-cols-[1fr_1fr_auto] md:grid-cols-[2fr_1fr_0.5fr]";
+        ? "grid-cols-[1fr_1fr_1fr_1fr] md:grid-cols-[1.5fr_1fr_1fr_0.5fr]" 
+        : "grid-cols-[1fr_1fr_1fr] md:grid-cols-[1fr_1fr_1fr]";
 
     return (
         <>
             <div className="neo-card overflow-hidden border-2 border-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                {/* Header - Oculto en mobile si prefieres un look tipo card, o visible para estructura */}
+                
                 <div className={cn(
-                    "grid gap-4 px-6 py-4 bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider",
+                    "grid gap-4 px-3 py-4 bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider border-b-4",
                     gridLayout
                 )}>
-                    <div>Fecha</div>
-                    <div className="text-center sm:text-left">Total Venta</div>
-                    {isAdmin && <div className="text-center sm:text-left">Ganancia</div>}
-                    <div className="text-right">Acción</div>
+                    <div className="font-black">Fecha</div>
+                    <div className="font-black text-center">Total</div>
+                    {isAdmin && <div className="font-black text-center">Ganancia</div>}
+                    <div className="font-black text-center">Acción</div>
                 </div>
 
                 {/* Body */}
@@ -77,26 +77,19 @@ export function VentasTable() {
                                 >
                                     {/* Fecha */}
                                     <div className="font-medium text-sm sm:text-base">
-                                        <span className="sm:hidden text-[10px] text-muted-foreground block uppercase font-bold">Fecha</span>
                                         {fecha}
                                     </div>
 
                                     {/* Total */}
-                                    <div className="font-bold text-base sm:text-lg">
-                                        <span className="sm:hidden text-[10px] text-muted-foreground block uppercase font-bold">Total</span>
+                                    <div className="font-bold text-base sm:text-lg text-end">
                                         ${venta.total.toLocaleString("es-AR")}
                                     </div>
 
                                     {/* Ganancia (Solo Admin) */}
                                     {isAdmin && (
-                                        <div className={cn(
-                                            "font-bold text-sm sm:text-base flex items-center gap-1",
-                                            ganancia >= 0 ? "text-green-600" : "text-destructive"
-                                        )}>
-                                            <div className="flex items-center gap-1">
+                                            <div className="font-bold text-sm sm:text-base text-end text-green-500">
                                                 ${ganancia.toLocaleString("es-AR")}
                                             </div>
-                                        </div>
                                     )}
 
                                     {/* Botón Detalle */}
