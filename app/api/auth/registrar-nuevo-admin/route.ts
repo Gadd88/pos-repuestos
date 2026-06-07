@@ -23,6 +23,7 @@ export async function POST(req: Request) {
         nombre: nombreNegocio,
         adminId: usuario.uid,
         creadoEn: new Date(),
+        activo: false
     });
 
     const negocioId = negocioRef.id;
@@ -39,7 +40,6 @@ export async function POST(req: Request) {
         rol: "admin",
         negocioId,
         nombreNegocio,
-        activo: true,
         creadoEn: new Date(),
     });
 
