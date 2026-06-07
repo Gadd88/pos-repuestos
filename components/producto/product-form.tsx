@@ -13,25 +13,24 @@ import Link from "next/link";
 import { ProductoType } from "@/lib/types";
 
 interface ProductFormProps {
-    productoId?: ProductoType['id'];
-    productoData?: Partial<Omit<ProductoType, "id" | "creadoEn" | "actualizadoEn">>;
+    productoId?: ProductoType["id"];
+    productoData?: Partial<
+        Omit<ProductoType, "id" | "creadoEn" | "actualizadoEn">
+    >;
 }
 
 type FormDataType = {
-    nombre: string
-    descripcion?: string
-    precio_compra: number
-    precio_venta_mayorista: number
-    precio_venta_minorista: number
-    stock: number
-}
+    nombre: string;
+    descripcion?: string;
+    precio_compra: number;
+    precio_venta_mayorista: number;
+    precio_venta_minorista: number;
+    stock: number;
+};
 
 export function ProductForm({ productoId, productoData }: ProductFormProps) {
     const router = useRouter();
-    const {
-        agregarProducto,
-        editarProducto,
-    } = useProductosStore();
+    const { agregarProducto, editarProducto } = useProductosStore();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -41,7 +40,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
         precio_compra: productoData?.precio_compra ?? 0,
         precio_venta_mayorista: productoData?.precio_venta_mayorista ?? 0,
         precio_venta_minorista: productoData?.precio_venta_minorista ?? 0,
-        stock: productoData?.stock ?? 0
+        stock: productoData?.stock ?? 0,
     });
 
     const isEditing = !!productoId;
@@ -54,7 +53,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
         try {
             const productData: Omit<
                 ProductoType,
-                "id" | "creadoEn" | "actualizadoEn"
+                "id" | "creadoEn" | "actualizadoEn" | "negocioId"
             > = {
                 nombre: formData.nombre.trim(),
                 descripcion: formData.descripcion?.trim() || "",
@@ -62,7 +61,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                 precio_venta_mayorista: formData.precio_venta_mayorista,
                 precio_venta_minorista: formData.precio_venta_minorista,
                 stock: formData.stock,
-                activo: true
+                activo: true,
             };
 
             let success = false;
@@ -87,8 +86,6 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
 
     return (
         <div className="min-h-screen bg-background">
-            {/* <AdminHeader /> */}
-
             <main className="container mx-auto px-4 py-8">
                 <div className="mx-auto space-y-8">
                     <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -197,7 +194,9 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            precio_compra: Number(e.target.value),
+                                            precio_compra: Number(
+                                                e.target.value,
+                                            ),
                                         })
                                     }
                                     required
@@ -224,7 +223,9 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            precio_venta_mayorista: Number(e.target.value),
+                                            precio_venta_mayorista: Number(
+                                                e.target.value,
+                                            ),
                                         })
                                     }
                                     required
@@ -251,7 +252,9 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            precio_venta_minorista: Number(e.target.value),
+                                            precio_venta_minorista: Number(
+                                                e.target.value,
+                                            ),
                                         })
                                     }
                                     required
@@ -314,8 +317,6 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                                 </Button>
                             </Link>
                         </div>
-
-             
                     </form>
                 </div>
             </main>

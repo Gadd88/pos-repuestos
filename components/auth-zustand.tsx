@@ -42,7 +42,7 @@ export const AuthInitializer = ({
         });
 
         return () => unsubscribe();
-    }, [setUser]);
+    }, []);
 
     return <>{children}</>;
 };

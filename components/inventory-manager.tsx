@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { useProductosStore } from "@/lib/stores/products-store";
 import { Button } from "@/components/ui/button";
-import { AdminHeader } from "@/components/admin/admin-header";
 import { ProductDeleteDialog } from "@/components/producto/product-delete-dialog";
 import { Plus, Package, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -32,7 +31,7 @@ export function InventoryManager() {
     const [query, setQuery] = useState("");
     const [isPending, startTransition] = useTransition();
     const deferredQuery = useDeferredValue(query);
-
+    
     const [deleteProductId, setDeleteProductId] = useState<
         ProductoType["id"] | null
     >(null);
@@ -54,7 +53,6 @@ export function InventoryManager() {
     if (isLoading) {
         return (
             <div className="min-h-screen bg-background">
-                <AdminHeader />
                 <main className="container mx-auto px-4 py-8">
                     <div className="flex items-center justify-center py-12">
                         <div className="text-center space-y-4">
@@ -71,7 +69,6 @@ export function InventoryManager() {
 
     return (
         <div className="min-h-screen bg-background">
-            <AdminHeader />
 
             <main className="container mx-auto px-4 py-8">
                 <div className="space-y-8">
