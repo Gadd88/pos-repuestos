@@ -12,7 +12,7 @@ import {
     Loader2,
     Receipt,
     User,
-    Users
+    Users,
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
@@ -71,7 +71,9 @@ export function AdminDashboard() {
                         </h1>
                     </div>
 
-                    <div className={`neo-card p-2 grid ${usuario?.rol === "superadmin" ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200`}>
+                    <div
+                        className={`neo-card p-2 grid ${usuario?.rol === "superadmin" ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200`}
+                    >
                         <Link href="/admin/ventas/nueva-venta">
                             <Button
                                 variant="ghost"
