@@ -11,7 +11,8 @@ import {
     AlertTriangle,
     Loader2,
     Receipt,
-    User
+    User,
+    Users
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
