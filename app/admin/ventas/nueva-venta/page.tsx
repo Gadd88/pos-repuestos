@@ -75,7 +75,7 @@ export default function NuevaVenta() {
                 <div className="neo-card overflow-auto">
                     {/* Header de tabla */}
                     <Table
-                        className="px-4 py-3 bg-primary text-primary uppercase"
+                        className="px-4 py-3 bg-primary text-primary uppercase overflow-x-auto"
                         style={{ fontFamily: "var(--font-montserrat)" }}
                     >
                         <TableHeader>

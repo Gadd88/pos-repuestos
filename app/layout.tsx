@@ -43,7 +43,7 @@ export default function RootLayout({
                 <AuthInitializer>
                     <AdminHeader />
                     <Toaster position="top-center"/>
-                    <main className="flex flex-1 mx-auto">
+                    <main className="flex flex-1 mx-auto w-full">
                         {children}
                     </main>
                     <div id="modal" />
