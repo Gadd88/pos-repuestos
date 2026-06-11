@@ -12,7 +12,7 @@ export default async function LoginPage() {
   if(session) redirect("/admin")
     
   return (
-    <div className="container bg-background flex flex-col justify-center items-center">
+    <div className="container bg-background flex flex-col justify-center items-center mx-auto">
       <div className="flex items-center justify-center px-4 py-8">
           <div className="w-full max-w-md space-y-8">
             <div className="text-center space-y-4">

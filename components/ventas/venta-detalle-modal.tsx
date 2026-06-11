@@ -70,6 +70,10 @@ export function VentaDetalleModal({ venta, onClose }: VentaDetalleModalProps) {
                                 label: "TOTAL VENTA",
                                 value: `$${venta.total.toLocaleString("es-AR")}`,
                             },
+                            {
+                                label: "ESTADO",
+                                value: `${venta.estado?.toUpperCase() ?? "COMPLETADA"}`,
+                            },
                             ...(usuario?.rol === "admin"
                                 ? [
                                       {

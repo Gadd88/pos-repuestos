@@ -91,6 +91,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 totalGastado: +totalGastado.toFixed(2),
                 creadoEn: FieldValue.serverTimestamp(),
                 ganancia: +((total - totalGastado)).toFixed(2),
+                estado: "completada",
                 items: items.map((item, i) => ({
                     idProducto: productosData[i].ref.id,
                     nombre: item.nombre,
@@ -129,3 +130,4 @@ export async function POST(req: NextRequest, res: NextResponse) {
         );
     }
 }
+
