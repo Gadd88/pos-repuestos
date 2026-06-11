@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { crearVenta, obtenerVentas } from "@/services/ventas-services"
+import { cancelarVenta, crearVenta, obtenerVentas } from "@/services/ventas-services"
 import { useCarritoState } from "./carrito-store"
 import { toast } from "sonner"
 import { ItemCarrito, VentaType } from "../types"
@@ -11,6 +11,7 @@ interface VentaState {
     error: string | null
     listarVentas: () => Promise<void>
     generarVenta: (ventaData: { carrito: ItemCarrito[]; tipo_venta: string }) => Promise<void>
+    cancelarVenta: (id: VentaType['id']) => Promise<void>
 }
 
 export const useVentaStore = create<VentaState>((set, get) => ({
@@ -44,6 +45,19 @@ export const useVentaStore = create<VentaState>((set, get) => ({
             set({isLoading: false, error: null})
         }
         // console.log(nuevaVenta)
+    },
+    cancelarVenta: async (id) => {
+        set({isLoading: true})
+        const toastId = toast.loading("Cancelando venta...")
+        try {
+            await cancelarVenta(id)
+            toast.success("Venta cancelada correctamente", {id: toastId})
+            get().listarVentas()
+        } catch (error) {
+            toast.error("Error al cancelar la venta", {id: toastId})
+        } finally {
+            set({isLoading: false, error: null})
+        }
     }
 
 }))

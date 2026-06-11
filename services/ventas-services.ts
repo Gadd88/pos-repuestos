@@ -1,4 +1,4 @@
-import { ItemCarrito } from "@/lib/types";
+import { ItemCarrito, VentaType } from "@/lib/types";
 import { tokenUsuario } from "./productos-services";
 
 
@@ -52,4 +52,17 @@ export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta
     return result;
 };
 
+export const cancelarVenta = async (id: VentaType['id']) => {
+    const token = await tokenUsuario();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ventas/cancelar`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ ventaId: id }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || `Ocurrió un error al cancelar la venta`);
+    return result;
+}
 

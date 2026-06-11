@@ -1,24 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { VentaDetalleModal } from "./venta-detalle-modal";
-import { Eye, Loader2, TrendingUp, TrendingDown } from "lucide-react";
+import { Eye, Loader2, CheckCheckIcon, XCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useVentaStore } from "@/lib/stores/ventas-store";
 import { VentaType } from "@/lib/types";
 import { useAuthStore } from "@/lib/stores/auth-store";
-import { cn } from "@/lib/utils"; // Utilidad estándar en Shadcn para clases condicionales
+import { ConfirmaEliminarVenta } from "../confirma-eliminar-venta";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "../ui/table";
 
 export function VentasTable() {
-    const { ventas, isLoading, listarVentas } = useVentaStore();
+    const { ventas, isLoading, listarVentas, cancelarVenta } = useVentaStore();
     const [selectedVenta, setSelectedVenta] = useState<VentaType | null>(null);
+
     const { usuario } = useAuthStore();
 
     const isAdmin = usuario?.rol === "admin";
 
     useEffect(() => {
         listarVentas();
-    }, [listarVentas]);
+    }, []);
 
     if (isLoading) {
         return (
@@ -31,85 +40,102 @@ export function VentasTable() {
         );
     }
 
-    // Definimos el grid dinámicamente según el rol
-    // Mobile: 2 cols (Fecha, Total) | Desktop Admin: 4 cols | Desktop User: 3 cols
-    const gridLayout = isAdmin 
-        ? "grid-cols-[1fr_1fr_1fr_1fr] md:grid-cols-[1.5fr_1fr_1fr_0.5fr]" 
-        : "grid-cols-[1fr_1fr_1fr] md:grid-cols-[1fr_1fr_1fr]";
+    const formatearFecha = (fecha: Date) => {
+        return new Date(fecha).toLocaleDateString("es-AR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+    };
 
     return (
         <>
-            <div className="neo-card overflow-hidden border-2 border-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                
-                <div className={cn(
-                    "grid gap-4 px-3 py-4 bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider border-b-4",
-                    gridLayout
-                )}>
-                    <div className="font-black">Fecha</div>
-                    <div className="font-black text-center">Total</div>
-                    {isAdmin && <div className="font-black text-center">Ganancia</div>}
-                    <div className="font-black text-center">Acción</div>
-                </div>
-
-                {/* Body */}
-                <div className="divide-y-2 divide-border">
+            <Table
+                className="neo-card px-4 py-3 uppercase"
+                style={{
+                    fontFamily: "var(--font-montserrat)",
+                }}
+            >
+                <TableHeader className="bg-purple-500 border-b-2 border-black">
+                    <TableRow>
+                        <TableHead className="text-white font-bold border-e text-center">
+                            Fecha
+                        </TableHead>
+                        <TableHead className="text-white font-bold text-end min-w-24">
+                            Total
+                        </TableHead>
+                        {isAdmin && (
+                            <TableHead className="text-white font-bold text-end min-w-24">
+                                Ganancia
+                            </TableHead>
+                        )}
+                        <TableHead className="text-white font-bold text-center min-w-24">
+                            Acciones
+                        </TableHead>
+                        <TableHead className="text-white font-bold text-center">
+                            Estado
+                        </TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
                     {ventas.length === 0 ? (
-                        <div className="px-6 py-16 text-center text-muted-foreground italic">
-                            No se encontraron registros de ventas.
-                        </div>
+                        <TableRow>
+                            <TableCell
+                                colSpan={4}
+                                className="text-center py-12 text-muted-foreground italic"
+                            >
+                                No se encontraron registros de ventas.
+                            </TableCell>
+                        </TableRow>
                     ) : (
-                        ventas.map((venta, i) => {
-                            const ganancia = venta.total - (venta.totalGastado || 0);
-                            const fecha = new Date(venta.creadoEn).toLocaleDateString("es-AR", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                            });
-
-                            return (
-                                <div
-                                    key={venta.id}
-                                    className={cn(
-                                        "grid gap-4 px-4 sm:px-6 py-4 items-center transition-all hover:bg-muted/30",
-                                        gridLayout,
-                                        i % 2 === 0 ? "bg-background" : "bg-card/50"
-                                    )}
-                                >
-                                    {/* Fecha */}
-                                    <div className="font-medium text-sm sm:text-base">
-                                        {fecha}
-                                    </div>
-
-                                    {/* Total */}
-                                    <div className="font-bold text-base sm:text-lg text-end">
-                                        ${venta.total.toLocaleString("es-AR")}
-                                    </div>
-
-                                    {/* Ganancia (Solo Admin) */}
-                                    {isAdmin && (
-                                            <div className="font-bold text-sm sm:text-base text-end text-green-500">
-                                                ${ganancia.toLocaleString("es-AR")}
-                                            </div>
-                                    )}
-
-                                    {/* Botón Detalle */}
-                                    <div className="flex justify-end">
+                        ventas?.map((venta) => (
+                            <TableRow key={venta?.id}>
+                                <TableCell className="w-20 border-e">
+                                    {formatearFecha(venta.creadoEn)}
+                                </TableCell>
+                                <TableCell className="font-black text-end">
+                                    ${venta?.total.toLocaleString("es-AR")}
+                                </TableCell>
+                                {isAdmin && (
+                                    <TableCell className="font-black text-end text-green-700">
+                                        $
+                                        {(
+                                            venta.total -
+                                            (venta.totalGastado || 0)
+                                        ).toLocaleString("es-AR")}
+                                    </TableCell>
+                                )}
+                                <TableCell className="text-center flex justify-around items-center gap-2">
                                         <Button
                                             size="icon"
                                             variant="outline"
-                                            className="h-10 w-10 sm:h-9 sm:w-9 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
-                                            onClick={() => setSelectedVenta(venta)}
+                                            className="h-10 w-fit p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                                            onClick={() =>
+                                                setSelectedVenta(venta)
+                                            }
                                         >
                                             <Eye className="w-4 h-4" />
+                                            Ver
                                         </Button>
+                                        <ConfirmaEliminarVenta
+                                            venta={venta}
+                                            cancelarVenta={cancelarVenta}
+                                        />
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex justify-center">
+                                        {venta.estado === "cancelada" ? (
+                                            <XCircleIcon className="w-8 h-8 text-red-500" />
+                                        ) : (
+                                            <CheckCheckIcon className="w-8 h-8 text-green-700 rounded-full border-2 border-green-500" />
+                                        )}
                                     </div>
-                                </div>
-                            );
-                        })
+                                </TableCell>
+                            </TableRow>
+                        ))
                     )}
-                </div>
-            </div>
-
+                </TableBody>
+            </Table>
             <VentaDetalleModal
                 venta={selectedVenta}
                 onClose={() => setSelectedVenta(null)}
@@ -117,131 +143,3 @@ export function VentasTable() {
         </>
     );
 }
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import { VentaDetalleModal } from "./venta-detalle-modal";
-// import { Eye, Loader2 } from "lucide-react";
-// import { Button } from "@/components/ui/button";
-// import { useVentaStore } from "@/lib/stores/ventas-store";
-// import { VentaType } from "@/lib/types";
-// import { useAuthStore } from "@/lib/stores/auth-store";
-
-
-// export function VentasTable() {
-//     const { ventas, isLoading, listarVentas } = useVentaStore();
-//     const [selectedVenta, setSelectedVenta] = useState<VentaType | null>(
-//         null,
-//     );
-
-//     const { usuario } = useAuthStore();
-
-//     useEffect(() => {
-//         listarVentas();
-//     }, []);
-
-//     if (isLoading) {
-//         return (
-//             <div className="flex items-center justify-center py-12">
-//                 <div className="text-center space-y-4">
-//                     <Loader2 className="h-8 w-8 animate-spin mx-auto" />
-//                     <p className="text-muted-foreground">
-//                         Cargando Ventas...
-//                     </p>
-//                 </div>
-//             </div>
-//         );
-//     }
-
-//     return (
-//         <>
-//             <div className="neo-card overflow-hidden">
-//                 {/* Header de tabla */}
-//                 <div
-//                     className="grid grid-cols-4 place-content-around gap-2 px-4 py-3 bg-primary text-primary-foreground border-b-2 border-border font-bold text-xs uppercase"
-//                     style={{ fontFamily: "var(--font-montserrat)" }}
-//                 >
-//                     <div className="text-center">Fecha</div>
-//                     <div className="text-center">Total Venta</div>
-//                     {
-//                         usuario?.rol === "admin" && (
-//                             <div className="">Ganancia</div>
-//                         )
-//                     }
-//                     <div className="text-end">Detalle</div>
-//                 </div>
-
-//                 {/* Filas */}
-//                 {ventas.length === 0 ? (
-//                     <div className="px-4 py-12 text-center text-muted-foreground">
-//                         No hay ventas registradas
-//                     </div>
-//                 ) : (
-//                     ventas.map((venta, i) => {
-//                         const ganancia = venta.total - venta.totalGastado;
-//                         const isEven = i % 2 === 0;
-
-//                         return (
-//                             <div
-//                                 key={venta.id}
-//                                 className={`grid grid-cols-12 gap-2 px-4 py-3 border-b-2 border-border items-center text-sm transition-colors hover:bg-muted/50 ${isEven ? "bg-background" : "bg-card"}`}
-//                             >
-//                                 <div
-//                                     className="col-span-4"
-//                                     style={{
-//                                         fontFamily: "var(--font-montserrat)",
-//                                     }}
-//                                 >
-//                                     {new Date(venta.creadoEn).toLocaleDateString(
-//                                         "es-AR",
-//                                         {
-//                                             day: "2-digit",
-//                                             month: "2-digit",
-//                                             year: "numeric",
-//                                         },
-//                                     )}
-//                                 </div>
-//                                 <div
-//                                     className="col-span-4 neo-heading text-base"
-//                                     style={{
-//                                         fontFamily: "var(--font-montserrat)",
-//                                     }}
-//                                 >
-//                                     ${venta.total.toLocaleString("es-AR")}
-//                                 </div>
-//                                 {
-//                                     usuario?.rol === "admin" && (
-//                                         <div
-//                                             className={`col-span-3 font-bold text-sm ${ganancia >= 0 ? "text-green-600" : "text-destructive"}`}
-//                                             style={{
-//                                                 fontFamily: "var(--font-montserrat)",
-//                                             }}
-//                                         >
-//                                             ${ganancia.toLocaleString("es-AR")}
-//                                         </div>
-
-//                                     )
-//                                 }
-//                                 <div className="col-span-1 flex justify-end">
-//                                     <Button
-//                                         size="sm"
-//                                         variant="outline"
-//                                         className="neo-button h-8 w-8 p-0"
-//                                         onClick={() => setSelectedVenta(venta)}
-//                                     >
-//                                         <Eye className="w-4 h-4" />
-//                                     </Button>
-//                                 </div>
-//                             </div>
-//                         );
-//                     })
-//                 )}
-//             </div>
-
-//             <VentaDetalleModal
-//                 venta={selectedVenta}
-//                 onClose={() => setSelectedVenta(null)}
-//             />
-//         </>
-//     );
-// }

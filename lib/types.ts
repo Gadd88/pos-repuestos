@@ -33,6 +33,8 @@ export type VentaType = {
     negocioId: string
     creadoEn: Date
     actualizadoEn: Date
+    estado: "completada" | "cancelada"
+    canceladoEn?: Date
 }
 
 export type UsuarioType = {
