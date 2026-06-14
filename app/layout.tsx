@@ -6,6 +6,8 @@ import { AuthInitializer } from "@/components/auth-zustand";
 import { Toaster } from "sonner";
 import Footer from "@/components/footer";
 import { AdminHeader } from "@/components/admin/admin-header";
+import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
+import QueryProvider from "./query-provider";
 
 const montserrat = Montserrat({
     subsets: ["latin"],
@@ -29,6 +31,7 @@ export const metadata: Metadata = {
     // themeColor: "#0ea5e9",
 }
 
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -41,13 +44,15 @@ export default function RootLayout({
         >
             <body className="min-h-screen bg-background font-sans flex flex-col">
                 <AuthInitializer>
-                    <AdminHeader />
-                    <Toaster position="top-center"/>
-                    <main className="flex flex-1 mx-auto w-full">
-                        {children}
-                    </main>
-                    <div id="modal" />
-                    <Footer />
+                    <QueryProvider>
+                        <AdminHeader />
+                        <Toaster position="top-center"/>
+                        <main className="flex flex-1 mx-auto w-full">
+                            {children}
+                        </main>
+                        <div id="modal" />
+                        <Footer />
+                    </QueryProvider>
                 </AuthInitializer>
             </body>
         </html>

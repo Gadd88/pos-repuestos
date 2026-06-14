@@ -4,13 +4,14 @@ import type React from "react";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useProductosStore } from "@/lib/stores/products-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { ProductoType } from "@/lib/types";
+import { useAgregarProducto, useEditarProducto } from "@/features/productos/useProductos";
+import { toast } from "sonner";
 
 interface ProductFormProps {
     productoId?: ProductoType["id"];
@@ -30,7 +31,8 @@ type FormDataType = {
 
 export function ProductForm({ productoId, productoData }: ProductFormProps) {
     const router = useRouter();
-    const { agregarProducto, editarProducto } = useProductosStore();
+    const { mutateAsync: mutateEditar } = useEditarProducto()
+    const { mutateAsync: mutateAgregar } = useAgregarProducto()
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -64,21 +66,26 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                 activo: true,
             };
 
-            let success = false;
             if (isEditing && productoId) {
-                success = await editarProducto(productoId, productData);
+                await mutateEditar({ id: productoId, updates: productData });
+                toast.success("Producto actualizado correctamente", {
+                    style: {
+                        background: "paleturquoise"
+                    }
+                })
             } else {
-                success = await agregarProducto(productData);
+                await mutateAgregar({productData: productData});
+                toast.success("Producto agregado correctamente", {
+                    style: {
+                        background: "lightblue"
+                    }
+                })
             }
-
-            if (success) {
-                router.push("/admin/stock");
-            } else {
-                setError("Error al guardar. Intente nuevamente");
-            }
+            router.push("/admin/stock");
         } catch (error) {
             console.error("Error guardando el producto:", error);
             setError("Ocurrió un error inesperado.");
+            throw error
         } finally {
             setIsLoading(false);
         }

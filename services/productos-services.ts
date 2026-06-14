@@ -13,11 +13,10 @@ export const tokenUsuario = async (): Promise<string> => {
 }
 
 
-export const fetchProductos = async () => {
+export const fetchProductos = async (): Promise<ProductoType[]> => {
     const token = await tokenUsuario();
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos`, {
-            next: { revalidate: 180 },
             headers: {
                 "Authorization": `Bearer ${token}`
             }
@@ -25,10 +24,10 @@ export const fetchProductos = async () => {
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`Error al obtener productos: ${errorText}`);
-            // throw new Error(`Error ${response.status}: ${errorText}`);
+            throw new Error(errorText || "Error al obtener productos");
         }
         const productos: ProductoType[] = await response.json();
-        return productos.filter(producto => producto.activo !== false);
+        return productos?.filter(producto => producto.activo !== false);
     } catch (error) {
         console.error("Error al obtener productos");
         throw error;

@@ -1,8 +1,6 @@
 import { VentaType } from "@/lib/types";
 import {
     AlertDialog,
-    AlertDialogPortal,
-    AlertDialogOverlay,
     AlertDialogTrigger,
     AlertDialogContent,
     AlertDialogHeader,

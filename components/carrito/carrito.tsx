@@ -6,8 +6,7 @@ import { useCarritoState } from "@/lib/stores/carrito-store";
 import { useVentaStore } from "@/lib/stores/ventas-store";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { useProductosStore } from "@/lib/stores/products-store";
-// import { toast } from 'sonner'
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Carrito = () => {
     const {
@@ -19,8 +18,9 @@ export const Carrito = () => {
         setIsOpen,
     } = useCarritoState();
     const { generarVenta, isLoading } = useVentaStore();
-    const { listarProductos } = useProductosStore();
     const [esMayorista, setEsMayorista] = useState(false);
+
+    const queryClient = useQueryClient();
 
     const totalVenta = carrito.reduce(
         (acc, item) =>
@@ -43,8 +43,11 @@ export const Carrito = () => {
     };
 
     const handleVenta = async () => {
-        await generarVenta({carrito, tipo_venta: esMayorista ? 'mayorista' : 'minorista'});
-        await listarProductos()
+        await generarVenta({
+            carrito,
+            tipo_venta: esMayorista ? "mayorista" : "minorista",
+        });
+        queryClient.invalidateQueries({ queryKey: ["productos"] });
     };
 
     const handleActive = () => {
@@ -156,21 +159,6 @@ export const Carrito = () => {
                                                       </button>
                                                   </div>
 
-                                                  {/* Precio */}
-                                                  {/* <span
-                                                      className="neo-heading text-sm w-20 text-right shrink-0"
-                                                      style={{
-                                                          fontFamily:
-                                                              "var(--font-montserrat)",
-                                                      }}
-                                                  >
-                                                      $
-                                                      {(
-                                                          item.precio_venta_minorista *
-                                                          item.cantidad
-                                                      ).toLocaleString("es-AR")}
-                                                  </span> */}
-
                                                   {/* Eliminar */}
                                                   <button
                                                       onClick={() => {
@@ -233,27 +221,27 @@ export const Carrito = () => {
                                               />
                                           </div>
                                           <div className="flex flex-col items-center w-full">
-                                            <span
-                                                className="neo-heading text-lg"
-                                                style={{
-                                                    fontFamily:
-                                                        "var(--font-montserrat)",
-                                                }}
-                                            >
-                                                TOTAL
-                                            </span>
-                                            <span
-                                                className="neo-heading text-xl"
-                                                style={{
-                                                    fontFamily:
-                                                        "var(--font-montserrat)",
-                                                }}
-                                            >
-                                                $
-                                                {totalVenta.toLocaleString(
-                                                    "es-AR",
-                                                )}
-                                            </span>
+                                              <span
+                                                  className="neo-heading text-lg"
+                                                  style={{
+                                                      fontFamily:
+                                                          "var(--font-montserrat)",
+                                                  }}
+                                              >
+                                                  TOTAL
+                                              </span>
+                                              <span
+                                                  className="neo-heading text-xl"
+                                                  style={{
+                                                      fontFamily:
+                                                          "var(--font-montserrat)",
+                                                  }}
+                                              >
+                                                  $
+                                                  {totalVenta.toLocaleString(
+                                                      "es-AR",
+                                                  )}
+                                              </span>
                                           </div>
                                       </div>
                                       <div className="grid grid-cols-2 gap-2">
