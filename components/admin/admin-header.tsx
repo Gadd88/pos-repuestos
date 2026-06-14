@@ -5,14 +5,17 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Package, Plus, Home } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function AdminHeader() {
     const { logout, usuario } = useAuthStore();
     const router = useRouter();
     const pathname = usePathname();
+    const queryClient = useQueryClient()
 
     const handleLogout = async () => {
         await logout();
+        queryClient.clear()
         router.push("/login");
     };
 

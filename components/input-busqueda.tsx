@@ -28,9 +28,6 @@ export const InputBusqueda = ({
                     placeholder="Busca productos por nombre o categoría..."
                     value={query}
                     onChange={handleInputChange}
-                    // onChange={(e) =>
-                    //     setSearchTerm(e.target.value)
-                    // }
                     className={`pl-10 neo-button ${isPending ? "opacity-50" : "opacity-100"}`}
                 />
             </div>

@@ -7,7 +7,7 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 
 type ProductCardStockType = {
     producto: ProductoType;
-    onDelete: (id: ProductoType["id"]) => void;
+    onDelete: (producto: ProductoType) => void;
 };
 
 export const ProductCardStock = ({
@@ -116,7 +116,7 @@ export const ProductCardStock = ({
                                 <Button
                                     variant="destructive"
                                     size="sm"
-                                    onClick={() => onDelete(producto.id)}
+                                    onClick={() => onDelete(producto)}
                                     className="neo-button font-semibold"
                                     style={{
                                         fontFamily: "var(--font-montserrat)",

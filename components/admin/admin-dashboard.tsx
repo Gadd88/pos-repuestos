@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { useProductosStore } from "@/lib/stores/products-store";
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Package,
@@ -15,18 +14,17 @@ import {
 import Link from "next/link";
 import { Badge } from "../ui/badge";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { useListarProductos } from "@/features/productos/useProductos";
 
 export function AdminDashboard() {
-    const { productos, isLoading, listarProductos, obtenerProductosBajoStock } =
-        useProductosStore();
+    const { data: productos = [], isLoading } =
+        useListarProductos();
 
     const { usuario } = useAuthStore();
 
-    useEffect(() => {
-        listarProductos();
-    }, []);
 
-    const productosBajoStock = obtenerProductosBajoStock();
+    const productosBajoStock = useMemo(() => productos.filter(producto => producto.stock <= 2), [productos]) 
+    
     const valorTotal = useMemo(
         () =>
             productos?.reduce(
