@@ -1,16 +1,11 @@
 "use client"
 
 import { ProductCard } from "@/components/producto/product-card"
-import { useProductosStore } from "@/lib/stores/products-store"
+import { useListarProductos } from "@/features/productos/useProductos"
 import { Loader2 } from "lucide-react"
-import { useEffect } from "react"
 
 export function ProductGrid() {
-  const { productos, isLoading, error, listarProductos } = useProductosStore()
-
-  useEffect(() => {
-    listarProductos()
-  }, [])
+  const { data: productos = [], isLoading, error } = useListarProductos()
 
   if (isLoading) {
     return (
@@ -26,7 +21,7 @@ export function ProductGrid() {
   if (error) {
     return (
       <div className="neo-card p-6 bg-destructive/10 border-destructive text-center">
-        <p className="text-destructive">Error cargando productos: {error}</p>
+        <p className="text-destructive">Error cargando productos: {error.message}</p>
       </div>
     )
   }

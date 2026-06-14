@@ -1,54 +1,26 @@
 "use client";
-import React, {
-    useState,
-    useEffect,
-    useDeferredValue,
-    useTransition,
-} from "react";
-import { useProductosStore } from "@/lib/stores/products-store";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ProductDeleteDialog } from "@/components/producto/product-delete-dialog";
 import { Plus, Package, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { ProductCardStock } from "./producto/product-card-stock";
 import { InputBusqueda } from "./input-busqueda";
-import { useShallow } from "zustand/react/shallow";
 import { ProductoType } from "@/lib/types";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { useBusquedaProductos } from "@/hooks/useBusquedaProducto";
 
 export function InventoryManager() {
-    const { productos, isLoading, error, listarProductos } = useProductosStore(
-        useShallow((state) => ({
-            productos: state.productos,
-            isLoading: state.isLoading,
-            error: state.error,
-            listarProductos: state.listarProductos,
-        })),
-    );
     const { usuario } = useAuthStore();
-
-    // const [searchTerm, setSearchTerm] = useState("");
-    const [query, setQuery] = useState("");
-    const [isPending, startTransition] = useTransition();
-    const deferredQuery = useDeferredValue(query);
-
-    const [deleteProductId, setDeleteProductId] = useState<
-        ProductoType["id"] | null
+    const [deleteProducto, setDeleteProducto] = useState<
+        ProductoType | null
     >(null);
 
-    useEffect(() => {
-        listarProductos();
-    }, []);
+    const { query, setQuery, filteredProducts, productos, isLoading, error } =
+        useBusquedaProductos();
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        startTransition(() => {
-            setQuery(e.target.value);
-        });
-    };
-
-    const filteredProducts = productos?.filter((producto) =>
-        producto.nombre.toLowerCase().includes(deferredQuery.toLowerCase()),
-    );
+    const errorMessage =
+        error instanceof Error ? error.message : "Ocurrió un error inesperado";
 
     if (isLoading) {
         return (
@@ -97,7 +69,9 @@ export function InventoryManager() {
 
                 {error && (
                     <div className="neo-card p-4 bg-destructive/10 border-destructive">
-                        <p className="text-destructive">Error: {error}</p>
+                        <p className="text-destructive">
+                            Error: {errorMessage}
+                        </p>
                     </div>
                 )}
 
@@ -106,8 +80,8 @@ export function InventoryManager() {
                         filteredProducts={filteredProducts}
                         query={query}
                         productos={productos}
-                        handleInputChange={handleInputChange}
-                        isPending={isPending}
+                        handleInputChange={(e) => setQuery(e.target.value)}
+                        isPending={isLoading}
                         showLength={true}
                     />
 
@@ -117,7 +91,7 @@ export function InventoryManager() {
                                 <ProductCardStock
                                     key={producto.id}
                                     producto={producto}
-                                    onDelete={setDeleteProductId}
+                                    onDelete={setDeleteProducto}
                                 />
                             ))
                         ) : (
@@ -132,7 +106,7 @@ export function InventoryManager() {
                                     NO SE ENCONTRARON PRODUCTOS
                                 </h3>
                                 <p className="text-muted-foreground mb-4">
-                                    {deferredQuery
+                                    {query
                                         ? "Ningún producto coincide con la búsqueda"
                                         : "No hay producto en stock."}
                                 </p>
@@ -154,8 +128,8 @@ export function InventoryManager() {
                 </div>
             </div>
             <ProductDeleteDialog
-                productId={deleteProductId}
-                onClose={() => setDeleteProductId(null)}
+                producto={deleteProducto}
+                onClose={() => setDeleteProducto(null)}
             />
         </div>
     );

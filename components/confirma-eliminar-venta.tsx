@@ -1,8 +1,6 @@
 import { VentaType } from "@/lib/types";
 import {
     AlertDialog,
-    AlertDialogPortal,
-    AlertDialogOverlay,
     AlertDialogTrigger,
     AlertDialogContent,
     AlertDialogHeader,
@@ -14,16 +12,20 @@ import {
 } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
 import { Trash2Icon } from "lucide-react";
+import { useCancelarVenta } from "@/features/ventas/useVentas";
+import { useQueryClient } from "@tanstack/react-query";
 
 type EliminarProps = {
-    cancelarVenta: (id: VentaType["id"]) => Promise<void>;
     venta: VentaType | null;
 };
-export const ConfirmaEliminarVenta = ({
-    cancelarVenta,
-    venta,
-}: EliminarProps) => {
+export const ConfirmaEliminarVenta = ({ venta }: EliminarProps) => {
     if (!venta) return null;
+    const queryClient = useQueryClient();
+    const { mutateAsync: cancelarVenta } = useCancelarVenta();
+    const handleCancelarVenta = async (id: VentaType["id"]) => {
+        await cancelarVenta(id);
+        queryClient.invalidateQueries({ queryKey: ["productos"] });
+    };
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -49,7 +51,9 @@ export const ConfirmaEliminarVenta = ({
                 <AlertDialogFooter>
                     <AlertDialogCancel>Volver</AlertDialogCancel>
 
-                    <AlertDialogAction onClick={() => cancelarVenta(venta.id)}>
+                    <AlertDialogAction
+                        onClick={() => handleCancelarVenta(venta.id)}
+                    >
                         Sí, cancelar
                     </AlertDialogAction>
                 </AlertDialogFooter>

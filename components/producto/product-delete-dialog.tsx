@@ -1,6 +1,4 @@
 "use client"
-
-import { useProductosStore } from "@/lib/stores/products-store"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -12,25 +10,32 @@ import {
 } from "@/components/ui/dialog"
 import { Trash2 } from "lucide-react"
 import { ProductoType } from "@/lib/types"
+import { useEliminarProducto } from "@/features/productos/useProductos"
+import { toast } from "sonner"
 
 interface ProductDeleteDialogProps {
-  productId: ProductoType['id'] | null
+  producto: ProductoType | null
   onClose: () => void
 }
 
-export function ProductDeleteDialog({ productId, onClose }: ProductDeleteDialogProps) {
-  const { eliminarProducto, obtenerProductoPorId } = useProductosStore()
-  const producto = productId ? obtenerProductoPorId(productId) : null
-
+export function ProductDeleteDialog({ producto, onClose }: ProductDeleteDialogProps) {
+  const { mutateAsync: eliminarProducto } = useEliminarProducto()
+  
   const handleDelete = async () => {
-    if (productId) {
-      await eliminarProducto(productId)
+    if (producto) {
+      await eliminarProducto(producto.id)
+      toast.success("Producto eliminado correctamente", {
+        style: {
+          background: "blanchedalmond",
+          fontWeight: "bold"
+        }
+      })
       onClose()
     }
   }
 
   return (
-    <Dialog open={!!productId} onOpenChange={onClose}>
+    <Dialog open={!!producto} onOpenChange={onClose}>
       <DialogContent className="neo-card max-w-md">
         <DialogHeader>
           <DialogTitle
