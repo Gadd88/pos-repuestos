@@ -2,12 +2,22 @@ import { ProductoType } from "@/lib/types";
 import { clientAuth } from "@/lib/firebase-client"
 
 export const tokenUsuario = async (): Promise<string> => {
+    const user = clientAuth.currentUser
+
+    if (user) { 
+        return await user.getIdToken() 
+    }
+
     return new Promise((resolve, reject) => {
         const unsubscribe = clientAuth.onAuthStateChanged(async (user) => {
             unsubscribe();
-            if (!user) return reject(new Error("No autenticado"));
-            const token = await user.getIdToken();
-            resolve(token);
+
+            if (!user) {
+                reject(new Error("No autenticado"));
+                return;
+            }
+
+            resolve(await user.getIdToken());
         });
     });
 }

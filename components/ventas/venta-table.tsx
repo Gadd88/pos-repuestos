@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { VentaDetalleModal } from "./venta-detalle-modal";
 import { Eye, Loader2, CheckCheckIcon, XCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useVentaStore } from "@/lib/stores/ventas-store";
 import { VentaType } from "@/lib/types";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { ConfirmaEliminarVenta } from "../confirma-eliminar-venta";
@@ -16,19 +15,15 @@ import {
     TableHeader,
     TableRow,
 } from "../ui/table";
+import { useListarVentas } from "@/features/ventas/useVentas";
 
 export function VentasTable() {
-    const { ventas, isLoading, listarVentas, cancelarVenta } = useVentaStore();
+    const { usuario } = useAuthStore();
     const [selectedVenta, setSelectedVenta] = useState<VentaType | null>(null);
 
-    const { usuario } = useAuthStore();
-
+    const { data: ventas = [], isLoading, error } = useListarVentas()
+    
     const isAdmin = usuario?.rol === "admin";
-
-    useEffect(() => {
-        listarVentas();
-    }, []);
-
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center py-20 space-y-4">
@@ -119,7 +114,6 @@ export function VentasTable() {
                                         </Button>
                                         <ConfirmaEliminarVenta
                                             venta={venta}
-                                            cancelarVenta={cancelarVenta}
                                         />
                                 </TableCell>
                                 <TableCell>

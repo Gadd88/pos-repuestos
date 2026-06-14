@@ -3,10 +3,10 @@ import { Trash2, CircleX, ShoppingCart, X } from "lucide-react";
 import { toast } from "sonner";
 import { createPortal } from "react-dom";
 import { useCarritoState } from "@/lib/stores/carrito-store";
-import { useVentaStore } from "@/lib/stores/ventas-store";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGenerarVenta } from "@/features/ventas/useVentas";
 
 export const Carrito = () => {
     const {
@@ -17,7 +17,11 @@ export const Carrito = () => {
         isOpen,
         setIsOpen,
     } = useCarritoState();
-    const { generarVenta, isLoading } = useVentaStore();
+    const {
+        mutateAsync: generarVenta,
+        isPending: isLoading,
+        error,
+    } = useGenerarVenta();
     const [esMayorista, setEsMayorista] = useState(false);
 
     const queryClient = useQueryClient();
@@ -47,7 +51,16 @@ export const Carrito = () => {
             carrito,
             tipo_venta: esMayorista ? "mayorista" : "minorista",
         });
+        toast.success("Venta creada correctamente", {
+            style: {
+                background: "paleturquoise",
+                font: "bold",
+            },
+        });
         queryClient.invalidateQueries({ queryKey: ["productos"] });
+        queryClient.invalidateQueries({ queryKey: ["ventas"] });
+        vaciarCarrito();
+        setIsOpen(false);
     };
 
     const handleActive = () => {
@@ -76,10 +89,7 @@ export const Carrito = () => {
             {isOpen
                 ? createPortal(
                       <>
-                          <div
-                              className="fixed inset-0 bg-black/50 z-40"
-                              // onClick={() => setIsActive(false)}
-                          >
+                          <div className="fixed inset-0 bg-black/50 z-40">
                               <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[95%] max-w-lg max-h-[80dvh] flex flex-col neo-card bg-background shadow-[8px_8px_0px_0px_theme(--color-border)]">
                                   <div className="flex items-center justify-between p-4 border-b-2 border-border bg-primary text-primary-foreground shrink-0">
                                       <h2
@@ -167,7 +177,7 @@ export const Carrito = () => {
                                                               "Producto eliminado",
                                                               {
                                                                   className:
-                                                                      "!bg-destructive !text-destructive-foreground !font-bold",
+                                                                      "!bg-red-300 !font-bold",
                                                                   icon: (
                                                                       <CircleX />
                                                                   ),

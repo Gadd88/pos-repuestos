@@ -26,17 +26,12 @@ export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta
             cantidad: producto.cantidad || 1
         };
     };
-    // console.log(ventaData)
     const items = ventaData.carrito.map((item) => transformarProducto(item));
 
     const ventaDataToSend = {
         tipo_venta: ventaData.tipo_venta,
         items
     }
-    // console.log(ventaDataToSend)
-
-    // console.log("Datos a enviar para crear venta:", ventaDataToSend);
-
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ventas`, {
         method: "POST",
         headers: {
