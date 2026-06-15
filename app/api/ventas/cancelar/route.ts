@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { adminDb } from "@/lib/firebase-admin"
 import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario"
-import { ProductoType } from "@/lib/types"
 
 export async function POST(req: Request) {
   const { ventaId } = await req.json()
@@ -27,10 +26,10 @@ export async function POST(req: Request) {
 
       const productosData = []
 
-      
+
       for (const item of venta?.items) {
-        
-        if(!item.idProducto) continue
+
+        if (!item.idProducto) continue
 
         const productoRef = adminDb.collection("productos").doc(item.idProducto)
 
@@ -41,14 +40,16 @@ export async function POST(req: Request) {
         productosData.push({ ref: productoRef, data: productoSnap.data(), cantidad: item.cantidad })
       }
 
-         for (const producto of productosData) {
+      if (venta?.estado !== "presupuesto") {
+        for (const producto of productosData) {
 
-        const stockActual = producto.data?.stock || 0
-        const nuevoStock = stockActual + producto.cantidad
+          const stockActual = producto.data?.stock || 0
+          const nuevoStock = stockActual + producto.cantidad
 
-        transaction.update(producto.ref, {
-          stock: nuevoStock,
-        })
+          transaction.update(producto.ref, {
+            stock: nuevoStock,
+          })
+        }
       }
 
       transaction.update(ventaRef, {

@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGenerarVenta } from "@/features/ventas/useVentas";
+import { useGenerarPresupuesto } from "@/features/presupuestos/usePresupuesto";
 
 export const Carrito = () => {
     const {
@@ -20,8 +21,14 @@ export const Carrito = () => {
     const {
         mutateAsync: generarVenta,
         isPending: isLoading,
-        error,
+        error: errorVenta,
     } = useGenerarVenta();
+
+    const {
+        mutateAsync: generarPresupuesto,
+        isPending,
+        error: errorPresupuesto,
+    } = useGenerarPresupuesto();
     const [esMayorista, setEsMayorista] = useState(false);
 
     const queryClient = useQueryClient();
@@ -62,6 +69,35 @@ export const Carrito = () => {
         vaciarCarrito();
         setIsOpen(false);
     };
+    const handlePresupuesto = async () => {
+        const nueva_venta = await generarPresupuesto({
+            carrito,
+            tipo_venta: esMayorista ? "mayorista" : "minorista",
+        });
+        console.log(nueva_venta)
+        const link = `${window.location.origin}/presupuesto/${nueva_venta.idVentas}`;
+        const mensaje = `🧾 Presupuesto
+        
+        Hola! Te comparto el Presupuesto
+        Total: $${nueva_venta.total}
+
+        Ver detalle:
+        ${link}
+        `;
+        await navigator.clipboard.writeText(mensaje);
+        toast.success(
+            "Presupuesto creado correctamente y copiado al portapapeles",
+            {
+                style: {
+                    background: "paleturquoise",
+                    font: "bold",
+                },
+            },
+        );
+        queryClient.invalidateQueries({ queryKey: ["ventas"] });
+        vaciarCarrito();
+        setIsOpen(false);
+    };
 
     const handleActive = () => {
         if (!carrito.length) return null;
@@ -91,9 +127,9 @@ export const Carrito = () => {
                       <>
                           <div className="fixed inset-0 bg-black/50 z-40">
                               <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[95%] max-w-lg max-h-[80dvh] flex flex-col neo-card bg-background shadow-[8px_8px_0px_0px_theme(--color-border)]">
-                                  <div className="flex items-center justify-between p-4 border-b-2 border-border bg-primary text-primary-foreground shrink-0">
+                                  <div className="flex items-center justify-between p-4 border-b-2 border-border bg-black shrink-0">
                                       <h2
-                                          className="neo-heading text-xl"
+                                          className="neo-heading text-xl text-primary-foreground"
                                           style={{
                                               fontFamily:
                                                   "var(--font-montserrat)",
@@ -259,9 +295,10 @@ export const Carrito = () => {
                                               onClick={handleVenta}
                                               disabled={
                                                   isLoading ||
+                                                  isPending ||
                                                   carrito.length === 0
                                               }
-                                              className="neo-button w-full py-1 font-bold text-sm bg-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(colors.border)] transition-all"
+                                              className="neo-button w-full py-1 font-bold text-sm bg-blue-400 text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(colors.border)] transition-all"
                                               style={{
                                                   fontFamily:
                                                       "var(--font-montserrat)",
@@ -272,8 +309,27 @@ export const Carrito = () => {
                                                   : "CONFIRMAR VENTA"}
                                           </button>
                                           <button
+                                              onClick={handlePresupuesto}
+                                              disabled={
+                                                  isLoading ||
+                                                  isPending ||
+                                                  carrito.length === 0
+                                              }
+                                              className="neo-button w-full py-1 font-bold text-sm bg-lime-400 text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(colors.border)] transition-all"
+                                              style={{
+                                                  fontFamily:
+                                                      "var(--font-montserrat)",
+                                              }}
+                                          >
+                                              {isPending
+                                                  ? "GENERANDO PRESUPUESTO..."
+                                                  : "PRESUPUESTAR"}
+                                          </button>
+                                      </div>
+                                      <div>
+                                          <button
                                               onClick={handleVaciar}
-                                              className="neo-button w-full py-1 font-bold text-sm bg-secondary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(colors.border)] transition-all flex justify-center items-center gap-1"
+                                              className="neo-button w-full py-1 font-bold text-sm bg-secondary-foreground text-secondary disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(colors.border)] transition-all flex justify-center items-center gap-1"
                                               style={{
                                                   fontFamily:
                                                       "var(--font-montserrat)",

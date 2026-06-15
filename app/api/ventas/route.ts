@@ -30,11 +30,10 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
 export async function POST(req: NextRequest, res: NextResponse) {
     const ventaData = await req.json();
-    // console.log(ventaData)
     const { negocioId } = await obtenerUsuarioDesdeRequest(req)
     const { items } = ventaData as { items: ItemCarrito[] }
     const { tipo_venta } = ventaData as { tipo_venta: 'minorista' | 'mayorista' }
-
+    const { estado } = ventaData
 
     try {
         const resultado = await adminDb.runTransaction(async (tx) => {
@@ -91,7 +90,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 totalGastado: +totalGastado.toFixed(2),
                 creadoEn: FieldValue.serverTimestamp(),
                 ganancia: +((total - totalGastado)).toFixed(2),
-                estado: "completada",
+                estado: estado,
                 items: items.map((item, i) => ({
                     idProducto: productosData[i].ref.id,
                     nombre: item.nombre,
@@ -100,13 +99,16 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 }))
             });
 
-            for (let i = 0; i < items.length; i++) {
-                tx.update(productosData[i].ref, {
-                    stock: productosData[i].data.stock - items[i].cantidad,
-                });
+            if (estado == "completada"){
+                for (let i = 0; i < items.length; i++) {
+                    tx.update(productosData[i].ref, {
+                        stock: productosData[i].data.stock - items[i].cantidad,
+                    });
+                }
             }
 
             return { id: ventaRef.id, total, totalGastado, tipo_venta };
+
         });
         return NextResponse.json(
             {
