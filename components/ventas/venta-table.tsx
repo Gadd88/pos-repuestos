@@ -21,8 +21,8 @@ export function VentasTable() {
     const { usuario } = useAuthStore();
     const [selectedVenta, setSelectedVenta] = useState<VentaType | null>(null);
 
-    const { data: ventas = [], isLoading, error } = useListarVentas()
-    
+    const { data: ventas = [], isLoading, error } = useListarVentas();
+
     const isAdmin = usuario?.rol === "admin";
     if (isLoading) {
         return (
@@ -101,27 +101,25 @@ export function VentasTable() {
                                     </TableCell>
                                 )}
                                 <TableCell className="text-center flex justify-around items-center gap-2">
-                                        <Button
-                                            size="icon"
-                                            variant="outline"
-                                            className="h-10 w-fit p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
-                                            onClick={() =>
-                                                setSelectedVenta(venta)
-                                            }
-                                        >
-                                            <Eye className="w-4 h-4" />
-                                            Ver
-                                        </Button>
-                                        <ConfirmaEliminarVenta
-                                            venta={venta}
-                                        />
+                                    <Button
+                                        size="icon"
+                                        variant="outline"
+                                        className="h-10 w-fit p-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                                        onClick={() => setSelectedVenta(venta)}
+                                    >
+                                        <Eye className="w-4 h-4" />
+                                        Ver
+                                    </Button>
+                                    <ConfirmaEliminarVenta venta={venta} />
                                 </TableCell>
                                 <TableCell>
-                                    <div className="flex justify-center">
+                                    <div className="flex justify-center font-bold">
                                         {venta.estado === "cancelada" ? (
                                             <XCircleIcon className="w-8 h-8 text-red-500" />
-                                        ) : (
+                                        ) : venta.estado === "completada" ? (
                                             <CheckCheckIcon className="w-8 h-8 text-green-700 rounded-full border-2 border-green-500" />
+                                        ) : (
+                                            "PRESUPUESTO"
                                         )}
                                     </div>
                                 </TableCell>

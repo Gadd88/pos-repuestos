@@ -1,9 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, SendIcon } from "lucide-react";
 import { VentaType } from "@/lib/types";
 import { useAuthStore } from "@/lib/stores/auth-store";
-
+import { toast } from "sonner";
 interface VentaDetalleModalProps {
     venta: VentaType | null;
     onClose: () => void;
@@ -16,6 +16,41 @@ export function VentaDetalleModal({ venta, onClose }: VentaDetalleModalProps) {
 
     const ganancia = venta.total - venta.totalGastado;
 
+    const handleCompartirPresupuesto = async () => {
+        const link = `${window.location.origin}/presupuesto/${venta.id}`;
+        const mensaje = `🧾 Presupuesto
+        
+        Hola! Te comparto el Presupuesto
+        Total: $${venta.total}
+
+        Ver detalle:
+        ${link}
+        `;
+        await navigator.clipboard.writeText(mensaje);
+        toast.success("Link del presupuesto copiado en el portapapeles")
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: "Presupuesto",
+                    text: `Total: $${venta.total}, Link: ${link}`,
+                    url: link
+                });
+            } catch (error) {
+                console.error("Error al compartir", error);
+            }
+        } else {
+            // fallback
+            window.open(`https://wa.me/?text=${encodeURIComponent(mensaje)}`);
+        }
+    };
+
+    // const compartirWhatsApp = () => {
+    //     const link = `${window.location.origin}/presupuesto/${venta.id}`;
+    //     const url = `https://wa.me/?text=${encodeURIComponent(link)}`;
+    //     window.open(url, "_blank");
+    // };
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-2">
             {/* Backdrop */}
@@ -24,7 +59,9 @@ export function VentaDetalleModal({ venta, onClose }: VentaDetalleModalProps) {
             {/* Modal */}
             <div className="relative z-10 w-full max-w-2xl neo-card bg-background max-h-[90vh] overflow-y-auto">
                 {/* Header */}
-                <div className="flex items-center justify-between p-3 border-b-2 border-border bg-primary text-primary-foreground">
+                <div
+                    className={`flex items-center justify-between p-3 border-b-2 border-border ${venta.estado === "presupuesto" ? "bg-purple-400" : venta.estado === "completada" ? "bg-sky-400" : "bg-destructive"} text-primary-foreground`}
+                >
                     <h2
                         className="neo-heading text-xl"
                         style={{ fontFamily: "var(--font-montserrat)" }}
@@ -165,7 +202,17 @@ export function VentaDetalleModal({ venta, onClose }: VentaDetalleModalProps) {
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 pb-6">
+                <div className="px-6 pb-6 space-y-4">
+                    {venta.estado === "presupuesto" && (
+                        <Button
+                            variant="ghost"
+                            className="neo-button font-bold w-full bg-green-600 text-white"
+                            style={{ fontFamily: "var(--font-montserrat)" }}
+                            onClick={() => handleCompartirPresupuesto()}
+                        >
+                            <SendIcon /> COMPARTIR PRESUPUESTO
+                        </Button>
+                    )}
                     <Button
                         variant="outline"
                         className="neo-button font-bold w-full"
