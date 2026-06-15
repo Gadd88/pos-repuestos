@@ -30,6 +30,7 @@ export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta
 
     const ventaDataToSend = {
         tipo_venta: ventaData.tipo_venta,
+        estado: "completada",
         items
     }
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ventas`, {
@@ -60,4 +61,3 @@ export const cancelarVenta = async (id: VentaType['id']) => {
     if (!response.ok) throw new Error(result.error || `Ocurrió un error al cancelar la venta`);
     return result;
 }
-

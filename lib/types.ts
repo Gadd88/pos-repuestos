@@ -21,6 +21,7 @@ export type ItemVentaType = {
 
 export type VentaType = {
     id: string
+    idVentas?: string
     items: ItemVentaType[]
     total: number
     totalGastado: number
@@ -33,8 +34,9 @@ export type VentaType = {
     negocioId: string
     creadoEn: Date
     actualizadoEn: Date
-    estado: "completada" | "cancelada"
+    estado: "completada" | "cancelada" | "presupuesto"
     canceladoEn?: Date
+    expiracion?: Date
 }
 
 export type UsuarioType = {
