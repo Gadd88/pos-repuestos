@@ -74,7 +74,6 @@ export const Carrito = () => {
             carrito,
             tipo_venta: esMayorista ? "mayorista" : "minorista",
         });
-        console.log(nueva_venta)
         const link = `${window.location.origin}/presupuesto/${nueva_venta.idVentas}`;
         const mensaje = `🧾 Presupuesto
         
