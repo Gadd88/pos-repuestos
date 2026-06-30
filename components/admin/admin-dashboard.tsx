@@ -246,7 +246,7 @@ export function AdminDashboard() {
                     </div>
 
                     {productosBajoStock.length > 0 ? (
-                        <ul className="text-sm text-muted-foreground mb-4 overflow-auto flex flex-wrap gap-1">
+                        <ul className="text-sm text-muted-foreground mb-4 overflow-auto flex flex-wrap gap-1 max-h-60">
                             {productosBajoStock.map((prod) => (
                                 <li key={prod.id} className="font-semibold">
                                     <Badge

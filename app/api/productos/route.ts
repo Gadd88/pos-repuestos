@@ -57,3 +57,59 @@ export async function POST(req: Request) {
     }
 
 }
+
+export async function PUT(req: Request) {
+    const { negocioId, rol } = await obtenerUsuarioDesdeRequest(req)
+
+    try {
+        const { campo, operacion, tipo, valor } = await req.json()
+        const ahora = FieldValue.serverTimestamp()
+
+        const bulkWriter = adminDb.bulkWriter();
+
+        const snapshot = await adminDb
+            .collection("productos")
+            .where("negocioId", "==", negocioId)
+            .get();
+
+        if (rol !== "admin") {
+            return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
+        }
+
+        snapshot.docs.forEach((doc) => {
+            const producto = doc.data();
+
+            let precioActual = producto[campo];
+
+            let nuevoPrecio = precioActual;
+
+            if (tipo === "porcentaje") {
+                const factor = valor / 100;
+
+                nuevoPrecio =
+                    operacion === "aumentar"
+                        ? precioActual * (1 + factor)
+                        : precioActual * (1 - factor);
+            } else {
+                nuevoPrecio =
+                    operacion === "aumentar"
+                        ? precioActual + valor
+                        : precioActual - valor;
+            }
+
+            bulkWriter.update(doc.ref, {
+                [campo]: Math.round(nuevoPrecio),
+                actualizadoEn: ahora,
+            });
+        });
+
+        await bulkWriter.close();
+
+        return NextResponse.json({sucess: true})
+
+    } catch (error) {
+        console.error(error)
+        return NextResponse.json({ success: false, error }, { status: 500 })
+    }
+
+}

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { ProductoType } from "@/lib/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchProductos, agregarProductoService, editarProductoService, eliminarProductoService } from "@/services/productos-services";
+import { fetchProductos, agregarProductoService, editarProductoService, eliminarProductoService, editarMasivoService, EditarMasivoType } from "@/services/productos-services";
 
 export const useListarProductos = () => {
   return useQuery<ProductoType[], Error>({
@@ -46,6 +46,17 @@ export const useEditarProducto = () => {
     },
   });
 };
+
+export const useEditarPrecios = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (updates: EditarMasivoType) => editarMasivoService(updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["productos"] })
+    }
+  })
+}
 
 export const useEliminarProducto = () => {
   const queryClient = useQueryClient();
