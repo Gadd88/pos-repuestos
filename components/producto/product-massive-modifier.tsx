@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Minus, Percent, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +26,7 @@ export const ProductoModificadorPrecios = ({
     modificarPrecios,
     onClose,
 }: ProductoModificadorPreciosType) => {
-    const { mutateAsync: editarMasivo } = useEditarPrecios()
+    const { mutateAsync: editarMasivo, isPending } = useEditarPrecios()
     const [campo, setCampo] = useState("precio_venta_minorista");
     const [operacion, setOperacion] = useState("aumentar");
     const [tipo, setTipo] = useState("porcentaje");
@@ -40,6 +40,7 @@ export const ProductoModificadorPrecios = ({
             valor
         }
         await editarMasivo(updates)
+        onClose()
     }
 
     return (
@@ -197,8 +198,8 @@ export const ProductoModificadorPrecios = ({
                 </div>
 
                 <DialogFooter className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
-                    <Button className="w-full" onClick={handleModificacion}>
-                        APLICAR MODIFICACIÓN
+                    <Button className="w-full" onClick={handleModificacion} disabled={isPending}>
+                        {isPending ? "MODIFICANDO..." : "APLICAR MODIFICACIÓN"}
                     </Button>
                     <Button
                         variant="outline"
