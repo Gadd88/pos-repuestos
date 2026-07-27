@@ -4,8 +4,8 @@ import { clientAuth } from "@/lib/firebase-client"
 export const tokenUsuario = async (): Promise<string> => {
     const user = clientAuth.currentUser
 
-    if (user) { 
-        return await user.getIdToken() 
+    if (user) {
+        return await user.getIdToken()
     }
 
     return new Promise((resolve, reject) => {
@@ -100,6 +100,40 @@ export const editarProductoService = async (
         throw error;
     }
 };
+
+export type EditarMasivoType = {
+    campo: string,
+    tipo: string,
+    operacion: string,
+    valor: number
+}
+
+export const editarMasivoService = async (updates: EditarMasivoType) => {
+    const token = await tokenUsuario()
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/productos`, {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(updates),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text()
+            console.error(`Respuesta del servidor: ${errorText}`)
+            throw new Error(`Error: ${response.status}:${errorText}`);
+        }
+
+        const result = await response.json();
+        if (result.success) return true;
+    } catch (error) {
+        console.error("Fallo al editar los productos")
+        throw error
+    }
+}
 
 export const eliminarProductoService = async (id: ProductoType["id"]): Promise<boolean> => {
 
