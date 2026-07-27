@@ -2,19 +2,22 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ProductDeleteDialog } from "@/components/producto/product-delete-dialog";
-import { Plus, Package, Loader2 } from "lucide-react";
+import { Plus, Package, Loader2, DollarSign } from "lucide-react";
 import Link from "next/link";
 import { ProductCardStock } from "./producto/product-card-stock";
 import { InputBusqueda } from "./input-busqueda";
 import { ProductoType } from "@/lib/types";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useBusquedaProductos } from "@/hooks/useBusquedaProducto";
+import { ProductoModificadorPrecios } from "./producto/product-massive-modifier";
 
 export function InventoryManager() {
     const { usuario } = useAuthStore();
-    const [deleteProducto, setDeleteProducto] = useState<
-        ProductoType | null
-    >(null);
+    const [deleteProducto, setDeleteProducto] = useState<ProductoType | null>(
+        null,
+    );
+
+    const [modificarPrecios, setModificarPrecios] = useState(false);
 
     const { query, setQuery, filteredProducts, productos, isLoading, error } =
         useBusquedaProductos();
@@ -53,17 +56,29 @@ export function InventoryManager() {
                         </p>
                     </div>
                     {usuario?.rol === "admin" && (
-                        <Link href="/admin/productos/agregar">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+                            <Link href="/admin/productos/agregar" className="w-full">
+                                <Button
+                                    className="neo-button font-bold w-full min-h-16"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    AGREGAR NUEVO PRODUCTO
+                                </Button>
+                            </Link>
                             <Button
-                                className="neo-button font-bold w-full min-h-16"
+                                className="neo-button font-bold min-h-16 bg-cyan-500 hover:bg-cyan-600 w-full"
+                                onClick={() => setModificarPrecios(true)}
                                 style={{
                                     fontFamily: "var(--font-montserrat)",
                                 }}
                             >
-                                <Plus className="w-4 h-4 mr-2" />
-                                AGREGAR NUEVO PRODUCTO
+                                <DollarSign className="w-4 h-4 mr-2" />
+                                MODIFICADOR PRECIOS MASIVO
                             </Button>
-                        </Link>
+                        </div>
                     )}
                 </div>
 
@@ -130,6 +145,10 @@ export function InventoryManager() {
             <ProductDeleteDialog
                 producto={deleteProducto}
                 onClose={() => setDeleteProducto(null)}
+            />
+            <ProductoModificadorPrecios
+                modificarPrecios={modificarPrecios}
+                onClose={() => setModificarPrecios(false)}
             />
         </div>
     );

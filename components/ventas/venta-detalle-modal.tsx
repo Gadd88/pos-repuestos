@@ -26,14 +26,11 @@ export function VentaDetalleModal({ venta, onClose }: VentaDetalleModalProps) {
         Ver detalle:
         ${link}
         `;
-        await navigator.clipboard.writeText(mensaje);
-        toast.success("Link del presupuesto copiado en el portapapeles")
-
         if (navigator.share) {
             try {
                 await navigator.share({
                     title: "Presupuesto",
-                    text: `Total: $${venta.total}, Link: ${link}`,
+                    text: `Presupusto:\n Total: $${venta.total}`,
                     url: link
                 });
             } catch (error) {
