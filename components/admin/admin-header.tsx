@@ -11,11 +11,11 @@ export function AdminHeader() {
     const { logout, usuario } = useAuthStore();
     const router = useRouter();
     const pathname = usePathname();
-    const queryClient = useQueryClient()
+    const queryClient = useQueryClient();
 
     const handleLogout = async () => {
         await logout();
-        queryClient.clear()
+        queryClient.clear();
         router.push("/login");
     };
 
@@ -34,7 +34,7 @@ export function AdminHeader() {
                                         >
                                             <div className="w-8 h-8 bg-sky-500 neo-button"></div>
                                             <span
-                                                className="neo-heading text-xl"
+                                                className="neo-heading text-xl max-w-[50vw] sm:max-w-none break-words whitespace-normal leading-tight line-clamp-2"
                                                 style={{
                                                     fontFamily:
                                                         "var(--font-montserrat)",

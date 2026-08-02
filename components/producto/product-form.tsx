@@ -105,7 +105,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                             VOLVER AL INTENVARIO
                         </Button>
                     </Link>
-                    <div>
+                    <div className="ms-auto">
                         <h1
                             className="neo-heading text-4xl"
                             style={{ fontFamily: "var(--font-montserrat)" }}
@@ -153,7 +153,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                                     })
                                 }
                                 required
-                                className="neo-button"
+                                className="neo-button border-secondary"
                                 placeholder="Filtro de Aire Honda CBR 150"
                             />
                         </div>
@@ -176,7 +176,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                                         descripcion: e.target.value,
                                     })
                                 }
-                                className="neo-button"
+                                className="neo-button border-secondary"
                                 placeholder="Filtro de Aire Honda CBR 150"
                             />
                         </div>
@@ -204,7 +204,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                                     })
                                 }
                                 required
-                                className="neo-button"
+                                className="neo-button border-secondary"
                                 placeholder="$10000"
                             />
                         </div>
@@ -233,7 +233,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                                     })
                                 }
                                 required
-                                className="neo-button"
+                                className="neo-button border-secondary"
                                 placeholder="$10000"
                             />
                         </div>
@@ -262,7 +262,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                                     })
                                 }
                                 required
-                                className="neo-button"
+                                className="neo-button border-secondary"
                                 placeholder="$10000"
                             />
                         </div>
@@ -289,7 +289,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
                                     })
                                 }
                                 required
-                                className="neo-button"
+                                className="neo-button border-secondary"
                                 placeholder="5"
                             />
                         </div>

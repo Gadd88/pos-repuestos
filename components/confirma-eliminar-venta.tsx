@@ -21,10 +21,11 @@ type EliminarProps = {
 export const ConfirmaEliminarVenta = ({ venta }: EliminarProps) => {
     if (!venta) return null;
     const queryClient = useQueryClient();
-    const { mutateAsync: cancelarVenta } = useCancelarVenta();
+    const { mutateAsync: cancelarVenta, isPending } = useCancelarVenta();
     const handleCancelarVenta = async (id: VentaType["id"]) => {
         await cancelarVenta(id);
         queryClient.invalidateQueries({ queryKey: ["productos"] });
+        queryClient.invalidateQueries({ queryKey: ["ventas"] });
     };
     return (
         <AlertDialog>
@@ -32,7 +33,7 @@ export const ConfirmaEliminarVenta = ({ venta }: EliminarProps) => {
                 <Button
                     variant="outline"
                     disabled={venta.estado === "cancelada"}
-                    className="h-10 w-10 sm:h-9 sm:w-9 border-2 bg-red-400 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                    className="h-10 w-16 sm:h-9 sm:w-9 border-2 bg-red-400 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
                 >
                     <Trash2Icon className="w-4 h-4" />
                 </Button>
@@ -53,8 +54,10 @@ export const ConfirmaEliminarVenta = ({ venta }: EliminarProps) => {
 
                     <AlertDialogAction
                         onClick={() => handleCancelarVenta(venta.id)}
+                        disabled={isPending}
+                        className="bg-red-500 text-white hover:bg-red-600 focus:ring-red-500"
                     >
-                        Sí, cancelar
+                        { isPending ? "Cancelando..." : "Sí, cancelar" }
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

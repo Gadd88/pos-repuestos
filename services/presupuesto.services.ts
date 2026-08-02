@@ -47,3 +47,18 @@ export const obtenerPresupuesto = async (id: string) => {
 
     return await res.json() as VentaType;
 };
+
+export const confirmarPresupuestoService = async (id: string): Promise<VentaType> => {
+    const token = await tokenUsuario();
+
+    const response = await fetch(`/api/ventas/presupuesto/${id}/confirmar`, {
+        method: "PATCH",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Ocurrió un error al confirmar el presupuesto");
+    return result;
+};

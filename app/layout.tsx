@@ -6,7 +6,6 @@ import { AuthInitializer } from "@/components/auth-zustand";
 import { Toaster } from "sonner";
 import Footer from "@/components/footer";
 import { AdminHeader } from "@/components/admin/admin-header";
-import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import QueryProvider from "./query-provider";
 
 const montserrat = Montserrat({

@@ -31,7 +31,7 @@ export const ProductCardStock = ({
                                 {producto.nombre}
                             </h3>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 ms-auto">
                             <span className="neo-subheading">
                                 {producto.stock <= 2 && producto.stock > 0 ? (
                                     <Badge
@@ -44,14 +44,7 @@ export const ProductCardStock = ({
                                     <Badge variant="destructive">
                                         SIN STOCK
                                     </Badge>
-                                ) : (
-                                    <Badge
-                                        variant="outline"
-                                        className="bg-sky-700 text-white"
-                                    >
-                                        EN STOCK
-                                    </Badge>
-                                )}
+                                ) : null}
                             </span>
                             <div
                                 className="neo-heading text-xl"
@@ -84,7 +77,7 @@ export const ProductCardStock = ({
                                     Precio Mayorista
                                 </span>
                                 <div
-                                    className="neo-heading text-xl text-secondary"
+                                    className="neo-heading text-xl text-black/70"
                                     style={{
                                         fontFamily: "var(--font-montserrat)",
                                     }}
@@ -117,7 +110,7 @@ export const ProductCardStock = ({
                                     variant="destructive"
                                     size="sm"
                                     onClick={() => onDelete(producto)}
-                                    className="neo-button font-semibold"
+                                    className="neo-button font-semibold bg-red-600 hover:bg-red-700"
                                     style={{
                                         fontFamily: "var(--font-montserrat)",
                                     }}

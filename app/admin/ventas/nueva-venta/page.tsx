@@ -85,7 +85,7 @@ export default function NuevaVenta() {
                             {filteredProducts.map((producto) => (
                                 <TableRow
                                     key={producto.id}
-                                    className="text-sm text-black font-semibold bg-secondary-foreground"
+                                    className="text-sm text-black font-semibold bg-secondary cursor-default"
                                 >
                                     <TableCell className="text-center border-e-2">
                                         <Button

@@ -19,7 +19,7 @@ interface ProductDeleteDialogProps {
 }
 
 export function ProductDeleteDialog({ producto, onClose }: ProductDeleteDialogProps) {
-  const { mutateAsync: eliminarProducto } = useEliminarProducto()
+  const { mutateAsync: eliminarProducto, isPending } = useEliminarProducto()
   
   const handleDelete = async () => {
     if (producto) {
@@ -36,7 +36,7 @@ export function ProductDeleteDialog({ producto, onClose }: ProductDeleteDialogPr
 
   return (
     <Dialog open={!!producto} onOpenChange={onClose}>
-      <DialogContent className="neo-card max-w-md">
+      <DialogContent className="neo-card max-w-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-[95%]">
         <DialogHeader>
           <DialogTitle
             className="neo-heading text-xl flex items-center gap-2"
@@ -61,10 +61,13 @@ export function ProductDeleteDialog({ producto, onClose }: ProductDeleteDialogPr
           <Button
             variant="destructive"
             onClick={handleDelete}
+            disabled={isPending}
             className="neo-button font-bold"
             style={{ fontFamily: "var(--font-montserrat)" }}
           >
-            ELIMINAR PRODUCTO
+            {
+isPending ? "ELIMINANDO..." : "ELIMINAR PRODUCTO"
+            }
           </Button>
         </DialogFooter>
       </DialogContent>
