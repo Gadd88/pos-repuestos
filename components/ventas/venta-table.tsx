@@ -100,7 +100,7 @@ export function VentasTable() {
                                         ).toLocaleString("es-AR")}
                                     </TableCell>
                                 )}
-                                <TableCell className="text-center flex justify-around items-center gap-2">
+                                <TableCell className="text-center flex justify-center items-center gap-4 w-fit m-auto">
                                     <Button
                                         size="icon"
                                         variant="outline"

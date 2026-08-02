@@ -3,147 +3,806 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   MODERN TECH DESIGN SYSTEM
+   Inspired by Linear • Vercel • Clerk • Railway
+   ============================================================ */
+
 :root {
-  /* Updated color tokens for neobrutalist design with high contrast black/white/red/gray palette */
-  --background: oklch(1 0 0); /* Pure white */
-  --foreground: oklch(0 0 0); /* Pure black */
-  --card: oklch(0.95 0 0); /* Light gray for cards */
-  --card-foreground: oklch(0 0 0); /* Black text on cards */
-  --popover: oklch(1 0 0); /* White popover */
-  --popover-foreground: oklch(0 0 0); /* Black popover text */
-  --primary: oklch(0.55 0.22 29); /* Bold red for primary actions */
-  --primary-foreground: oklch(1 0 0); /* White text on red */
-  --secondary: oklch(0.5 0 0); /* Medium gray */
-  --secondary-foreground: oklch(1 0 0); /* White text on gray */
-  --muted: oklch(0.95 0 0); /* Light gray for muted elements */
-  --muted-foreground: oklch(0.5 0 0); /* Medium gray text */
-  --accent: oklch(1 0 0); /* White accent */
-  --accent-foreground: oklch(0 0 0); /* Black accent text */
-  --destructive: oklch(0.55 0.22 29); /* Red for destructive actions */
-  --destructive-foreground: oklch(1 0 0); /* White text on red */
-  --border: oklch(0.05 0 0); /* Medium gray borders for thick neobrutalist style */
-  --input: oklch(1 0 0); /* White input backgrounds */
-  --ring: oklch(0.55 0.22 29); /* Red focus rings */
-  --chart-1: oklch(0.55 0.22 29); /* Red for charts */
-  --chart-2: oklch(0.5 0 0); /* Gray for secondary chart elements */
-  --chart-3: oklch(0 0 0); /* Black for additional chart elements */
-  --chart-4: oklch(1 0 0); /* White for chart backgrounds */
-  --chart-5: oklch(0.95 0 0); /* Light gray for muted chart elements */
-  --radius: 0.25rem; /* Smaller radius for sharper neobrutalist edges */
-  --sidebar: oklch(0.95 0 0); /* Light gray sidebar */
-  --sidebar-foreground: oklch(0 0 0); /* Black sidebar text */
-  --sidebar-primary: oklch(0.5 0 0); /* Gray primary sidebar elements */
-  --sidebar-primary-foreground: oklch(1 0 0); /* White primary sidebar text */
-  --sidebar-accent: oklch(0.55 0.22 29); /* Red sidebar accents */
-  --sidebar-accent-foreground: oklch(1 0 0); /* White sidebar accent text */
-  --sidebar-border: oklch(0.5 0 0); /* Gray sidebar borders */
-  --sidebar-ring: oklch(0.55 0.22 29); /* Red sidebar focus */
-  --font-open-sans: "Open Sans", sans-serif;
-  --font-montserrat: "Montserrat", sans-serif;
+
+  /* ----------------------------------------------------------------
+   Base Colors
+   ---------------------------------------------------------------- */
+
+  --background: oklch(0.985 0.003 270);
+  --foreground: oklch(0.23 0.015 270);
+
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+
+  /* ----------------------------------------------------------------
+   Brand
+   ---------------------------------------------------------------- */
+
+  --primary: oklch(0.59 0.18 277);
+  --primary-foreground: oklch(0.985 0 0);
+
+  --secondary: oklch(0.955 0.004 270);
+  --secondary-foreground: var(--foreground);
+
+  --accent: oklch(0.95 0.01 275);
+  --accent-foreground: var(--foreground);
+
+  --muted: oklch(0.965 0.004 270);
+  --muted-foreground: oklch(0.53 0.01 270);
+
+  /* ----------------------------------------------------------------
+   Semantic
+   ---------------------------------------------------------------- */
+
+  --destructive: oklch(0.64 0.22 25);
+  --destructive-foreground: white;
+
+  --success: oklch(0.72 0.16 150);
+  --warning: oklch(0.82 0.16 85);
+
+  /* ----------------------------------------------------------------
+   Borders
+   ---------------------------------------------------------------- */
+
+  --border: oklch(0.91 0.004 270);
+  --input: oklch(0.995 0 0);
+
+  --ring: oklch(0.63 0.18 277);
+
+  /* ----------------------------------------------------------------
+   Radius
+   ---------------------------------------------------------------- */
+
+  --radius: 1px;
+
+  /* ----------------------------------------------------------------
+   Charts
+   ---------------------------------------------------------------- */
+
+  --chart-1: oklch(0.62 0.18 277);
+  --chart-2: oklch(0.68 0.12 215);
+  --chart-3: oklch(0.74 0.14 170);
+  --chart-4: oklch(0.77 0.17 85);
+  --chart-5: oklch(0.70 0.16 30);
+
+  /* ----------------------------------------------------------------
+   Sidebar
+   ---------------------------------------------------------------- */
+
+  --sidebar: oklch(0.975 0.004 270);
+  --sidebar-foreground: var(--foreground);
+
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: white;
+
+  --sidebar-accent: oklch(0.95 0.008 270);
+  --sidebar-accent-foreground: var(--foreground);
+
+  --sidebar-border: oklch(0.91 0.004 270);
+  --sidebar-ring: var(--ring);
+
+  /* ----------------------------------------------------------------
+   Fonts
+   ---------------------------------------------------------------- */
+
+  --font-open-sans: "Inter", sans-serif;
+  --font-montserrat: "Geist", sans-serif;
 }
 
 .dark {
-  /* Dark mode with inverted high contrast palette */
-  --background: oklch(0 0 0); /* Pure black background */
-  --foreground: oklch(1 0 0); /* Pure white text */
-  --card: oklch(0.1 0 0); /* Very dark gray cards */
-  --card-foreground: oklch(1 0 0); /* White card text */
-  --popover: oklch(0 0 0); /* Black popover */
-  --popover-foreground: oklch(1 0 0); /* White popover text */
-  --primary: oklch(0.55 0.22 29); /* Same bold red */
-  --primary-foreground: oklch(1 0 0); /* White text on red */
-  --secondary: oklch(0.3 0 0); /* Dark gray */
-  --secondary-foreground: oklch(1 0 0); /* White text on dark gray */
-  --muted: oklch(0.1 0 0); /* Very dark gray for muted */
-  --muted-foreground: oklch(0.7 0 0); /* Light gray muted text */
-  --accent: oklch(0 0 0); /* Black accent */
-  --accent-foreground: oklch(1 0 0); /* White accent text */
-  --destructive: oklch(0.55 0.22 29); /* Same red for destructive */
-  --destructive-foreground: oklch(1 0 0); /* White text on red */
-  --border: oklch(0.5 0 0); /* Medium gray borders */
-  --input: oklch(0.1 0 0); /* Very dark input backgrounds */
-  --ring: oklch(0.55 0.22 29); /* Red focus rings */
-  --chart-1: oklch(0.55 0.22 29); /* Red charts */
-  --chart-2: oklch(0.7 0 0); /* Light gray secondary */
-  --chart-3: oklch(1 0 0); /* White additional elements */
-  --chart-4: oklch(0 0 0); /* Black chart backgrounds */
-  --chart-5: oklch(0.1 0 0); /* Dark gray muted */
-  --sidebar: oklch(0.05 0 0); /* Very dark sidebar */
-  --sidebar-foreground: oklch(1 0 0); /* White sidebar text */
-  --sidebar-primary: oklch(0.55 0.22 29); /* Red primary sidebar */
-  --sidebar-primary-foreground: oklch(1 0 0); /* White primary text */
-  --sidebar-accent: oklch(0.3 0 0); /* Dark gray accents */
-  --sidebar-accent-foreground: oklch(1 0 0); /* White accent text */
-  --sidebar-border: oklch(0.3 0 0); /* Dark gray borders */
-  --sidebar-ring: oklch(0.55 0.22 29); /* Red focus */
-}
 
+  /* ----------------------------------------------------------------
+   Base
+   ---------------------------------------------------------------- */
+
+  --background: oklch(0.17 0.014 270);
+  --foreground: oklch(0.94 0.004 270);
+
+  --card: oklch(0.205 0.014 270);
+  --card-foreground: var(--foreground);
+
+  --popover: oklch(0.19 0.014 270);
+  --popover-foreground: var(--foreground);
+
+  /* ----------------------------------------------------------------
+   Brand
+   ---------------------------------------------------------------- */
+
+  --primary: oklch(0.70 0.18 277);
+  --primary-foreground: oklch(0.985 0 0);
+
+  --secondary: oklch(0.245 0.012 270);
+  --secondary-foreground: var(--foreground);
+
+  --accent: oklch(0.28 0.012 270);
+  --accent-foreground: var(--foreground);
+
+  --muted: oklch(0.24 0.012 270);
+  --muted-foreground: oklch(0.72 0.01 270);
+
+  /* ----------------------------------------------------------------
+   Semantic
+   ---------------------------------------------------------------- */
+
+  --destructive: oklch(0.67 0.20 25);
+  --destructive-foreground: white;
+
+  --success: oklch(0.72 0.15 150);
+  --warning: oklch(0.82 0.16 85);
+
+  /* ----------------------------------------------------------------
+   Borders
+   ---------------------------------------------------------------- */
+
+  --border: oklch(0.31 0.01 270);
+
+  --input: oklch(0.22 0.012 270);
+
+  --ring: oklch(0.72 0.18 277);
+
+  /* ----------------------------------------------------------------
+   Charts
+   ---------------------------------------------------------------- */
+
+  --chart-1: oklch(0.72 0.18 277);
+  --chart-2: oklch(0.72 0.12 220);
+  --chart-3: oklch(0.74 0.12 170);
+  --chart-4: oklch(0.78 0.14 85);
+  --chart-5: oklch(0.72 0.17 25);
+
+  /* ----------------------------------------------------------------
+   Sidebar
+   ---------------------------------------------------------------- */
+
+  --sidebar: oklch(0.19 0.012 270);
+  --sidebar-foreground: var(--foreground);
+
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: white;
+
+  --sidebar-accent: oklch(0.24 0.012 270);
+  --sidebar-accent-foreground: var(--foreground);
+
+  --sidebar-border: oklch(0.30 0.012 270);
+  --sidebar-ring: var(--ring);
+}
 @theme inline {
+
+  /* ============================================================
+     COLORS
+     ============================================================ */
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* ============================================================
+     CHARTS
+     ============================================================ */
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+
+  /* ============================================================
+     SIDEBAR
+     ============================================================ */
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
+
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Added font family mappings for neobrutalist typography */
+  /* ============================================================
+     RADIUS
+     ============================================================ */
+
+  --radius-sm: max(calc(var(--radius) - 2px), 1px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 1px);
+  --radius-xl: calc(var(--radius) + 3px);
+
+  /* ============================================================
+     TYPOGRAPHY
+     ============================================================ */
+
   --font-sans: var(--font-open-sans);
   --font-heading: var(--font-montserrat);
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  --font-mono:
+    "Geist Mono",
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+
+  /* ============================================================
+     EXTRA DESIGN TOKENS
+     (No rompen compatibilidad)
+     ============================================================ */
+
+  --shadow-xs:
+      0 1px 1px rgba(15,23,42,.04);
+
+  --shadow-sm:
+      0 1px 2px rgba(15,23,42,.05),
+      0 2px 4px rgba(15,23,42,.05);
+
+  --shadow-md:
+      0 2px 6px rgba(15,23,42,.06),
+      0 8px 18px rgba(15,23,42,.06);
+
+  --shadow-lg:
+      0 8px 24px rgba(15,23,42,.08),
+      0 18px 48px rgba(15,23,42,.08);
+
+  --shadow-xl:
+      0 20px 60px rgba(15,23,42,.10);
+
+  --transition-fast:
+      120ms cubic-bezier(.2,.8,.2,1);
+
+  --transition-normal:
+      180ms cubic-bezier(.2,.8,.2,1);
+
+  --transition-slow:
+      260ms cubic-bezier(.2,.8,.2,1);
 }
 
 @layer base {
+
+  /* ============================================================
+     RESET
+     ============================================================ */
+
   * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+    @apply border-border outline-none;
   }
 
-  /* Added neobrutalist typography and spacing utilities */
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  .dark html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 650;
+    letter-spacing: -.03em;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 18%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* ============================================================
+     TYPOGRAPHY
+     ============================================================ */
+
   .neo-heading {
-    @apply font-black text-foreground tracking-tight;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: -.04em;
+    color: var(--foreground);
   }
 
   .neo-subheading {
-    @apply font-bold text-foreground tracking-tight;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: -.02em;
+    color: var(--foreground);
   }
+
+  /* ============================================================
+     CARDS
+     ============================================================ */
 
   .neo-card {
-    @apply bg-card border-4 border-border shadow-[4px_4px_0px_0px_theme(colors.border)];
+
+    @apply bg-card border border-border;
+
+    border-radius: var(--radius);
+
+    box-shadow:
+      var(--shadow-sm);
+
+    transition:
+      box-shadow var(--transition-normal),
+      border-color var(--transition-normal),
+      transform var(--transition-normal),
+      background-color var(--transition-normal);
   }
 
-  .neo-button {
-    @apply border-4 border-border shadow-[3px_3px_0px_0px_theme(colors.border)] transition-all duration-75 active:shadow-none active:translate-x-[3px] active:translate-y-[3px];
+  .neo-card:hover {
+
+    border-color:
+      color-mix(in srgb, var(--primary) 18%, var(--border));
+
+    box-shadow:
+      var(--shadow-md);
   }
+
+  /* ============================================================
+     BUTTONS
+     ============================================================ */
+
+  .neo-button {
+
+    @apply border border-border;
+
+    border-radius: var(--radius);
+
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast),
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      transform var(--transition-fast);
+
+    box-shadow:
+      var(--shadow-xs);
+
+    cursor: pointer;
+
+    user-select: none;
+  }
+
+  .neo-button:hover {
+
+    box-shadow:
+      var(--shadow-sm);
+
+    border-color:
+      color-mix(in srgb, var(--primary) 25%, var(--border));
+  }
+
+  .neo-button:active {
+
+    transform: scale(.985);
+
+    box-shadow:
+      var(--shadow-xs);
+  }
+
+  .neo-button:focus-visible {
+
+    outline: none;
+
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent),
+      var(--shadow-sm);
+  }
+
+  /* ============================================================
+     INPUTS
+     ============================================================ */
+
+  input,
+  textarea,
+  select {
+
+    border-radius: var(--radius);
+
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      background-color var(--transition-fast);
+  }
+
+  input:hover,
+  textarea:hover,
+  select:hover {
+
+    border-color:
+      color-mix(in srgb, var(--primary) 18%, var(--border));
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+
+    border-color: var(--primary);
+
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+  }
+
+  /* ============================================================
+     LINKS
+     ============================================================ */
+
+  a {
+
+    transition:
+      color var(--transition-fast);
+  }
+
+  a:hover {
+
+    color:
+      color-mix(in srgb, var(--primary) 80%, var(--foreground));
+  }
+
+  /* ============================================================
+     SCROLLBAR
+     ============================================================ */
+
+  ::-webkit-scrollbar {
+
+    width: 11px;
+    height: 11px;
+  }
+
+  ::-webkit-scrollbar-track {
+
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+
+    background:
+      color-mix(in srgb, var(--foreground) 18%, transparent);
+
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+
+    background:
+      color-mix(in srgb, var(--primary) 60%, transparent);
+  }
+
+}
+
+/* ============================================================
+   MODERN UI UTILITIES
+   Compatible con el diseño existente
+   ============================================================ */
+
+@layer utilities {
+
+  /* ============================================================
+     SURFACES
+     ============================================================ */
+
+  .surface-1 {
+    background: var(--background);
+  }
+
+  .surface-2 {
+    background: var(--card);
+  }
+
+  .surface-3 {
+    background: color-mix(in srgb, var(--card) 94%, var(--primary) 6%);
+  }
+
+  .surface-muted {
+    background: var(--muted);
+  }
+
+  /* ============================================================
+     PANELS
+     ============================================================ */
+
+  .panel {
+
+    background: var(--card);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow-sm);
+  }
+
+  .panel-hover {
+
+    transition:
+      box-shadow var(--transition-normal),
+      border-color var(--transition-normal),
+      transform var(--transition-normal);
+  }
+
+  .panel-hover:hover {
+
+    transform: translateY(-2px);
+
+    border-color:
+      color-mix(in srgb, var(--primary) 22%, var(--border));
+
+    box-shadow: var(--shadow-md);
+  }
+
+  /* ============================================================
+     BADGES
+     ============================================================ */
+
+  .badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: .4rem;
+
+    padding: .22rem .6rem;
+
+    border-radius: var(--radius);
+
+    border: 1px solid var(--border);
+
+    background: var(--muted);
+
+    font-size: .75rem;
+
+    font-weight: 600;
+  }
+
+  .badge-primary {
+
+    background:
+      color-mix(in srgb, var(--primary) 12%, transparent);
+
+    color: var(--primary);
+
+    border-color:
+      color-mix(in srgb, var(--primary) 25%, var(--border));
+  }
+
+  .badge-success {
+
+    background: rgba(34,197,94,.10);
+
+    color: rgb(22 163 74);
+
+    border-color: rgba(34,197,94,.25);
+  }
+
+  .badge-warning {
+
+    background: rgba(245,158,11,.10);
+
+    color: rgb(217 119 6);
+
+    border-color: rgba(245,158,11,.25);
+  }
+
+  .badge-danger {
+
+    background: rgba(239,68,68,.10);
+
+    color: rgb(220 38 38);
+
+    border-color: rgba(239,68,68,.25);
+  }
+
+  /* ============================================================
+     TABLES
+     ============================================================ */
+
+  .table-modern {
+
+    width: 100%;
+
+    border-collapse: collapse;
+  }
+
+  .table-modern thead {
+
+    background:
+      color-mix(in srgb, var(--muted) 92%, white 8%);
+  }
+
+  .dark .table-modern thead {
+
+    background:
+      color-mix(in srgb, var(--muted) 96%, black 4%);
+  }
+
+  .table-modern th {
+
+    text-align: left;
+
+    font-weight: 600;
+
+    font-size: .875rem;
+
+    color: var(--muted-foreground);
+
+    padding: .9rem;
+
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table-modern td {
+
+    padding: .9rem;
+
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table-modern tbody tr {
+
+    transition:
+      background-color var(--transition-fast);
+  }
+
+  .table-modern tbody tr:hover {
+
+    background:
+      color-mix(in srgb, var(--primary) 4%, transparent);
+  }
+
+  /* ============================================================
+     DIVIDERS
+     ============================================================ */
+
+  .divider {
+
+    height: 1px;
+
+    background: var(--border);
+
+    width: 100%;
+  }
+
+  /* ============================================================
+     PAGE TITLES
+     ============================================================ */
+
+  .section-title {
+
+    font-family: var(--font-heading);
+
+    font-size: 1.35rem;
+
+    font-weight: 700;
+
+    letter-spacing: -.03em;
+  }
+
+  .section-description {
+
+    color: var(--muted-foreground);
+
+    font-size: .92rem;
+  }
+
+  /* ============================================================
+     SHADOW HELPERS
+     ============================================================ */
+
+  .shadow-xs {
+    box-shadow: var(--shadow-xs);
+  }
+
+  .shadow-sm {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .shadow-md {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-xl {
+    box-shadow: var(--shadow-xl);
+  }
+
+  /* ============================================================
+     PRIMARY GRADIENT
+     ============================================================ */
+
+  .bg-gradient-primary {
+
+    background:
+      linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--primary) 88%, #7c3aed 12%),
+        color-mix(in srgb, var(--primary) 72%, #4f46e5 28%)
+      );
+  }
+
+  /* ============================================================
+     GLASS
+     ============================================================ */
+
+  .glass {
+
+    backdrop-filter: blur(14px);
+
+    -webkit-backdrop-filter: blur(14px);
+
+    background:
+      color-mix(in srgb, var(--card) 82%, transparent);
+
+    border: 1px solid
+      color-mix(in srgb, white 12%, var(--border));
+  }
+
+  /* ============================================================
+     TRANSITIONS
+     ============================================================ */
+
+  .transition-default {
+
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
 }

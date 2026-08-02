@@ -125,7 +125,7 @@ export const Carrito = () => {
                 ? createPortal(
                       <>
                           <div className="fixed inset-0 bg-black/50 z-40">
-                              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[95%] max-w-lg max-h-[80dvh] flex flex-col neo-card bg-background shadow-[8px_8px_0px_0px_theme(--color-border)]">
+                              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[95%] max-w-lg max-h-[80dvh] flex flex-col neo-card bg-background shadow-[6px_6px_0px_0px_black]">
                                   <div className="flex items-center justify-between p-4 border-b-2 border-border bg-black shrink-0">
                                       <h2
                                           className="neo-heading text-xl text-primary-foreground"

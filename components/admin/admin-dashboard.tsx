@@ -65,15 +65,15 @@ export function AdminDashboard() {
                 </div>
 
                 <div
-                    className={`neo-card p-2 grid ${usuario?.rol === "superadmin" ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200`}
+                    className={`grid ${usuario?.rol === "superadmin" ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200`}
                 >
                     <Link href="/admin/ventas/nueva-venta">
                         <Button
                             variant="ghost"
-                            className="w-full bg-sky-500 neo-button font-bold flex justify-center items-center py-6"
+                            className="w-full bg-sky-500 neo-button font-bold flex justify-center items-center py-6 overflow-hidden text-white hover:text-black"
                             style={{ fontFamily: "var(--font-montserrat)" }}
                         >
-                            <Plus className="w-8 h-8 text-white font-black" />
+                            <Plus className="text-white size-12 sm:size-20 stroke-2 rounded-full border hover:text-black hover:border-black"   />
                             Nueva Venta
                         </Button>
                     </Link>
@@ -158,7 +158,7 @@ export function AdminDashboard() {
                     className={`grid grid-cols-1 ${!esAdmin ? "md:grid-cols-2" : "md:grid-cols-3"} gap-6`}
                 >
                     {usuario?.rol === "admin" && (
-                        <div className="neo-card p-2 lg:p-6 space-y-4">
+                        <div className="neo-card p-6 space-y-4">
                             <div className="flex items-center gap-3">
                                 <Users className="w-8 h-8 text-purple-500" />
                                 <h2 className="neo-heading text-xl">
