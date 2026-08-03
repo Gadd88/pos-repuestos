@@ -65,7 +65,7 @@ export function AdminDashboard() {
                 </div>
 
                 <div
-                    className={`grid ${usuario?.rol === "superadmin" ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200`}
+                    className={`grid ${usuario?.rol === "superadmin" ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2 transition-all duration-200`}
                 >
                     <Link href="/admin/ventas/nueva-venta">
                         <Button
@@ -73,7 +73,7 @@ export function AdminDashboard() {
                             className="w-full bg-sky-500 neo-button font-bold flex justify-center items-center py-6 overflow-hidden text-white hover:text-black"
                             style={{ fontFamily: "var(--font-montserrat)" }}
                         >
-                            <Plus className="text-white size-12 sm:size-20 stroke-2 rounded-full border hover:text-black hover:border-black"   />
+                            <Plus className="size-12 sm:size-20 stroke-2 rounded-full border"   />
                             Nueva Venta
                         </Button>
                     </Link>
@@ -81,12 +81,12 @@ export function AdminDashboard() {
                         <Link href="/admin/super">
                             <Button
                                 variant="ghost"
-                                className="w-full neo-button font-semibold bg-lime-500 py-6"
+                                className="w-full neo-button font-semibold bg-lime-500 py-6 overflow-hidden text-white"
                                 style={{
                                     fontFamily: "var(--font-montserrat)",
                                 }}
                             >
-                                <User className="w-8 h-8 text-white" />
+                                <User className="size-12 sm:size-20 rounded-full border" />
                                 Super Admin
                             </Button>
                         </Link>

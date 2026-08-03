@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ProductDeleteDialog } from "@/components/producto/product-delete-dialog";
-import { Plus, Package, Loader2, DollarSign } from "lucide-react";
+import { Plus, Package, Loader2, DollarSign, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { ProductCardStock } from "./producto/product-card-stock";
 import { InputBusqueda } from "./input-busqueda";
@@ -44,9 +44,19 @@ export function InventoryManager() {
         <div className="container mx-auto px-4 py-8">
             <div className="space-y-8">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
+                    <Link href="/admin">
+                        <Button
+                            variant="outline"
+                            className="neo-button font-semibold bg-transparent"
+                            style={{ fontFamily: "var(--font-montserrat)" }}
+                        >
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            VOLVER AL DASHBOARD
+                        </Button>
+                    </Link>
+                    <div className="ms-auto">
                         <h1
-                            className="neo-heading text-4xl mb-2"
+                            className="neo-heading text-4xl"
                             style={{ fontFamily: "var(--font-montserrat)" }}
                         >
                             ADMINISTRADOR DE PRODUCTOS
@@ -55,27 +65,29 @@ export function InventoryManager() {
                             Administra tu stock de productos
                         </p>
                     </div>
+                </div>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     {usuario?.rol === "admin" && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
                             <Link href="/admin/productos/agregar" className="w-full">
                                 <Button
-                                    className="neo-button font-bold w-full min-h-16"
+                                    className="neo-button font-bold w-full py-6 flex items-center justify-between overflow-hidden"
                                     style={{
                                         fontFamily: "var(--font-montserrat)",
                                     }}
                                 >
-                                    <Plus className="w-4 h-4 mr-2" />
+                                    <Plus className="size-12 sm:size-20 rounded-full border" />
                                     AGREGAR NUEVO PRODUCTO
                                 </Button>
                             </Link>
                             <Button
-                                className="neo-button font-bold min-h-16 bg-cyan-500 hover:bg-cyan-600 w-full"
+                                className="neo-button font-bold py-6 bg-cyan-500 hover:bg-cyan-600 w-full overflow-hidden flex items-center justify-between"
                                 onClick={() => setModificarPrecios(true)}
                                 style={{
                                     fontFamily: "var(--font-montserrat)",
                                 }}
                             >
-                                <DollarSign className="w-4 h-4 mr-2" />
+                                <DollarSign className="size-12 sm:size-20 rounded-full border" />
                                 MODIFICADOR PRECIOS MASIVO
                             </Button>
                         </div>

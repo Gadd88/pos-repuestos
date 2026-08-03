@@ -41,7 +41,7 @@ export const ProductCardStock = ({
                                         BAJO STOCK
                                     </Badge>
                                 ) : producto.stock === 0 ? (
-                                    <Badge variant="destructive">
+                                    <Badge variant="destructive" className="bg-red-300 text-black">
                                         SIN STOCK
                                     </Badge>
                                 ) : null}
@@ -110,7 +110,7 @@ export const ProductCardStock = ({
                                     variant="destructive"
                                     size="sm"
                                     onClick={() => onDelete(producto)}
-                                    className="neo-button font-semibold bg-red-600 hover:bg-red-700"
+                                    className="neo-button font-semibold bg-red-700 hover:bg-red-700"
                                     style={{
                                         fontFamily: "var(--font-montserrat)",
                                     }}

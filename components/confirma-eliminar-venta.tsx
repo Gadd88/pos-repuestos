@@ -33,7 +33,7 @@ export const ConfirmaEliminarVenta = ({ venta }: EliminarProps) => {
                 <Button
                     variant="outline"
                     disabled={venta.estado === "cancelada"}
-                    className="h-10 w-16 sm:h-9 sm:w-9 border-2 bg-red-400 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                    className="h-10 w-16 border-2 bg-red-400 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
                 >
                     <Trash2Icon className="w-4 h-4" />
                 </Button>
