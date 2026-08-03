@@ -446,7 +446,7 @@ export function VentaDetalleModal({ venta, onClose }: VentaDetalleModalProps) {
                 {/* Footer */}
                 <div className="px-6 pb-6 space-y-3">
                     {venta.estado === "presupuesto" && (
-                        <>
+                        <div className="grid sm:grid-cols-2 gap-2 grid-cols-1">
                             <ConfirmaPresupuesto
                                 presupuesto={venta}
                                 onConfirmado={onClose}
@@ -483,7 +483,7 @@ export function VentaDetalleModal({ venta, onClose }: VentaDetalleModalProps) {
                             >
                                 <SendIcon /> COMPARTIR PRESUPUESTO
                             </Button>
-                        </>
+                        </div>
                     )}
                     <Button
                         variant="outline"

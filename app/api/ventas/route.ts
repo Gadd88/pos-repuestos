@@ -1,32 +1,167 @@
 import { adminDb } from "@/lib/firebase-admin";
 import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario";
 import { ItemCarrito, VentaType } from "@/lib/types";
-import { FieldPath, FieldValue } from "firebase-admin/firestore";
+import { FieldPath, FieldValue, Timestamp } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 
 const COLLECTION_NAME = "ventas";
 
-export async function GET(req: NextRequest, res: NextResponse) {
-    const { negocioId } = await obtenerUsuarioDesdeRequest(req)
-    
+export async function GET(req: NextRequest) {
+    const { negocioId } = await obtenerUsuarioDesdeRequest(req);
+
     try {
-        const ventasRef = adminDb.collection(COLLECTION_NAME);
-        const snapshot = await ventasRef.orderBy("creadoEn", "desc").where("negocioId", "==", negocioId).get();
+        const { searchParams } = new URL(req.url);
+        const limit = Number(searchParams.get("limit") ?? 10);
+        const desde = searchParams.get("desde");
+        const hasta = searchParams.get("hasta");
+        const cursorFecha = searchParams.get("cursorFecha");
+        const cursorId = searchParams.get("cursorId");
+        let query = adminDb
+            .collection(COLLECTION_NAME)
+            .where("negocioId", "==", negocioId)
+            .orderBy("creadoEn", "desc")
+            .orderBy(FieldPath.documentId()) //ultimo agregado, cursor compuesto
 
-        const ventasList = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-            creadoEn: doc.data().creadoEn?.toDate() || new Date(),
-            actualizadoEn: doc.data().actualizadoEn?.toDate() || new Date(),
-        })) as VentaType[];
+        if (desde) {
+            query = query.where(
+                "creadoEn",
+                ">=",
+                new Date(desde)
+            );
+        }
 
-        return NextResponse.json(ventasList)
+        if (hasta) {
+            const fechaHasta = new Date(hasta);
+            fechaHasta.setHours(
+                23,
+                59,
+                59,
+                999
+            );
+            query = query.where(
+                "creadoEn",
+                "<=",
+                fechaHasta
+            );
+        }
+
+        /**
+         * Cursor
+         */
+
+        if (cursorFecha && cursorId) {
+            query = query.startAfter(
+                Timestamp.fromDate(new Date(cursorFecha)),
+                cursorId
+            );
+        }
+
+        /**
+         * Se pide un registro extra para saber
+         * si existen más resultados.
+         */
+
+        const snapshot = await query
+            .limit(limit + 1)
+            .get();
+        const docs = snapshot.docs;
+        const hasMore = docs.length > limit;
+        const docsToReturn = hasMore
+            ? docs.slice(0, limit)
+            : docs;
+        const ventas = docsToReturn.map((doc) => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                ...data,
+                creadoEn:
+                    data.creadoEn?.toDate() ??
+                    new Date(),
+                actualizadoEn:
+                    data.actualizadoEn?.toDate() ??
+                    new Date(),
+            };
+        }) as VentaType[];
+        /**
+         * Cursor para la próxima página
+         */
+        let nextCursor: {
+            creadoEn: string;
+            id: string;
+        } | null = null;
+        if (ventas.length > 0) {
+            const ultimaVenta = ventas[ventas.length - 1];
+            nextCursor = {
+                creadoEn: ultimaVenta.creadoEn.toISOString(),
+                id: ultimaVenta.id,
+            };
+            // nextCursor =
+            //     ventas[
+            //         ventas.length - 1
+            //     ].creadoEn.toISOString();
+        }
+        return NextResponse.json({
+            ventas,
+            hasMore,
+            nextCursor
+        });
     } catch (error) {
-        console.error(error)
-        return NextResponse.json({ sucess: false, error }, { status: 500 })
+        console.error(error);
+        return NextResponse.json(
+            {
+                success: false,
+                error
+            },
+            {
+                status: 500
+            }
+        );
     }
+    // try {
+    //     const { searchParams } = new URL(req.url);
+    //     const limit = Number(searchParams.get("limit") ?? 10);
+    //     const desde = searchParams.get("desde");
+    //     const hasta = searchParams.get("hasta");
+    //     let query = adminDb
+    //         .collection(COLLECTION_NAME)
+    //         .where("negocioId", "==", negocioId)
+    //         .orderBy("creadoEn", "desc");
+
+    //     if (desde) {
+    //         query = query.where(
+    //             "creadoEn",
+    //             ">=",
+    //             new Date(desde)
+    //         );
+    //     }
+
+    //     if (hasta) {
+    //         const fechaHasta = new Date(hasta);
+    //         fechaHasta.setHours(23, 59, 59, 999);
+    //         query = query.where(
+    //             "creadoEn",
+    //             "<=",
+    //             fechaHasta
+    //         );
+    //     }
+    //     const snapshot = await query
+    //         .limit(limit)
+    //         .get();
+    //     const ventasList = snapshot.docs.map((doc) => ({
+    //         id: doc.id,
+    //         ...doc.data(),
+    //         creadoEn: doc.data().creadoEn?.toDate() || new Date(),
+    //         actualizadoEn: doc.data().actualizadoEn?.toDate() || new Date(),
+    //     })) as VentaType[];
+
+    //     return NextResponse.json(ventasList)
+    // } catch (error) {
+    //     console.error(error)
+    //     return NextResponse.json({ sucess: false, error }, { status: 500 })
+    // }
 }
+// const snapshot = await ventasRef.orderBy("creadoEn", "desc").where("negocioId", "==", negocioId).get();
 
 export async function POST(req: NextRequest, res: NextResponse) {
     const ventaData = await req.json();
@@ -99,7 +234,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 }))
             });
 
-            if (estado == "completada"){
+            if (estado == "completada") {
                 for (let i = 0; i < items.length; i++) {
                     tx.update(productosData[i].ref, {
                         stock: productosData[i].data.stock - items[i].cantidad,

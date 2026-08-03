@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
-import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario";
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
     
     const { id } = await params 
-    const { negocioId } = await obtenerUsuarioDesdeRequest(req);
     
     try {
         const doc = await adminDb
@@ -21,10 +19,6 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         }
 
         const data = doc.data();
-
-        if (data?.negocioId !== negocioId) {
-            return NextResponse.json({ error: "No autorizado" }, { status: 403 });
-        }
 
         if (data?.estado !== "presupuesto") {
             return NextResponse.json(

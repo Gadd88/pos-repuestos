@@ -39,12 +39,12 @@ export default function UsuariosPage() {
                         </h1>
                     </div>
                 </div>
-                <div className="flex justify-between md:items-center flex-col md:flex-row gap-4">
+                <div className="flex items-center sm:justify-end gap-4">
                     <Button
-                        className="neo-button bg-purple-600"
+                        className="neo-button bg-purple-600 overflow-hidden text-white font-semibold w-full max-w-md"
                         onClick={() => setOpenModal(true)}
                     >
-                        <Plus className="w-4 h-4 mr-2" />
+                        <Plus className="size-16 rounded-full border-2" />
                         Agregar Vendedor
                     </Button>
                 </div>

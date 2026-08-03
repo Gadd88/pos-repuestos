@@ -2,16 +2,65 @@ import { ItemCarrito, VentaType } from "@/lib/types";
 import { tokenUsuario } from "./productos-services";
 
 
-export const obtenerVentas = async () => {
-    const token = await tokenUsuario()
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ventas`, {
-        cache: "no-store",
-        headers: {
-            "Authorization": `Bearer ${token}`
+// export const obtenerVentas = async () => {
+//     const token = await tokenUsuario()
+//     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ventas`, {
+//         cache: "no-store",
+//         headers: {
+//             "Authorization": `Bearer ${token}`
+//         }
+//     });
+//     const result = await response.json();
+//     return result;
+// };
+type ObtenerVentasParams = {
+    limit?: number;
+    desde?: Date | string;
+    hasta?: Date | string;
+    cursor?: {
+        creadoEn: string;
+        id: string;
+    } | null;
+};
+
+export type ObtenerVentasResponse = {
+    ventas: VentaType[];
+    hasMore: boolean;
+    nextCursor: {
+        creadoEn: string;
+        id: string;
+    } | null;
+};
+
+export const obtenerVentas = async (
+    params: ObtenerVentasParams = {}
+): Promise<ObtenerVentasResponse> => {
+    const token = await tokenUsuario();
+    const search = new URLSearchParams();
+    if (params.limit)
+        search.set("limit", params.limit.toString());
+    if (params.desde)
+        search.set("desde", params.desde instanceof Date ? params.desde.toISOString() : params.desde);
+    if (params.hasta)
+        search.set("hasta", params.hasta instanceof Date ? params.hasta.toISOString() : params.hasta);
+    if (params.cursor) {
+        search.set("cursorFecha", params.cursor.creadoEn);
+        search.set("cursorId", params.cursor.id);
+    }
+    const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/ventas?${search.toString()}`,
+        {
+            cache: "no-store",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         }
-    });
-    const result = await response.json();
-    return result;
+    );
+    if (!response.ok) {
+        throw new Error("Error al obtener ventas");
+    }
+
+    return response.json();
 };
 
 export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta: string }) => {

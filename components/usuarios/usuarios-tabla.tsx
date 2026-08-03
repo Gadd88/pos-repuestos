@@ -25,7 +25,7 @@ export function UsuariosTabla() {
                 className="px-4 py-3 uppercase"
                 style={{ fontFamily: "var(--font-montserrat)" }}
             >
-                <TableHeader className="bg-purple-500">
+                <TableHeader className="bg-black">
                     <TableRow>
                         <TableHead className="text-white font-bold border-e-2">
                             Email
