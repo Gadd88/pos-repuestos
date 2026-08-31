@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   const usuariosRef = adminDb.collection(COLLECTION_NAME);
   const snapshot = await usuariosRef.where("negocioId", "==", negocioId).where("rol", "==", "vendedor").get();
 
-  if (snapshot.size >= 1) {
+  if (snapshot.size >= 3) {
     return NextResponse.json({ success: false, error: "Solo se puede crear un vendedor por negocio." }, { status: 400 });
   }
 
