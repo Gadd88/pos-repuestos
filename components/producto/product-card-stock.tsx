@@ -90,7 +90,7 @@ export const ProductCardStock = ({
                         {(usuario?.rol === "admin" ||
                             usuario?.rol === "superadmin") && (
                             <div className="flex items-center justify-between gap-2">
-                                <Link
+                                <Link prefetch={false}
                                     href={`/admin/productos/${producto.id}/editar-producto`}
                                 >
                                     <Button

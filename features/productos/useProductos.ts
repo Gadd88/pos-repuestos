@@ -2,14 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import { ProductoType } from "@/lib/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchProductos, agregarProductoService, editarProductoService, eliminarProductoService, editarMasivoService, EditarMasivoType } from "@/services/productos-services";
-import { Old_Standard_TT } from "next/font/google";
 
 export const useListarProductos = () => {
   return useQuery<ProductoType[], Error>({
     queryKey: ["productos"],
-    queryFn: fetchProductos,
+    queryFn: async () => {
+      return fetchProductos()
+    },
     staleTime: 1000 * 60 * 15, // 15 min
     gcTime: 1000 * 60 * 30,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 
@@ -21,9 +25,9 @@ export const useAgregarProducto = () => {
   const queryClient = useQueryClient();
 
   return useMutation<ProductoType, Error, AgregarProductoInput>({
-    mutationFn: ({productData}) => agregarProductoService(productData),
+    mutationFn: ({ productData }) => agregarProductoService(productData),
     onSuccess: (nuevoProducto) => {
-      queryClient.setQueryData<ProductoType[]>(["productos"], (old = []) => [...old, nuevoProducto].sort((a,b) => a.nombre.localeCompare(b.nombre)));
+      queryClient.setQueryData<ProductoType[]>(["productos"], (old = []) => [...old, nuevoProducto].sort((a, b) => a.nombre.localeCompare(b.nombre)));
       // queryClient.invalidateQueries({ queryKey: ["productos"] });
     },
   });
@@ -39,13 +43,15 @@ export const useEditarProducto = () => {
   const queryClient = useQueryClient();
 
   return useMutation<
-  ProductoType, //lo que retorna 
-  Error,  // error
-  EditarProductoInput //variables de lo que recibe
+    ProductoType, //lo que retorna 
+    Error,  // error
+    EditarProductoInput //variables de lo que recibe
   >({
     mutationFn: ({ id, updates }) => editarProductoService(id, updates),
     onSuccess: (updates, { id }) => {
-      queryClient.setQueryData<ProductoType[]>(["productos"], (old = []) => old.map((producto) => ( producto.id === id ? { ...producto, ...updates} : producto )))
+      queryClient.setQueryData<ProductoType[]>(["productos"], (old = []) => {
+        return old.map((producto) => (producto.id === id ? { ...producto, ...updates } : producto))
+      })
       // queryClient.invalidateQueries({ queryKey: ["productos"] });
     },
   });
@@ -68,7 +74,7 @@ export const useEliminarProducto = () => {
   return useMutation({
     mutationFn: (id: ProductoType["id"]) => eliminarProductoService(id),
     onSuccess: (_data, id) => {
-      queryClient.setQueryData<ProductoType[]>(["productos"], (old =[]) => old.filter((producto) => producto.id !== id))
+      queryClient.setQueryData<ProductoType[]>(["productos"], (old = []) => old.filter((producto) => producto.id !== id))
       // queryClient.invalidateQueries({ queryKey: ["productos"] });
     },
   });

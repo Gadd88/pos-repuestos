@@ -98,7 +98,7 @@ export const Carrito = () => {
                 },
             },
         );
-        queryClient.invalidateQueries({ queryKey: ["ventas"] });
+        // queryClient.invalidateQueries({ queryKey: ["ventas"] });
         vaciarCarrito();
         setIsOpen(false);
     };

@@ -83,7 +83,7 @@ export function ProductForm({ productoId, productoData }: ProductFormProps) {
             }
             router.push("/admin/stock");
         } catch (error) {
-            console.error("Error guardando el producto:", error);
+            // console.error("Error guardando el producto:", error);
             setError("Ocurrió un error inesperado.");
             throw error
         } finally {
