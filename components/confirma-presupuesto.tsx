@@ -33,9 +33,13 @@ export const ConfirmaPresupuesto = ({ presupuesto, trigger, onConfirmado }: Conf
         confirmarPresupuesto(id, {
             onSuccess: () => {
                 toast.success("Presupuesto confirmado como venta");
-                queryClient.invalidateQueries({ queryKey: ["productos"] });
-                queryClient.invalidateQueries({ queryKey: ["ventas"] });
-                queryClient.invalidateQueries({ queryKey: ["presupuesto", id] });
+                // queryClient.invalidateQueries({ queryKey: ["productos"] });
+                // queryClient.setQueryData<ProductoType[]>(["productos"], (old =[]) => old.map((producto) => {
+                //             const item = .find((item) => item.id === producto.id);
+                //             return item ? { ...producto, stock: producto.stock - item!.cantidad } : producto;
+                //         }))
+                // queryClient.invalidateQueries({ queryKey: ["ventas"] });
+                // queryClient.invalidateQueries({ queryKey: ["presupuesto", id] });
                 onConfirmado?.();
             },
             onError: (error) => {

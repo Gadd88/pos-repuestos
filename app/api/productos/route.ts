@@ -13,7 +13,7 @@ export async function GET(req: Request) {
 
     try {
         const productosRef = adminDb.collection(COLLECTION_NAME);
-        const snapshot = await productosRef.orderBy("nombre", "asc").where("negocioId", "==", negocioId).get();
+        const snapshot = await productosRef.orderBy("nombre", "asc").where("negocioId", "==", negocioId).where("activo", "==", true).get();
 
         const productosList = snapshot.docs.map((doc) => ({
             id: doc.id,
