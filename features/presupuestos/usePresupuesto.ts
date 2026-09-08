@@ -25,7 +25,6 @@ export const useGenerarPresupuesto = () => {
     return useMutation<VentaType, Error, GenerarPresupuestoInput>({
         mutationFn: ({carrito, tipo_venta}) => crearPresupuestoService({carrito, tipo_venta}),
         onSuccess: () => {
-            // queryClient.setQueryData<VentaType[]>(["ventas"], (old = []) => [...old, {...nuevaVenta, estado: "presupuesto" } as VentaType])
             queryClient.invalidateQueries({ queryKey: ["ventas"]})
         }
     })
@@ -35,12 +34,11 @@ export const useConfirmarPresupuesto = () => {
     const queryClient = useQueryClient();
     return useMutation<VentaType, Error, string>({
         mutationFn: (id) => confirmarPresupuestoService(id),
-        onSuccess: (_data, id) => {
+        onSuccess: (_data) => {
             queryClient.setQueryData<ProductoType[]>(["productos"], (old =[]) => old.map((producto) => {
                 const item = _data.items.find((i) => i.idProducto === producto.id);
                 return item ? { ...producto, stock: producto.stock - item.cantidad } : producto;
             }));
-            // queryClient.setQueryData<VentaType[]>(["ventas"], (old = []) => old.map((venta) => (venta.id === id ? { ...venta, estado: "completada" } : venta)));
             queryClient.invalidateQueries({ queryKey: ["ventas"] });
             // queryClient.invalidateQueries({ queryKey: ["presupuesto", id] });
         },

@@ -80,8 +80,9 @@ export const useCancelarVenta = () => {
 
   return useMutation({
     mutationFn: (id: VentaType["id"]) => cancelarVenta(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ventas"] });
+    onSuccess: (id) => {
+      queryClient.setQueryData<VentaType[]>(["ventas"], (old = []) => old.map((venta) => (venta.id === id ? { ...venta, estado: "cancelada" } : venta)));
+      // queryClient.invalidateQueries({ queryKey: ["ventas"] });
     },
   });
 };
