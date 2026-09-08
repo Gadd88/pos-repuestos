@@ -1,5 +1,4 @@
-import PresupuestoPage from "@/app/presupuesto/[id]/page";
-import { ItemCarrito, VentaType } from "@/lib/types";
+import { ItemCarrito, ProductoType, VentaType } from "@/lib/types";
 import { obtenerPresupuesto, crearPresupuestoService, confirmarPresupuestoService } from "@/services/presupuesto.services";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -35,9 +34,13 @@ export const useConfirmarPresupuesto = () => {
     const queryClient = useQueryClient();
     return useMutation<VentaType, Error, string>({
         mutationFn: (id) => confirmarPresupuestoService(id),
-        onSuccess: (_, id) => {
+        onSuccess: (_data) => {
+            queryClient.setQueryData<ProductoType[]>(["productos"], (old =[]) => old.map((producto) => {
+                const item = _data.items.find((i) => i.idProducto === producto.id);
+                return item ? { ...producto, stock: producto.stock - item.cantidad } : producto;
+            }));
             queryClient.invalidateQueries({ queryKey: ["ventas"] });
-            queryClient.invalidateQueries({ queryKey: ["presupuesto", id] });
+            // queryClient.invalidateQueries({ queryKey: ["presupuesto", id] });
         },
     });
 };

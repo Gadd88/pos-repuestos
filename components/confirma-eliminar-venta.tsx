@@ -1,4 +1,4 @@
-import { VentaType } from "@/lib/types";
+import { ProductoType, VentaType } from "@/lib/types";
 import {
     AlertDialog,
     AlertDialogTrigger,
@@ -24,7 +24,11 @@ export const ConfirmaEliminarVenta = ({ venta }: EliminarProps) => {
     const { mutateAsync: cancelarVenta, isPending } = useCancelarVenta();
     const handleCancelarVenta = async (id: VentaType["id"]) => {
         await cancelarVenta(id);
-        queryClient.invalidateQueries({ queryKey: ["productos"] });
+        queryClient.setQueryData<ProductoType[]>(["productos"], (old =[]) => old.map((producto) => {
+            const item = venta.items.find((item) => item.idProducto === producto.id);
+            return item ? { ...producto, stock: producto.stock + item.cantidad } : producto;
+        }));
+        // queryClient.invalidateQueries({ queryKey: ["productos"] });
         queryClient.invalidateQueries({ queryKey: ["ventas"] });
     };
     return (

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGenerarVenta } from "@/features/ventas/useVentas";
 import { useGenerarPresupuesto } from "@/features/presupuestos/usePresupuesto";
+import { ProductoType } from "@/lib/types";
 
 export const Carrito = () => {
     const {
@@ -64,8 +65,12 @@ export const Carrito = () => {
                 font: "bold",
             },
         });
-        queryClient.invalidateQueries({ queryKey: ["productos"] });
-        queryClient.invalidateQueries({ queryKey: ["ventas"] });
+        queryClient.setQueryData<ProductoType[]>(["productos"], (old =[]) => old.map((producto) => {
+            const item = carrito.find((item) => item.id === producto.id);
+            return item ? { ...producto, stock: producto.stock - item!.cantidad } : producto;
+        }))
+        // queryClient.invalidateQueries({ queryKey: ["productos"] });
+        // queryClient.invalidateQueries({ queryKey: ["ventas"] });
         vaciarCarrito();
         setIsOpen(false);
     };
@@ -93,7 +98,7 @@ export const Carrito = () => {
                 },
             },
         );
-        queryClient.invalidateQueries({ queryKey: ["ventas"] });
+        // queryClient.invalidateQueries({ queryKey: ["ventas"] });
         vaciarCarrito();
         setIsOpen(false);
     };

@@ -6,8 +6,14 @@ import { fetchProductos, agregarProductoService, editarProductoService, eliminar
 export const useListarProductos = () => {
   return useQuery<ProductoType[], Error>({
     queryKey: ["productos"],
-    queryFn: fetchProductos,
-    staleTime: 1000 * 60 * 5, // 5 min
+    queryFn: async () => {
+      return fetchProductos()
+    },
+    staleTime: 1000 * 60 * 15, // 15 min
+    gcTime: 1000 * 60 * 30,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 
@@ -19,9 +25,10 @@ export const useAgregarProducto = () => {
   const queryClient = useQueryClient();
 
   return useMutation<ProductoType, Error, AgregarProductoInput>({
-    mutationFn: ({productData}) => agregarProductoService(productData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["productos"] });
+    mutationFn: ({ productData }) => agregarProductoService(productData),
+    onSuccess: (nuevoProducto) => {
+      queryClient.setQueryData<ProductoType[]>(["productos"], (old = []) => [...old, nuevoProducto].sort((a, b) => a.nombre.localeCompare(b.nombre)));
+      // queryClient.invalidateQueries({ queryKey: ["productos"] });
     },
   });
 };
@@ -36,13 +43,16 @@ export const useEditarProducto = () => {
   const queryClient = useQueryClient();
 
   return useMutation<
-  ProductoType, //lo que retorna 
-  Error,  // error
-  EditarProductoInput //variables de lo que recibe
+    ProductoType, //lo que retorna 
+    Error,  // error
+    EditarProductoInput //variables de lo que recibe
   >({
     mutationFn: ({ id, updates }) => editarProductoService(id, updates),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["productos"] });
+    onSuccess: (updates, { id }) => {
+      queryClient.setQueryData<ProductoType[]>(["productos"], (old = []) => {
+        return old.map((producto) => (producto.id === id ? { ...producto, ...updates } : producto))
+      })
+      // queryClient.invalidateQueries({ queryKey: ["productos"] });
     },
   });
 };
@@ -63,8 +73,9 @@ export const useEliminarProducto = () => {
 
   return useMutation({
     mutationFn: (id: ProductoType["id"]) => eliminarProductoService(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["productos"] });
+    onSuccess: (_data, id) => {
+      queryClient.setQueryData<ProductoType[]>(["productos"], (old = []) => old.filter((producto) => producto.id !== id))
+      // queryClient.invalidateQueries({ queryKey: ["productos"] });
     },
   });
 };
