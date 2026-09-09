@@ -27,7 +27,7 @@ export type VentaType = {
     totalGastado: number
     fecha: Date
     tipo_venta: 'minorista' | 'mayorista'
-    metodo_pago: 'efectivo' | 'tarjeta' | 'transferencia'
+    metodo_pago: 'efectivo' | 'tarjeta' | 'transferencia' | 'qr'
     cliente?: string
     vendedor_nombre: string
     vendedor_id: string
@@ -42,7 +42,7 @@ export type VentaType = {
 export type UsuarioType = {
     id: string
     uid?: string
-    nombre: string
+    nombreUsuario: string
     email: string
     negocioId: string
     nombreNegocio: string
@@ -62,3 +62,25 @@ export type NegocioType = {
     adminId: string
     creadoEn: Date
 }
+
+export type MovimientoStockTipo =
+    | "venta"
+    | "cancelacion_venta"
+    | "ajuste"
+    | "compra";
+
+export type MovimientoStockType = {
+    id: string;
+    negocioId: string;
+    productoId: string;
+    productoNombre: string;
+    tipo: MovimientoStockTipo;
+    cantidad: number;
+    stockAnterior: number;
+    stockNuevo: number;
+    ventaId?: string;
+    usuarioId?: string;
+    usuarioNombre?: string;
+    motivo?: string;
+    creadoEn: Date;
+};

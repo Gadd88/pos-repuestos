@@ -9,6 +9,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useGenerarVenta } from "@/features/ventas/useVentas";
 import { useGenerarPresupuesto } from "@/features/presupuestos/usePresupuesto";
 import { ProductoType } from "@/lib/types";
+import { Label } from "../ui/label";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 export const Carrito = () => {
     const {
@@ -31,6 +33,7 @@ export const Carrito = () => {
         error: errorPresupuesto,
     } = useGenerarPresupuesto();
     const [esMayorista, setEsMayorista] = useState(false);
+    const [metodoPago, setMetodoPago] = useState("");
 
     const queryClient = useQueryClient();
 
@@ -58,6 +61,7 @@ export const Carrito = () => {
         await generarVenta({
             carrito,
             tipo_venta: esMayorista ? "mayorista" : "minorista",
+            metodo_pago: metodoPago ?? "efectivo",
         });
         toast.success("Venta creada correctamente", {
             style: {
@@ -65,10 +69,14 @@ export const Carrito = () => {
                 font: "bold",
             },
         });
-        queryClient.setQueryData<ProductoType[]>(["productos"], (old =[]) => old.map((producto) => {
-            const item = carrito.find((item) => item.id === producto.id);
-            return item ? { ...producto, stock: producto.stock - item!.cantidad } : producto;
-        }))
+        queryClient.setQueryData<ProductoType[]>(["productos"], (old = []) =>
+            old.map((producto) => {
+                const item = carrito.find((item) => item.id === producto.id);
+                return item
+                    ? { ...producto, stock: producto.stock - item!.cantidad }
+                    : producto;
+            }),
+        );
         // queryClient.invalidateQueries({ queryKey: ["productos"] });
         // queryClient.invalidateQueries({ queryKey: ["ventas"] });
         vaciarCarrito();
@@ -224,7 +232,7 @@ export const Carrito = () => {
                                                               },
                                                           );
                                                       }}
-                                                      className="neo-button w-8 h-8 flex items-center justify-center bg-destructive text-destructive-foreground hover:shadow-[3px_3px_0px_0px_theme(colors.border)] transition-all shrink-0"
+                                                      className="neo-button w-8 h-8 flex items-center justify-center bg-destructive text-destructive-foreground hover:shadow-[3px_3px_0px_0px_theme(--color-border)] transition-all shrink-0"
                                                   >
                                                       <Trash2 className="w-4 h-4" />
                                                   </button>
@@ -250,6 +258,64 @@ export const Carrito = () => {
                                           </span>
                                       </div>
 
+                                      <div className="rounded-xl p-2">
+                                        <h3 className="neo-heading text-center">Método de pago</h3>
+                                          <RadioGroup
+                                              defaultValue="efectivo"
+                                              value={metodoPago}
+                                              name="Método de pago"
+                                              onValueChange={setMetodoPago}
+                                              className="grid grid-cols-2 overflow-x-auto md:grid-cols-2 items-center"
+                                          >
+                                              <div className="flex justify-between p-2 border-b-2 border-e-2 md:flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
+                                                  <Label className="neo-heading font-semibold md:text-md">
+                                                      Efectivo
+                                                  </Label>
+                                                  <RadioGroupItem
+                                                      value="efectivo"
+                                                      defaultChecked
+                                                      id="efectivo"
+                                                      className="border-2 border-muted rounded-full w-10 h-10 focus:ring-2 focus:ring-blue-500"
+                                                  >
+                                                      Efectivo
+                                                  </RadioGroupItem>
+                                              </div>
+                                              <div className="flex justify-between p-2 border-b-2 border-e-2 md:flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
+                                                  <Label className="neo-heading font-semibold md:text-md">
+                                                      Transferencia
+                                                  </Label>
+                                                  <RadioGroupItem
+                                                      value="transferencia"
+                                                      id="transferencia"
+                                                      className="border-2 border-muted rounded-full w-10 h-10 focus:ring-2 focus:ring-blue-500"
+                                                  >
+                                                      Transferencia
+                                                  </RadioGroupItem>
+                                              </div>
+                                              <div className="flex justify-between p-2 border-b-2 border-e-2 md:flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
+                                                  <Label className="neo-heading font-semibold md:text-md">
+                                                      Tarjeta
+                                                  </Label>
+                                                  <RadioGroupItem
+                                                      value="tarjeta"
+                                                      id="tarjeta"
+                                                      className="border-2 border-muted rounded-full w-10 h-10 focus:ring-2 focus:ring-blue-500"
+                                                  >
+                                                      Tarjeta
+                                                  </RadioGroupItem>
+                                              </div>
+                                              <div className="flex justify-between p-2 border-b-2 border-e-2 md:flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
+                                                  <Label className="neo-heading font-semibold md:text-md">QR</Label>
+                                                  <RadioGroupItem
+                                                      value="qr"
+                                                      id="qr"
+                                                      className="border-2 border-muted rounded-full w-10 h-10 focus:ring-2 focus:ring-blue-500"
+                                                  >
+                                                      QR
+                                                  </RadioGroupItem>
+                                              </div>
+                                          </RadioGroup>
+                                      </div>
                                       <div className="flex justify-between items-center border-t-2 border-border pt-3">
                                           <div className="neo-button flex gap-2 items-center justify-between p-2 bg-transparent shrink-0">
                                               <label
@@ -302,7 +368,7 @@ export const Carrito = () => {
                                                   isPending ||
                                                   carrito.length === 0
                                               }
-                                              className="neo-button w-full py-1 font-bold text-sm bg-blue-400 text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(colors.border)] transition-all"
+                                              className="neo-button w-full py-1 font-bold text-sm bg-blue-400 text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(--color-border)] transition-all"
                                               style={{
                                                   fontFamily:
                                                       "var(--font-montserrat)",
@@ -319,7 +385,7 @@ export const Carrito = () => {
                                                   isPending ||
                                                   carrito.length === 0
                                               }
-                                              className="neo-button w-full py-1 font-bold text-sm bg-lime-400 text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(colors.border)] transition-all"
+                                              className="neo-button w-full py-1 font-bold text-sm bg-lime-400 text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(--color-border)] transition-all"
                                               style={{
                                                   fontFamily:
                                                       "var(--font-montserrat)",
@@ -333,7 +399,7 @@ export const Carrito = () => {
                                       <div>
                                           <button
                                               onClick={handleVaciar}
-                                              className="neo-button w-full py-1 font-bold text-sm bg-secondary-foreground text-secondary disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(colors.border)] transition-all flex justify-center items-center gap-1"
+                                              className="neo-button w-full border-2 py-1 font-bold text-sm bg-white text-black disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[4px_4px_0px_0px_theme(--color-border)] transition-all flex justify-center items-center gap-1"
                                               style={{
                                                   fontFamily:
                                                       "var(--font-montserrat)",

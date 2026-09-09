@@ -10,7 +10,7 @@ interface AuthState {
     setUsuarios: (usuarios: UsuarioType[] | null) => void;
     setLoading: (arg: boolean) => void;
     obtenerUsuarios: () => Promise<void>;
-    generarVendedor: (email: string, password: string) => Promise<void>;
+    generarVendedor: (nombre: string, email: string, password: string) => Promise<void>;
     eliminarVendedor: (id: string) => Promise<void>;
 }
 
@@ -32,19 +32,19 @@ export const useUsuarioStore = create<AuthState>((set) => ({
             console.error("Error al obtener usuarios", err);
         }
     },
-    generarVendedor: async (email: string, password: string) => {
+    generarVendedor: async (nombre: string,email: string, password: string) => {
         set({ loading: true, error: null });
         const toastId = toast.loading("Generando vendedor...")
         try{
-            const nuevoVendedor = await generarUsuarioVendedor(email, password);
+            const nuevoVendedor = await generarUsuarioVendedor(nombre, email, password);
             set((state) => ({
                 usuarios: [...state.usuarios || [], nuevoVendedor],
                 loading: false
              }));
             toast.success("Vendedor generado exitosamente", { id: toastId });
-        } catch (err: unknown) {
-            set({ error: err instanceof Error ? err.message : String(err), loading: false });
-            toast.error(`${err.error ? err.error : String(err)}`, { id: toastId });
+        } catch (err) {
+            set({ error: err.error, loading: false });
+            toast.error(`${err.error}`, { id: toastId });
             throw err;
         }
     },

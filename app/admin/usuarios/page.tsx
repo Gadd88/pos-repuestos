@@ -12,10 +12,6 @@ export default function UsuariosPage() {
     const { obtenerUsuarios, loading } = useUsuarioStore();
     const [openModal, setOpenModal] = useState(false);
 
-    useEffect(() => {
-        obtenerUsuarios();
-    }, []);
-
     return (
         <>
             <div className="container mx-auto px-4 py-8 space-y-6">

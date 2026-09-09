@@ -63,7 +63,7 @@ export const obtenerVentas = async (
     return response.json();
 };
 
-export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta: string }) => {
+export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta: string; metodo_pago: string }) => {
     const token = await tokenUsuario();
 
     const transformarProducto = (producto: ItemCarrito) => {
@@ -80,7 +80,8 @@ export const crearVenta = async (ventaData: { carrito: ItemCarrito[]; tipo_venta
     const ventaDataToSend = {
         tipo_venta: ventaData.tipo_venta,
         estado: "completada",
-        items
+        items,
+        metodo_pago: ventaData.metodo_pago
     }
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ventas`, {
         method: "POST",

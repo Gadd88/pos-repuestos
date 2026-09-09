@@ -3,12 +3,13 @@ import { adminAuth, adminDb } from "@/lib/firebase-admin";
 import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario";
 import { UsuarioType } from "@/lib/types";
 import { NextResponse } from "next/server";
+import { registrarMovimientoStock } from '@/lib/helpers/movimientos-stock';
 
 const COLLECTION_NAME = "usuarios"
 
 export async function GET(req: Request) {
 
-  const { negocioId } = await obtenerUsuarioDesdeRequest(req)
+  const { negocioId, uid } = await obtenerUsuarioDesdeRequest(req)
 
   try {
     const usuariosRef = adminDb.collection(COLLECTION_NAME);
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
   const { negocioId } = await obtenerUsuarioDesdeRequest(req)
 
 
-  const { email, rol, password } = await req.json();
+  const {nombre, email, rol, password } = await req.json();
 
   // revisamos numero de usuarios creados - max 1
   const usuariosRef = adminDb.collection(COLLECTION_NAME);
@@ -40,26 +41,31 @@ export async function POST(req: Request) {
   if (snapshot.size >= 3) {
     return NextResponse.json({ success: false, error: "Solo se puede crear un vendedor por negocio." }, { status: 400 });
   }
+  try{
+    // 1. Crear usuario
+    const nuevoUsuario = await adminAuth.createUser({ email, password });
+  
+    // 2. Claims
+    await adminAuth.setCustomUserClaims(nuevoUsuario.uid, {
+      rol,
+      negocioId,
+    });
+  
+    // 3. Firestore
+    await adminDb.collection("usuarios").doc(nuevoUsuario.uid).set({
+      nombreUsuario: nombre,
+      email,
+      rol,
+      negocioId,
+      activo: true,
+      creadoEn: new Date(),
+    });
+  
+    return Response.json({ success: true, usuario: nuevoUsuario });
+  }catch(error){
+    return NextResponse.json({ success: false, error: `Error al crear el usuario: ${error}` }, { status: 500 });
+  }
 
-  // 1. Crear usuario
-  const nuevoUsuario = await adminAuth.createUser({ email, password });
-
-  // 2. Claims
-  await adminAuth.setCustomUserClaims(nuevoUsuario.uid, {
-    rol,
-    negocioId,
-  });
-
-  // 3. Firestore
-  await adminDb.collection("usuarios").doc(nuevoUsuario.uid).set({
-    email,
-    rol,
-    negocioId,
-    activo: true,
-    creadoEn: new Date(),
-  });
-
-  return Response.json({ success: true, usuario: nuevoUsuario });
 }
 
 export async function DELETE(req: Request) {

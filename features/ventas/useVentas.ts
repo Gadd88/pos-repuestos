@@ -58,14 +58,15 @@ export const useListarVentas = ({ limit, desde, hasta }: Props) => {
 
 type GenerarVentaInput = {
   carrito: ItemCarrito[],
-  tipo_venta: string
+  tipo_venta: string,
+  metodo_pago: string
 };
 
 export const useGenerarVenta = () => {
   const queryClient = useQueryClient();
 
   return useMutation<VentaType, Error, GenerarVentaInput>({
-    mutationFn: ({ carrito, tipo_venta }) => crearVenta({ carrito, tipo_venta }),
+    mutationFn: ({ carrito, tipo_venta, metodo_pago }) => crearVenta({ carrito, tipo_venta, metodo_pago }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
     },
