@@ -7,8 +7,6 @@ export async function obtenerUsuarioDesdeRequest(req: Request) {
     if (!token) throw new Error("Unauthorized");
 
     const decoded = await adminAuth.verifyIdToken(token);
-    console.log(decoded);
-
     //   const decoded = JSON.parse(atob(token.split(".")[1]));
 
     return {

@@ -10,6 +10,7 @@ import { ProductoType } from "@/lib/types";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useBusquedaProductos } from "@/hooks/useBusquedaProducto";
 import { ProductoModificadorPrecios } from "./producto/product-massive-modifier";
+import { useMovimientosStock } from "@/hooks/useMovmientosStock";
 
 export function InventoryManager() {
     const { usuario } = useAuthStore();

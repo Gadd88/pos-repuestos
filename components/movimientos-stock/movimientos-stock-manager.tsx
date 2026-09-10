@@ -1,0 +1,597 @@
+"use client";
+
+import { useState } from "react";
+import {
+    ArrowDown,
+    ArrowLeft,
+    ArrowUp,
+    Loader2,
+    RefreshCw,
+} from "lucide-react";
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import { useMovimientosStock } from "@/hooks/useMovmientosStock";
+import { MovimientoStockType } from "@/lib/types";
+import { useBusquedaProductos } from "@/hooks/useBusquedaProducto";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+
+type TipoFiltro = "" | "venta" | "cancelacion_venta" | "ajuste" | "compra";
+
+export function MovimientosStockManager() {
+    const [tipo, setTipo] = useState<TipoFiltro>("");
+    const [desde, setDesde] = useState("");
+    const [hasta, setHasta] = useState("");
+
+    const {
+        query: productoQuery,
+        setQuery: setProductoQuery,
+        filteredProducts,
+    } = useBusquedaProductos();
+
+    const [productoId, setProductoId] = useState("");
+
+    const {
+        data,
+        isLoading,
+        isError,
+        error,
+        refetch,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useMovimientosStock({
+        limit: 20,
+        productoId: productoId || undefined,
+        tipo: tipo || undefined,
+        desde: desde || undefined,
+        hasta: hasta || undefined,
+    });
+
+    const movimientos: MovimientoStockType[] =
+        data?.pages.flatMap((page) => page.movimientos) ?? [];
+
+    const resumen = movimientos.reduce(
+        (acc, movimiento) => {
+            switch (movimiento.tipo) {
+                case "venta":
+                    acc.ventas += Math.abs(movimiento.cantidad);
+                    break;
+
+                case "cancelacion_venta":
+                    acc.cancelaciones += Math.abs(movimiento.cantidad);
+                    break;
+
+                case "compra":
+                    acc.compras += Math.abs(movimiento.cantidad);
+                    break;
+
+                case "ajuste":
+                    acc.ajustes += movimiento.cantidad;
+                    break;
+            }
+
+            acc.neto += movimiento.cantidad;
+
+            return acc;
+        },
+        {
+            ventas: 0,
+            cancelaciones: 0,
+            compras: 0,
+            ajustes: 0,
+            neto: 0,
+        },
+    );
+
+    const resumenPorUsuario = movimientos.reduce<
+        Record<
+            string,
+            {
+                nombre: string;
+                ventas: Set<string>;
+                unidades: number;
+            }
+        >
+    >((acc, movimiento) => {
+        if (movimiento.tipo !== "venta") {
+            return acc;
+        }
+        const usuarioId = movimiento.usuarioId ?? "sin-usuario";
+        if (!acc[usuarioId]) {
+            acc[usuarioId] = {
+                nombre: movimiento.usuarioNombre ?? "Usuario desconocido",
+                ventas: new Set<string>(),
+                unidades: 0,
+            };
+        }
+        acc[usuarioId].unidades += Math.abs(movimiento.cantidad);
+
+        if (movimiento.ventaId) {
+            acc[usuarioId].ventas.add(movimiento.ventaId);
+        }
+        return acc;
+    }, {});
+
+    const vendedores = Object.values(resumenPorUsuario).map((usuario) => ({
+        nombre: usuario.nombre,
+        ventas: usuario.ventas.size,
+        unidades: usuario.unidades,
+    }));
+
+    const formatearFecha = (fecha: string | Date) => {
+        return new Date(fecha).toLocaleString("es-AR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+
+    const obtenerTipoLabel = (tipo: string) => {
+        switch (tipo) {
+            case "venta":
+                return "Venta";
+            case "cancelacion_venta":
+                return "Cancelación";
+            case "compra":
+                return "Compra";
+            case "ajuste":
+                return "Ajuste";
+            case "confirmacion_presupuesto":
+                return "Confirmación de presupuesto";
+            default:
+                return tipo;
+        }
+    };
+
+    const limpiarFiltros = () => {
+        setTipo("");
+        setDesde("");
+        setHasta("");
+        setProductoId("");
+        setProductoQuery("");
+    };
+
+    return (
+        <div className="w-full max-w-6xl mx-auto px-3 py-4 sm:px-4 sm:py-6">
+            <div className="space-y-6">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <Link href="/admin">
+                        <Button
+                            variant="outline"
+                            className="neo-button font-semibold bg-transparent"
+                        >
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            VOLVER AL DASHBOARD
+                        </Button>
+                    </Link>
+
+                    <div className="md:text-right">
+                        <h1
+                            className="neo-heading text-3xl md:text-4xl"
+                            style={{
+                                fontFamily: "var(--font-montserrat)",
+                            }}
+                        >
+                            MOVIMIENTOS DE STOCK
+                        </h1>
+
+                        <p className="text-muted-foreground">
+                            Historial y auditoría de movimientos de inventario
+                        </p>
+                    </div>
+                </div>
+
+                {/* Filtros */}
+                <div className="neo-card p-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        <div className="relative flex flex-col gap-2 sm:col-span-4">
+                            <label className="text-sm font-semibold">
+                                PRODUCTO
+                            </label>
+
+                            <input
+                                type="text"
+                                value={productoQuery}
+                                onChange={(e) => {
+                                    setProductoQuery(e.target.value);
+                                    setProductoId("");
+                                }}
+                                placeholder="Buscar producto..."
+                                className="neo-input w-full"
+                            />
+
+                            {productoQuery && !productoId && (
+                                <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto border-2 border-black bg-white shadow-[4px_4px_0px_0px_black]">
+                                    {filteredProducts.length === 0 ? (
+                                        <div className="p-3 text-sm">
+                                            No se encontraron productos.
+                                        </div>
+                                    ) : (
+                                        filteredProducts
+                                            .slice(0, 20)
+                                            .map((producto) => (
+                                                <button
+                                                    key={producto.id}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setProductoId(
+                                                            producto.id,
+                                                        );
+                                                        setProductoQuery("");
+                                                    }}
+                                                    className="block w-full border-b border-gray-300 p-3 text-left text-sm hover:bg-gray-100"
+                                                >
+                                                    {producto.nombre}
+                                                </button>
+                                            ))
+                                    )}
+                                </div>
+                            )}
+
+                            {productoId && (
+                                <div className="flex items-center gap-2 pt-1">
+                                    <span className="min-w-0 flex-1 truncate border-2 border-black bg-gray-100 px-3 py-2 text-sm font-semibold">
+                                        {filteredProducts.find(
+                                            (producto) =>
+                                                producto.id === productoId,
+                                        )?.nombre ?? "Producto seleccionado"}
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setProductoId("");
+                                            setProductoQuery("");
+                                        }}
+                                        className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-black bg-white font-bold hover:bg-gray-100"
+                                        aria-label="Quitar producto"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-semibold mb-2">
+                                TIPO
+                            </label>
+
+                            <select
+                                value={tipo}
+                                onChange={(e) =>
+                                    setTipo(e.target.value as TipoFiltro)
+                                }
+                                className="w-full h-10 rounded-md border bg-background px-3 text-sm"
+                            >
+                                <option value="">Todos</option>
+                                <option value="venta">Ventas</option>
+                                <option value="confirmacion_presupuesto">
+                                    Confirmaciones de presupuesto
+                                </option>
+                                <option value="cancelacion_venta">
+                                    Cancelaciones
+                                </option>
+                                <option value="compra">Compras</option>
+                                <option value="ajuste">Ajustes</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold mb-2">
+                                DESDE
+                            </label>
+
+                            <input
+                                type="date"
+                                value={desde}
+                                onChange={(e) => setDesde(e.target.value)}
+                                className="w-full h-10 rounded-md border bg-background px-3 text-sm"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold mb-2">
+                                HASTA
+                            </label>
+
+                            <input
+                                type="date"
+                                value={hasta}
+                                onChange={(e) => setHasta(e.target.value)}
+                                className="w-full h-10 rounded-md border bg-background px-3 text-sm"
+                            />
+                        </div>
+
+                        <div className="flex items-end gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={limpiarFiltros}
+                                className="flex-1"
+                            >
+                                LIMPIAR
+                            </Button>
+
+                            <Button
+                                variant="outline"
+                                onClick={() => refetch()}
+                                className="h-10 px-3"
+                                title="Actualizar"
+                            >
+                                <RefreshCw className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Error */}
+                {isError && (
+                    <div className="neo-card p-4 bg-destructive/10 border-destructive">
+                        <p className="text-destructive font-medium">
+                            {error instanceof Error
+                                ? error.message
+                                : "Error al obtener los movimientos"}
+                        </p>
+                    </div>
+                )}
+
+                {/* Loading */}
+                {isLoading && (
+                    <div className="flex justify-center py-12">
+                        <div className="text-center space-y-4">
+                            <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+                            <p className="text-muted-foreground">
+                                Cargando movimientos...
+                            </p>
+                        </div>
+                    </div>
+                )}
+                {/* Resumen */}
+                <div className="neo-card p-3 sm:p-4">
+                    <h2 className="neo-heading mb-3 text-base sm:text-lg">
+                        RESUMEN
+                    </h2>
+
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                        <div className="border-2 border-black p-2 sm:p-3">
+                            <p className="text-xs font-semibold text-gray-600">
+                                VENTAS
+                            </p>
+                            <p className="text-lg font-bold">
+                                {resumen.ventas}
+                            </p>
+                        </div>
+
+                        <div className="border-2 border-black p-2 sm:p-3">
+                            <p className="text-xs font-semibold text-gray-600">
+                                CANCELACIONES
+                            </p>
+                            <p className="text-lg font-bold">
+                                {resumen.cancelaciones}
+                            </p>
+                        </div>
+
+                        <div className="border-2 border-black p-2 sm:p-3">
+                            <p className="text-xs font-semibold text-gray-600">
+                                COMPRAS
+                            </p>
+                            <p className="text-lg font-bold">
+                                {resumen.compras}
+                            </p>
+                        </div>
+
+                        <div className="border-2 border-black p-2 sm:p-3">
+                            <p className="text-xs font-semibold text-gray-600">
+                                AJUSTES
+                            </p>
+                            <p className="text-lg font-bold">
+                                {resumen.ajustes}
+                            </p>
+                        </div>
+                        <div className="border-2 border-black p-3 col-span-2 sm:col-span-1">
+                            <p className="text-xs font-semibold text-gray-600">
+                                MOVIMIENTO NETO
+                            </p>
+
+                            <p className="text-xl font-bold text-end">
+                                {resumen.neto > 0 ? "+" : ""}
+                                {resumen.neto} un.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Vendedores */}
+                {vendedores.length > 0 && (
+                    <div className="neo-card p-3 sm:p-4">
+                        <h2 className="neo-heading mb-3 text-base sm:text-lg">
+                            VENTAS POR VENDEDOR
+                        </h2>
+
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4 min-h-20 max-h-20 cursor-default overflow-y-auto">
+                            {vendedores.map((vendedor) => (
+                                <div
+                                    key={vendedor.nombre}
+                                    className="flex items-center justify-between gap-3 border-2 border-black p-3 hover:bg-sky-100"
+                                >
+                                    <p className="min-w-0 truncate font-semibold">
+                                        {vendedor.nombre}
+                                    </p>
+
+                                    <div className="shrink-0 text-right text-sm">
+                                        <p>
+                                            {vendedor.ventas}{" "}
+                                            {vendedor.ventas === 1
+                                                ? "venta"
+                                                : "ventas"}
+                                        </p>
+
+                                        <p className="font-bold">
+                                            {vendedor.unidades}{" "}
+                                            {vendedor.unidades === 1
+                                                ? "unidad"
+                                                : "unidades"}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Lista */}
+                {!isLoading && !isError && (
+                    <>
+                        {movimientos.length === 0 ? (
+                            <div className="neo-card p-12 text-center">
+                                <p className="text-muted-foreground">
+                                    No se encontraron movimientos de stock.
+                                </p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="space-y-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                                    {movimientos.map((movimiento) => {
+                                        const esEntrada =
+                                            movimiento.cantidad > 0;
+                                        return (
+                                            <div
+                                                key={movimiento.id}
+                                                className="neo-card p-3 min-h-52 max-h-52"
+                                            >
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="flex min-w-0 items-start gap-3">
+                                                        {movimiento.cantidad <
+                                                        0 ? (
+                                                            <ArrowDown className="mt-0.5 h-5 w-5 shrink-0" />
+                                                        ) : (
+                                                            <ArrowUp className="mt-0.5 h-5 w-5 shrink-0" />
+                                                        )}
+
+                                                        <div className="min-w-0">
+                                                            <p className="font-bold">
+                                                                {movimiento.tipo ===
+                                                                "venta"
+                                                                    ? "VENTA"
+                                                                    : movimiento.tipo ===
+                                                                        "cancelacion_venta"
+                                                                      ? "CANCELACIÓN"
+                                                                      : movimiento.tipo ===
+                                                                          "ajuste"
+                                                                        ? "AJUSTE"
+                                                                        : movimiento.tipo === 
+                                                                            "confirmacion_presupuesto"
+                                                                          ? "CONFIRMACIÓN DE..."
+                                                                          : "COMPRA"}
+                                                            </p>
+
+                                                            <p className="text-xs text-gray-600">
+                                                                {movimiento.creadoEn.toLocaleString(
+                                                                    "es-AR",
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <span className="shrink-0 text-lg font-bold">
+                                                        {movimiento.cantidad > 0
+                                                            ? "+"
+                                                            : ""}
+                                                        {movimiento.cantidad}
+                                                    </span>
+                                                </div>
+
+                                                <div className="mt-2 border-t-2 border-black pt-2">
+                                                    <p className="truncate font-semibold">
+                                                        {
+                                                            movimiento.productoNombre
+                                                        }
+                                                    </p>
+
+                                                    <p className="mt-1 text-sm">
+                                                        Stock:{" "}
+                                                        <span className="font-semibold">
+                                                            {
+                                                                movimiento.stockAnterior
+                                                            }
+                                                        </span>
+                                                        {" → "}
+                                                        <span className="font-semibold">
+                                                            {
+                                                                movimiento.stockNuevo
+                                                            }
+                                                        </span>
+                                                    </p>
+                                                </div>
+
+                                                {(movimiento.usuarioNombre ||
+                                                    movimiento.ventaId ||
+                                                    movimiento.motivo) && (
+                                                    <div className="mt-2 space-y-1 border-t border-gray-300 pt-2 text-xs text-gray-600">
+                                                        {movimiento.usuarioNombre && (
+                                                            <p>
+                                                                Usuario:{" "}
+                                                                <span className="font-semibold text-black">
+                                                                    {
+                                                                        movimiento.usuarioNombre
+                                                                    }
+                                                                </span>
+                                                            </p>
+                                                        )}
+
+                                                        {movimiento.ventaId && (
+                                                            <p className="truncate">
+                                                                Venta:{" "}
+                                                                <span className="font-mono">
+                                                                    {
+                                                                        movimiento.ventaId
+                                                                    }
+                                                                </span>
+                                                            </p>
+                                                        )}
+
+                                                        {movimiento.motivo && (
+                                                            <p>
+                                                                Motivo:{" "}
+                                                                {
+                                                                    movimiento.motivo
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                {hasNextPage && (
+                                    <div className="flex justify-center pt-4">
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => fetchNextPage()}
+                                            disabled={isFetchingNextPage}
+                                            className="neo-button font-semibold"
+                                        >
+                                            {isFetchingNextPage ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                    CARGANDO...
+                                                </>
+                                            ) : (
+                                                "CARGAR MÁS"
+                                            )}
+                                        </Button>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </>
+                )}
+            </div>
+        </div>
+    );
+}

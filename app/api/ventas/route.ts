@@ -317,6 +317,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
                         ventaId: ventaRef.id,
                         usuarioId: uid,
                         usuarioNombre: vendedorNombre,
+                        motivo: "Venta realizada"
                     });
                 }
             }

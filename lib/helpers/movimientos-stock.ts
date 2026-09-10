@@ -6,7 +6,7 @@ type RegistrarMovimientoParams = {
     negocioId: string;
     productoId: string;
     productoNombre: string;
-    tipo: "venta" | "cancelacion_venta" | "ajuste" | "compra";
+    tipo: "venta" | "cancelacion_venta" | "ajuste" | "compra" | "confirmacion_presupuesto";
     cantidad: number;
     stockAnterior: number;
     stockNuevo: number;

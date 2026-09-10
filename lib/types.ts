@@ -67,7 +67,8 @@ export type MovimientoStockTipo =
     | "venta"
     | "cancelacion_venta"
     | "ajuste"
-    | "compra";
+    | "compra"
+    | "confirmacion_presupuesto";
 
 export type MovimientoStockType = {
     id: string;
