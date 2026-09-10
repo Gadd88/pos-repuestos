@@ -68,11 +68,9 @@ export default function NuevaVenta() {
                                 <TableHead className="text-white font-bold border-e-2">
                                     Producto
                                 </TableHead>
-                                {usuario?.rol == "admin" && (
-                                    <TableHead className="text-white font-bold border-e-2">
-                                        Precio Un. Mayorista
-                                    </TableHead>
-                                )}
+                                <TableHead className="text-white font-bold border-e-2">
+                                    Precio Un. Mayorista
+                                </TableHead>
                                 <TableHead className="text-white font-bold border-e-2">
                                     Precio Un. Minorista
                                 </TableHead>
@@ -108,14 +106,12 @@ export default function NuevaVenta() {
                                     <TableCell className="border-e-2">
                                         {producto?.nombre}
                                     </TableCell>
-                                    {usuario?.rol == "admin" && (
-                                        <TableCell className="text-center border-e-2">
-                                            $
-                                            {producto?.precio_venta_mayorista.toFixed(
-                                                2,
-                                            )}
-                                        </TableCell>
-                                    )}
+                                    <TableCell className="text-center border-e-2">
+                                        $
+                                        {producto?.precio_venta_mayorista.toFixed(
+                                            2,
+                                        )}
+                                    </TableCell>
                                     <TableCell className="text-center border-e-2">
                                         $
                                         {producto?.precio_venta_minorista.toFixed(
