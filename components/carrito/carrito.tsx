@@ -77,8 +77,6 @@ export const Carrito = () => {
                     : producto;
             }),
         );
-        // queryClient.invalidateQueries({ queryKey: ["productos"] });
-        // queryClient.invalidateQueries({ queryKey: ["ventas"] });
         vaciarCarrito();
         setIsOpen(false);
     };
@@ -106,7 +104,6 @@ export const Carrito = () => {
                 },
             },
         );
-        // queryClient.invalidateQueries({ queryKey: ["ventas"] });
         vaciarCarrito();
         setIsOpen(false);
     };

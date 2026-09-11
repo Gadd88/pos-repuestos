@@ -40,7 +40,6 @@ export const useConfirmarPresupuesto = () => {
                 return item ? { ...producto, stock: producto.stock - item.cantidad } : producto;
             }));
             queryClient.invalidateQueries({ queryKey: ["ventas"] });
-            // queryClient.invalidateQueries({ queryKey: ["presupuesto", id] });
         },
     });
 };

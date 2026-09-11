@@ -33,13 +33,6 @@ export const ConfirmaPresupuesto = ({ presupuesto, trigger, onConfirmado }: Conf
         confirmarPresupuesto(id, {
             onSuccess: () => {
                 toast.success("Presupuesto confirmado como venta");
-                // queryClient.invalidateQueries({ queryKey: ["productos"] });
-                // queryClient.setQueryData<ProductoType[]>(["productos"], (old =[]) => old.map((producto) => {
-                //             const item = .find((item) => item.id === producto.id);
-                //             return item ? { ...producto, stock: producto.stock - item!.cantidad } : producto;
-                //         }))
-                // queryClient.invalidateQueries({ queryKey: ["ventas"] });
-                // queryClient.invalidateQueries({ queryKey: ["presupuesto", id] });
                 onConfirmado?.();
             },
             onError: (error) => {
@@ -55,7 +48,7 @@ export const ConfirmaPresupuesto = ({ presupuesto, trigger, onConfirmado }: Conf
                     <Button
                         variant="outline"
                         disabled={presupuesto.estado === "completada"}
-                        className="h-10 w-10 sm:h-9 sm:w-9 border-2 bg-sky-400 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                        className="h-10 w-10 sm:h-9 sm:w-9 border-2 bg-sky-400 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-px active:translate-y-px active:shadow-none"
                     >
                         <CheckCheck className="w-4 h-4" />
                     </Button>

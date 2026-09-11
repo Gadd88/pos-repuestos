@@ -11,6 +11,16 @@ export async function GET(req: NextRequest) {
     const { negocioId } = await obtenerUsuarioDesdeRequest(req);
 
     try {
+
+        const configuracionSnapshot = await adminDb
+            .collection("configuracionStock")
+            .doc(negocioId)
+            .get();
+
+        const configuracion = configuracionSnapshot.data();
+
+        const inicioAuditoria = configuracion?.inicioAuditoria;
+        
         const { searchParams } = new URL(req.url);
 
         const limit = Math.min(
@@ -29,6 +39,7 @@ export async function GET(req: NextRequest) {
         let query = adminDb
             .collection(COLLECTION_NAME)
             .where("negocioId", "==", negocioId)
+            .where("creadoEn", ">=", inicioAuditoria)
             .orderBy("creadoEn", "desc")
             .orderBy(FieldPath.documentId());
 

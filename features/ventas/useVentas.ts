@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ItemCarrito, VentaType } from "@/lib/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -32,28 +31,7 @@ export const useListarVentas = ({ limit, desde, hasta }: Props) => {
     },
     staleTime: 1000 * 60 * 5, // 5 min
   })
-  // return useQuery({
-  //   queryKey: [
-  //     "ventas",
-  //     limit,
-  //     desde,
-  //     hasta
-  //   ],
-
-  //   queryFn: () =>
-  //     obtenerVentas({
-  //       limit,
-  //       desde,
-  //       hasta
-  //     }),
-  //   staleTime: 1000 * 60 * 5, // 5 min
-  // })
 };
-// return useQuery<VentaType[], Error>({
-//   queryKey: ["ventas"],
-//   queryFn: obtenerVentas,
-//   staleTime: 1000 * 60 * 5, // 5 min
-// });
 
 
 type GenerarVentaInput = {
@@ -73,18 +51,14 @@ export const useGenerarVenta = () => {
   });
 };
 
-
-
-
 export const useCancelarVenta = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: VentaType["id"]) => cancelarVenta(id),
     onSuccess: (id) => {
-      queryClient.setQueryData<VentaType[]>(["ventas"], (old = []) => old.map((venta) => (venta.id === id ? { ...venta, estado: "cancelada" } : venta)));
-      // queryClient.invalidateQueries({ queryKey: ["ventas"] });
+      queryClient.invalidateQueries({ queryKey: ["ventas"] });
+      // queryClient.setQueryData<VentaType[]>(["ventas"], (old = []) => old.map((venta) => (venta.id === id ? { ...venta, estado: "cancelada" } : venta)));
     },
   });
 };
-

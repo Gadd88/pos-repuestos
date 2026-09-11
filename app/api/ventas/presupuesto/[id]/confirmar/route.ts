@@ -95,7 +95,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
                     negocioId,
                     productoId: producto.ref.id,
                     productoNombre: producto.nombre,
-                    tipo: "confirmacion_presupuesto",
+                    tipo: "venta",
                     cantidad: -producto.cantidad,
                     stockAnterior: producto.stock,
                     stockNuevo: producto.stock - producto.cantidad,
