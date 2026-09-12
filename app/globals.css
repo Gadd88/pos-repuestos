@@ -441,6 +441,10 @@
       var(--shadow-sm);
   }
 
+  .black-button {
+    @apply bg-black text-white font-semibold hover:bg-black/80 hover:text-white;
+  }
+
   /* ============================================================
      INPUTS
      ============================================================ */
@@ -805,4 +809,46 @@
       box-shadow var(--transition-fast);
   }
 
+}
+
+@utility neo-button {
+  @apply border border-border;
+
+  border-radius: var(--radius);
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+
+  box-shadow: var(--shadow-xs);
+
+  cursor: pointer;
+  user-select: none;
+}
+
+@utility black-button {
+  @apply neo-button;
+  @apply w-full sm:w-auto bg-black text-white font-semibold hover:bg-black/80 hover:text-white;
+}
+
+@utility button-secondary-outline {
+  @apply neo-button;
+  @apply w-full sm:w-auto bg-transparent text-slate-700 dark:text-slate-200 font-semibold;
+  @apply border border-slate-300 dark:border-slate-700;
+  @apply hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white;
+}
+@utility button-secondary-liquid {
+  @apply neo-button;
+  @apply w-full sm:w-auto bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 font-semibold;
+  @apply border-transparent;
+  @apply hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-black dark:hover:text-white;
+}
+@utility button-secondary-ghost {
+  @apply neo-button;
+  @apply w-full sm:w-auto bg-transparent text-slate-500 font-medium;
+  @apply border-transparent shadow-none;
+  @apply hover:bg-slate-100 hover:text-slate-900;
 }

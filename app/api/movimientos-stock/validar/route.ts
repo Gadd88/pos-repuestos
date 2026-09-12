@@ -3,27 +3,28 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { adminDb } from "@/lib/firebase-admin";
 import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario";
+import { InconsistenciaStock } from "@/lib/types";
 
 const MOVIMIENTOS_COLLECTION = "movimientosStock";
 const PRODUCTOS_COLLECTION = "productos";
 
-type Inconsistencia = {
-    productoId: string;
-    productoNombre: string;
-    tipo:
-    | "cantidad_incorrecta"
-    | "ruptura_continuidad"
-    | "stock_actual_incorrecto";
-    detalle: string;
-    movimientoId?: string;
-    fechaMovimiento?: string;
-    movimientoAnterior?: {
-        id: string,
-        stockNuevo: number,
-        fecha: string
-    };
-    stockAnteriorRegistrado?: number;
-};
+// type Inconsistencia = {
+//     productoId: string;
+//     productoNombre: string;
+//     tipo:
+//     | "cantidad_incorrecta"
+//     | "ruptura_continuidad"
+//     | "stock_actual_incorrecto";
+//     detalle: string;
+//     movimientoId?: string;
+//     fechaMovimiento?: string;
+//     movimientoAnterior?: {
+//         id: string,
+//         stockNuevo: number,
+//         fecha: string
+//     };
+//     stockAnteriorRegistrado?: number;
+// };
 
 export async function GET(req: NextRequest) {
     const { negocioId } = await obtenerUsuarioDesdeRequest(req);
@@ -101,8 +102,7 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        const productosSnapshot =
-            await productosQuery.get();
+        const productosSnapshot = await productosQuery.get();
 
         const productos = new Map<
             string,
@@ -135,6 +135,7 @@ export async function GET(req: NextRequest) {
                 stockAnterior: number;
                 stockNuevo: number;
                 fecha: string | null;
+                esCorreccionAuditoria: boolean;
             }[]
         >();
 
@@ -152,6 +153,7 @@ export async function GET(req: NextRequest) {
                 stockAnterior: Number(data.stockAnterior ?? 0),
                 stockNuevo: Number(data.stockNuevo ?? 0),
                 fecha: data.creadoEn?.toDate?.()?.toISOString() ?? null,
+                esCorreccionAuditoria: data.esCorreccionAuditoria ?? false
             };
 
             const movimientos = movimientosPorProducto.get(movimiento.productoId) ?? [];
@@ -166,7 +168,7 @@ export async function GET(req: NextRequest) {
 
         // 4. Validar consistencia
 
-        const inconsistencias: Inconsistencia[] = [];
+        const inconsistencias: InconsistenciaStock[] = [];
 
         for (const [
             productoId,
@@ -208,10 +210,9 @@ export async function GET(req: NextRequest) {
 
                 const actual = movimientos[i];
 
-                if (
-                    anterior.stockNuevo !==
-                    actual.stockAnterior
-                ) {
+                const esCorreccionAuditoria = actual.esCorreccionAuditoria === true;
+
+                if (!esCorreccionAuditoria && anterior.stockNuevo !== actual.stockAnterior) {
                     inconsistencias.push({
                         productoId,
                         productoNombre: actual.productoNombre,
@@ -250,6 +251,8 @@ export async function GET(req: NextRequest) {
                     tipo: "stock_actual_incorrecto",
                     movimientoId: ultimoMovimiento.id,
                     fechaMovimiento: ultimoMovimiento.fecha ?? undefined,
+                    stockUltimoMovimiento: ultimoMovimiento.stockNuevo,
+                    stockActual: productoActual.stock,
                     detalle:
                         `El último movimiento registra un stock de ` +
                         `${ultimoMovimiento.stockNuevo}, ` +

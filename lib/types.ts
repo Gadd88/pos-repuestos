@@ -84,4 +84,61 @@ export type MovimientoStockType = {
     usuarioNombre?: string;
     motivo?: string;
     creadoEn: Date;
+    esCorreccionAuditoria?: boolean;
+};
+
+export type InconsistenciaStock = {
+    productoId: string;
+    productoNombre: string;
+    tipo:
+    | "cantidad_incorrecta"
+    | "ruptura_continuidad"
+    | "stock_actual_incorrecto";
+    detalle: string;
+    movimientoId?: string;
+    fechaMovimiento?: string;
+    movimientoAnterior?: {
+        id: string;
+        stockNuevo: number;
+        fecha: string;
+    };
+    stockAnteriorRegistrado?: number;
+    stockUltimoMovimiento?: number;
+    stockActual?: number;
+};
+
+export type ValidacionMovimientosStock = {
+    success: boolean;
+    productoId?: string | null;
+    consistente: boolean;
+    productosRevisados: number;
+    movimientosRevisados: number;
+    inconsistencias: InconsistenciaStock[];
+    inicioAuditoria: string;
+};
+
+export type ResumenMovimientosStock = {
+    success: boolean;
+    desde: string;
+    hasta: string;
+    cantidadMovimientos: number;
+
+    resumen: {
+        ventas: number;
+        cancelaciones: number;
+        compras: number;
+        ajustes: number;
+        unidadesVendidas: number;
+        unidadesCanceladas: number;
+        unidadesCompradas: number;
+        unidadesAjustadas: number;
+        movimientoNeto: number;
+    };
+
+    vendedores: {
+        usuarioId: string;
+        nombre: string;
+        ventas: number;
+        unidadesVendidas: number;
+    }[];
 };

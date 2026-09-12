@@ -9,18 +9,22 @@ import {
     RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
-
+import { InconsistenciaStock } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { useMovimientosStock } from "@/hooks/useMovmientosStock";
 import { MovimientoStockType } from "@/lib/types";
 import { useBusquedaProductos } from "@/hooks/useBusquedaProducto";
 import { useResumenMovimientosStock } from "@/hooks/useResumenMovimientoStock";
 import { useValidarMovimientosStock } from "@/hooks/useValidarMovimientoStock";
-import { iniciarAuditoriaStock } from "@/services/movimientos-stock.services";
+import {
+    iniciarAuditoriaStock,
+    corregirStock,
+} from "@/services/movimientos-stock.services";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuditoriaStock } from "@/hooks/useAuditoriaStock";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { ModalCorreccionStock } from "./validacion/modal-correccion-stock";
 
 type TipoFiltro = "" | "venta" | "cancelacion_venta" | "ajuste" | "compra";
 
@@ -35,6 +39,12 @@ export function MovimientosStockManager() {
     const [tipoValidacion, setTipoValidacion] = useState<
         "todo" | "producto" | null
     >(null);
+    const [productoAcorregir, setProductoAcorregir] =
+        useState<InconsistenciaStock | null>(null);
+    const [stockCorrecto, setStockCorrecto] = useState("");
+    const [motivoCorreccion, setMotivoCorreccion] = useState("");
+    // const [isCorrigiendoStock, setIsCorrigiendoStock] = useState(false);
+    const [errorCorreccion, setErrorCorreccion] = useState<string | null>(null);
 
     const queryClient = useQueryClient();
 
@@ -193,6 +203,55 @@ export function MovimientosStockManager() {
         }
     };
 
+    // const handleCorregirStock = async () => {
+    //     if (!productoAcorregir) {
+    //         return;
+    //     }
+
+    //     const stock = Number(stockCorrecto);
+
+    //     if (!Number.isFinite(stock) || stock < 0) {
+    //         setErrorCorreccion("Ingresá un stock válido mayor o igual a 0.");
+    //         return;
+    //     }
+
+    //     if (!motivoCorreccion.trim()) {
+    //         setErrorCorreccion("Ingresá el motivo de la corrección.");
+    //         return;
+    //     }
+
+    //     try {
+    //         setIsCorrigiendoStock(true);
+    //         setErrorCorreccion(null);
+
+    //         await corregirStock({
+    //             productoId: productoAcorregir.productoId,
+    //             stockCorrecto: stock,
+    //             motivo: motivoCorreccion.trim(),
+    //         });
+
+    //         setProductoAcorregir(null);
+    //         setStockCorrecto("");
+    //         setMotivoCorreccion("");
+
+    //         if (tipoValidacion === "todo") {
+    //             await validarStock();
+    //         }
+
+    //         if (tipoValidacion === "producto") {
+    //             await validarProductoStock();
+    //         }
+    //     } catch (error) {
+    //         setErrorCorreccion(
+    //             error instanceof Error
+    //                 ? error.message
+    //                 : "Error al corregir stock",
+    //         );
+    //     } finally {
+    //         setIsCorrigiendoStock(false);
+    //     }
+    // };
+
     const limpiarFiltros = () => {
         setTipo("");
         setDesde("");
@@ -247,11 +306,11 @@ export function MovimientosStockManager() {
 
                         <div className="grid grid-cols-2 gap-2 sm:flex">
                             <div className="flex flex-col gap-1">
-                                <label className="text-xs font-semibold">
+                                <Label className="text-xs font-semibold">
                                     DESDE
-                                </label>
+                                </Label>
 
-                                <input
+                                <Input
                                     type="date"
                                     value={reporteDesde}
                                     onChange={(e) =>
@@ -262,11 +321,11 @@ export function MovimientosStockManager() {
                             </div>
 
                             <div className="flex flex-col gap-1">
-                                <label className="text-xs font-semibold">
+                                <Label className="text-xs font-semibold">
                                     HASTA
-                                </label>
+                                </Label>
 
-                                <input
+                                <Input
                                     type="date"
                                     value={reporteHasta}
                                     onChange={(e) =>
@@ -662,6 +721,33 @@ export function MovimientosStockManager() {
                                                             </p>
                                                         )}
                                                     </div>
+                                                    {inconsistencia.tipo ===
+                                                        "stock_actual_incorrecto" && (
+                                                        <Button
+                                                            variant={"outline"}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setProductoAcorregir(
+                                                                    inconsistencia,
+                                                                );
+                                                                setStockCorrecto(
+                                                                    String(
+                                                                        inconsistencia.stockUltimoMovimiento ??
+                                                                            "",
+                                                                    ),
+                                                                );
+                                                                setMotivoCorreccion(
+                                                                    "",
+                                                                );
+                                                                setErrorCorreccion(
+                                                                    null,
+                                                                );
+                                                            }}
+                                                            className="neo-button mt-4 w-full sm:w-auto bg-black text-white font-semibold"
+                                                        >
+                                                            CORREGIR STOCK
+                                                        </Button>
+                                                    )}
                                                 </div>
                                             ),
                                         )}
@@ -793,6 +879,33 @@ export function MovimientosStockManager() {
                                                             }
                                                         </p>
                                                     )}
+                                                    {inconsistencia.tipo ===
+                                                        "stock_actual_incorrecto" && (
+                                                        <Button
+                                                            variant={"outline"}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setProductoAcorregir(
+                                                                    inconsistencia,
+                                                                );
+                                                                setStockCorrecto(
+                                                                    String(
+                                                                        inconsistencia.stockUltimoMovimiento ??
+                                                                            "",
+                                                                    ),
+                                                                );
+                                                                setMotivoCorreccion(
+                                                                    "",
+                                                                );
+                                                                setErrorCorreccion(
+                                                                    null,
+                                                                );
+                                                            }}
+                                                            className="neo-button mt-4 w-full sm:w-auto bg-black text-white font-semibold"
+                                                        >
+                                                            CORREGIR STOCK
+                                                        </Button>
+                                                    )}
                                                 </div>
                                             ),
                                         )}
@@ -814,11 +927,11 @@ export function MovimientosStockManager() {
                 <div className="neo-card p-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                         <div className="relative flex flex-col gap-2 sm:col-span-4">
-                            <label className="text-sm font-semibold">
+                            <Label className="text-sm font-semibold">
                                 PRODUCTO
-                            </label>
+                            </Label>
 
-                            <input
+                            <Input
                                 type="text"
                                 value={productoQuery}
                                 onChange={(e) => {
@@ -826,7 +939,7 @@ export function MovimientosStockManager() {
                                     setProductoId("");
                                 }}
                                 placeholder="Buscar producto..."
-                                className="neo-input w-full"
+                                className="neo-input w-full text-black"
                             />
 
                             {productoQuery && !productoId && (
@@ -839,7 +952,7 @@ export function MovimientosStockManager() {
                                         filteredProducts
                                             .slice(0, 20)
                                             .map((producto) => (
-                                                <button
+                                                <Button
                                                     key={producto.id}
                                                     type="button"
                                                     onClick={() => {
@@ -848,10 +961,10 @@ export function MovimientosStockManager() {
                                                         );
                                                         setProductoQuery("");
                                                     }}
-                                                    className="block w-full border-b border-gray-300 p-3 text-left text-sm hover:bg-gray-100"
+                                                    className="block w-full border-b border-gray-300 p-3 text-left text-sm hover:bg-gray-100 bg-white text-black cursor-pointer"
                                                 >
                                                     {producto.nombre}
-                                                </button>
+                                                </Button>
                                             ))
                                     )}
                                 </div>
@@ -866,24 +979,24 @@ export function MovimientosStockManager() {
                                         )?.nombre ?? "Producto seleccionado"}
                                     </span>
 
-                                    <button
+                                    <Button
                                         type="button"
                                         onClick={() => {
                                             setProductoId("");
                                             setProductoQuery("");
                                         }}
-                                        className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-black bg-white font-bold hover:bg-gray-100"
+                                        className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-black bg-white font-bold hover:bg-gray-100 text-black cursor-pointer"
                                         aria-label="Quitar producto"
                                     >
                                         ×
-                                    </button>
+                                    </Button>
                                 </div>
                             )}
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold mb-2">
+                            <Label className="block text-sm font-semibold mb-2">
                                 TIPO
-                            </label>
+                            </Label>
 
                             <select
                                 value={tipo}
@@ -903,11 +1016,11 @@ export function MovimientosStockManager() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-semibold mb-2">
+                            <Label className="block text-sm font-semibold mb-2">
                                 DESDE
-                            </label>
+                            </Label>
 
-                            <input
+                            <Input
                                 type="date"
                                 value={desde}
                                 onChange={(e) => setDesde(e.target.value)}
@@ -916,11 +1029,11 @@ export function MovimientosStockManager() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-semibold mb-2">
+                            <Label className="block text-sm font-semibold mb-2">
                                 HASTA
-                            </label>
+                            </Label>
 
-                            <input
+                            <Input
                                 type="date"
                                 value={hasta}
                                 onChange={(e) => setHasta(e.target.value)}
@@ -1082,7 +1195,7 @@ export function MovimientosStockManager() {
                                         return (
                                             <div
                                                 key={movimiento.id}
-                                                className="neo-card p-3 min-h-52 max-h-52"
+                                                className="neo-card p-3 min-h-56 max-h-56"
                                             >
                                                 <div className="flex items-start justify-between gap-3">
                                                     <div className="flex min-w-0 items-start gap-3">
@@ -1093,7 +1206,7 @@ export function MovimientosStockManager() {
                                                             <ArrowUp className="mt-0.5 h-5 w-5 shrink-0" />
                                                         )}
 
-                                                        <div className="min-w-0">
+                                                        <div className="min-w-0 space-y-2">
                                                             <p className="font-bold">
                                                                 {movimiento.tipo ===
                                                                 "venta"
@@ -1109,6 +1222,11 @@ export function MovimientosStockManager() {
                                                                           ? "CONFIRMACIÓN DE..."
                                                                           : "COMPRA"}
                                                             </p>
+                                                            {movimiento.esCorreccionAuditoria && (
+                                                                <p className="border-2 border-black p-1 text-xs font-bold">
+                                                                    CORRECCIÓN DE AUDITORÍA
+                                                                </p>
+                                                            )}
 
                                                             <p className="text-xs text-gray-600">
                                                                 {formatearFecha(
@@ -1213,6 +1331,113 @@ export function MovimientosStockManager() {
                     </>
                 )}
             </div>
+            {productoAcorregir && (
+                <ModalCorreccionStock
+                    productoAcorregir={productoAcorregir}
+                    setProductoAcorregir={setProductoAcorregir}
+                    tipoValidacion={tipoValidacion}
+                    validarProductoStock={validarProductoStock}
+                    validarStock={validarStock}
+                    errorCorreccion={errorCorreccion}
+                    motivoCorreccion={motivoCorreccion}
+                    setErrorCorreccion={setErrorCorreccion}
+                    setMotivoCorreccion={setMotivoCorreccion}
+                    setStockCorrecto={setStockCorrecto}
+                    stockCorrecto={stockCorrecto}
+                />
+                // <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-3">
+                //     <div className="neo-card w-full max-w-md p-4 sm:p-6">
+                //         <h2 className="neo-heading text-lg">CORREGIR STOCK</h2>
+
+                //         <p className="mt-2 text-sm">Producto:</p>
+
+                //         <p className="font-bold">
+                //             {productoAcorregir.productoNombre}
+                //         </p>
+
+                //         <div className="mt-4 border-2 border-black p-3">
+                //             <p className="text-xs font-semibold text-gray-600">
+                //                 STOCK ACTUAL REGISTRADO
+                //             </p>
+
+                //             <p className="text-2xl font-bold">
+                //                 {productoAcorregir.stockAnteriorRegistrado}
+                //             </p>
+                //         </div>
+
+                //         <div className="mt-4">
+                //             <Label className="text-sm font-semibold">
+                //                 STOCK CORRECTO
+                //             </Label>
+
+                //             <Input
+                //                 type="number"
+                //                 min="0"
+                //                 value={stockCorrecto}
+                //                 onChange={(e) =>
+                //                     setStockCorrecto(e.target.value)
+                //                 }
+                //                 className="neo-input mt-1 w-full"
+                //                 placeholder="Ej: 15"
+                //             />
+                //         </div>
+
+                //         <div className="mt-4">
+                //             <Label className="text-sm font-semibold">
+                //                 MOTIVO
+                //             </Label>
+
+                //             <Textarea
+                //                 value={motivoCorreccion}
+                //                 onChange={(e) =>
+                //                     setMotivoCorreccion(e.target.value)
+                //                 }
+                //                 className="neo-input mt-1 min-h-24 w-full resize-y"
+                //                 placeholder="Ej: Conteo físico de stock"
+                //             />
+                //         </div>
+
+                //         {errorCorreccion && (
+                //             <div className="mt-3 border-2 border-black bg-red-100 p-3 text-sm">
+                //                 {errorCorreccion}
+                //             </div>
+                //         )}
+
+                //         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-end">
+                //             <Button
+                //                 variant="outline"
+                //                 type="button"
+                //                 onClick={() => {
+                //                     if (isCorrigiendoStock) {
+                //                         return;
+                //                     }
+
+                //                     setProductoAcorregir(null);
+                //                     setStockCorrecto("");
+                //                     setMotivoCorreccion("");
+                //                     setErrorCorreccion(null);
+                //                 }}
+                //                 className="neo-button w-full sm:w-auto"
+                //                 disabled={isCorrigiendoStock}
+                //             >
+                //                 CANCELAR
+                //             </Button>
+
+                //             <Button
+                //                 type="button"
+                //                 variant="outline"
+                //                 onClick={handleCorregirStock}
+                //                 className="neo-button w-full sm:w-auto bg-black text-white font-semibold hover:bg-black/80 hover:text-white"
+                //                 disabled={isCorrigiendoStock}
+                //             >
+                //                 {isCorrigiendoStock
+                //                     ? "CORRIGIENDO..."
+                //                     : "CONFIRMAR CORRECCIÓN"}
+                //             </Button>
+                //         </div>
+                //     </div>
+                // </div>
+            )}
         </div>
     );
 }

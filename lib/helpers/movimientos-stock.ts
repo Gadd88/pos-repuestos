@@ -14,6 +14,7 @@ type RegistrarMovimientoParams = {
     usuarioId?: string;
     usuarioNombre?: string;
     motivo?: string;
+    esCorreccionAuditoria?: boolean;
 };
 
 export function registrarMovimientoStock({
@@ -29,6 +30,7 @@ export function registrarMovimientoStock({
     usuarioId,
     usuarioNombre,
     motivo,
+    esCorreccionAuditoria
 }: RegistrarMovimientoParams) {
 
     const movimientoRef = adminDb
@@ -47,6 +49,7 @@ export function registrarMovimientoStock({
         usuarioId: usuarioId ?? null,
         usuarioNombre: usuarioNombre ?? null,
         motivo: motivo ?? null,
+        esCorreccionAuditoria: esCorreccionAuditoria ?? false,
         creadoEn: FieldValue.serverTimestamp(),
     });
 }
