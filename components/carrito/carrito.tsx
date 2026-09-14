@@ -135,7 +135,7 @@ export const Carrito = () => {
                 ? createPortal(
                       <>
                           <div className="fixed inset-0 bg-black/50 z-40">
-                              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[95%] max-w-lg max-h-[80dvh] flex flex-col neo-card bg-background shadow-[6px_6px_0px_0px_black]">
+                              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-7/12 z-50 w-[95%] max-w-lg max-h-[80dvh] flex flex-col neo-card bg-background shadow-[6px_6px_0px_0px_black]">
                                   <div className="flex items-center justify-between p-4 border-b-2 border-border bg-black shrink-0">
                                       <h2
                                           className="neo-heading text-xl text-primary-foreground"
@@ -148,7 +148,7 @@ export const Carrito = () => {
                                       </h2>
                                       <button
                                           onClick={() => setIsOpen(false)}
-                                          className="neo-button w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground hover:bg-primary/80 transition-colors"
+                                          className="neo-button w-8 h-8 flex items-center justify-center bg-secondary text-secondary-foreground hover:bg-primary/80 transition-colors"
                                       >
                                           <X className="w-4 h-4" />
                                       </button>
@@ -255,58 +255,58 @@ export const Carrito = () => {
                                           </span>
                                       </div>
 
-                                      <div className="rounded-xl p-2">
-                                        <h3 className="neo-heading text-center">Método de pago</h3>
+                                      <div className="rounded-xl p-2 border-t-2">
+                                        <h3 className="neo-heading text-center my-2">Método de pago</h3>
                                           <RadioGroup
                                               defaultValue="efectivo"
                                               value={metodoPago}
                                               name="Método de pago"
                                               onValueChange={setMetodoPago}
-                                              className="grid grid-cols-2 overflow-x-auto md:grid-cols-2 items-center"
+                                              className="grid grid-cols-4 overflow-x-auto  items-center"
                                           >
-                                              <div className="flex justify-between p-2 border-b-2 border-e-2 md:flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
+                                              <div className="flex justify-between p-2 md:border-b-2 md:border-e-2 flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
                                                   <Label className="neo-heading font-semibold md:text-md">
                                                       Efectivo
                                                   </Label>
                                                   <RadioGroupItem
                                                       value="efectivo"
-                                                      defaultChecked
+                                                      defaultChecked={true}
                                                       id="efectivo"
-                                                      className="border-2 border-muted rounded-full w-10 h-10 focus:ring-2 focus:ring-blue-500"
+                                                      className="border-2 border-muted rounded-full w-6 h-6 focus:ring-2 focus:ring-blue-500 cursor-pointer"
                                                   >
                                                       Efectivo
                                                   </RadioGroupItem>
                                               </div>
-                                              <div className="flex justify-between p-2 border-b-2 border-e-2 md:flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
+                                              <div className="flex justify-between p-2 md:border-b-2 md:border-e-2 flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
                                                   <Label className="neo-heading font-semibold md:text-md">
                                                       Transferencia
                                                   </Label>
                                                   <RadioGroupItem
                                                       value="transferencia"
                                                       id="transferencia"
-                                                      className="border-2 border-muted rounded-full w-10 h-10 focus:ring-2 focus:ring-blue-500"
+                                                      className="border-2 border-muted rounded-full w-6 h-6 focus:ring-2 focus:ring-blue-500 cursor-pointer"
                                                   >
                                                       Transferencia
                                                   </RadioGroupItem>
                                               </div>
-                                              <div className="flex justify-between p-2 border-b-2 border-e-2 md:flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
+                                              <div className="flex justify-between p-2 md:border-b-2 md:border-e-2 flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
                                                   <Label className="neo-heading font-semibold md:text-md">
                                                       Tarjeta
                                                   </Label>
                                                   <RadioGroupItem
                                                       value="tarjeta"
                                                       id="tarjeta"
-                                                      className="border-2 border-muted rounded-full w-10 h-10 focus:ring-2 focus:ring-blue-500"
+                                                      className="border-2 border-muted rounded-full w-6 h-6 focus:ring-2 focus:ring-blue-500 cursor-pointer"
                                                   >
                                                       Tarjeta
                                                   </RadioGroupItem>
                                               </div>
-                                              <div className="flex justify-between p-2 border-b-2 border-e-2 md:flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
+                                              <div className="flex justify-between p-2 md:border-b-2 md:border-e-2 flex-col-reverse items-center rounded-xl gap-2 md:shadow-md md:p-2">
                                                   <Label className="neo-heading font-semibold md:text-md">QR</Label>
                                                   <RadioGroupItem
                                                       value="qr"
                                                       id="qr"
-                                                      className="border-2 border-muted rounded-full w-10 h-10 focus:ring-2 focus:ring-blue-500"
+                                                      className="border-2 border-muted rounded-full w-6 h-6 focus:ring-2 focus:ring-blue-500 cursor-pointer"
                                                   >
                                                       QR
                                                   </RadioGroupItem>

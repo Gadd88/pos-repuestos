@@ -138,10 +138,22 @@ export const validarMovimientosStock = async (productoId?: string): Promise<Vali
     return data;
 };
 
+export type UltimaValidacionStock = {
+    fecha: string | null;
+    usuarioId: string;
+    tipo: "todo" | "producto";
+    productoId: string | null;
+    consistente: boolean;
+    productosRevisados: number;
+    movimientosRevisados: number;
+    inconsistencias: number;
+};
+
 export type ConfiguracionAuditoriaStock = {
     success: boolean;
     auditoriaIniciada: boolean;
     inicioAuditoria: string | null;
+    ultimaValidacion: UltimaValidacionStock | null;
 };
 
 export const obtenerConfiguracionAuditoriaStock = async (): Promise<ConfiguracionAuditoriaStock> => {

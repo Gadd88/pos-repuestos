@@ -21,10 +21,22 @@ export async function GET(req: NextRequest) {
                 success: true,
                 auditoriaIniciada: false,
                 inicioAuditoria: null,
+                ultimaValidacion: null
             });
         }
 
         const data = snapshot.data();
+
+        const ultimaValidacion =
+            data?.ultimaValidacion
+                ? {
+                    ...data.ultimaValidacion,
+                    fecha:
+                        data.ultimaValidacion.fecha
+                            ?.toDate?.()
+                            ?.toISOString() ?? null,
+                }
+                : null;
 
         return NextResponse.json({
             success: true,
@@ -33,6 +45,7 @@ export async function GET(req: NextRequest) {
                 data?.inicioAuditoria
                     ?.toDate?.()
                     ?.toISOString() ?? null,
+            ultimaValidacion
         });
     } catch (error) {
         console.error(

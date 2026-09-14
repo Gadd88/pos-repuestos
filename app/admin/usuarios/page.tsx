@@ -9,9 +9,10 @@ import { UsuarioNuevoModal } from "@/components/usuarios/usuarios-modal";
 import Link from "next/link";
 
 export default function UsuariosPage() {
-    const { obtenerUsuarios, loading } = useUsuarioStore();
+    const { obtenerUsuarios, loading, usuarios } = useUsuarioStore();
     const [openModal, setOpenModal] = useState(false);
 
+    console.log(usuarios, loading)
     return (
         <>
             <div className="container mx-auto px-4 py-8 space-y-6">

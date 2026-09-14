@@ -1,6 +1,6 @@
 import { tokenUsuario } from "./productos-services";
 
-export const obtenerUsuarios = async () => {
+export const obtenerUsuariosService = async () => {
 
     const token = await tokenUsuario()
 

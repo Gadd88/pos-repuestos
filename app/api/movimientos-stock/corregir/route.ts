@@ -129,6 +129,35 @@ export async function POST(req: NextRequest) {
         let stockAnterior = 0;
         let diferencia = 0;
 
+        const configuracionSnap = await adminDb
+            .collection("configuracionStock")
+            .doc(negocioId)
+            .get();
+
+        if (!configuracionSnap.exists) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error:
+                        "La auditoría de stock todavía no fue iniciada",
+                },
+                { status: 400 }
+            );
+        }
+
+        const inicioAuditoria = configuracionSnap.data()?.inicioAuditoria;
+
+        if (!inicioAuditoria) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error:
+                        "La configuración de auditoría no tiene fecha de inicio",
+                },
+                { status: 500 }
+            );
+        }
+
         await adminDb.runTransaction(async (tx) => {
             const productoTransactionSnap = await tx.get(productoRef);
 
@@ -140,7 +169,7 @@ export async function POST(req: NextRequest) {
 
             const productoActual = productoTransactionSnap.data();
 
-            if ( productoActual?.negocioId !== negocioId ) {
+            if (productoActual?.negocioId !== negocioId) {
                 throw new Error(
                     "Producto no pertenece al negocio"
                 );

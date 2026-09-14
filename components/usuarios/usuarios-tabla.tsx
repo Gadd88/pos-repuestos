@@ -18,6 +18,7 @@ export function UsuariosTabla() {
         await eliminarVendedor(id);
         await obtenerUsuarios();
     }
+    console.log(usuarios)
 
     return (
         <div className="neo-card overflow-auto">

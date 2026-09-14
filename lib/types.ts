@@ -105,6 +105,8 @@ export type InconsistenciaStock = {
     stockAnteriorRegistrado?: number;
     stockUltimoMovimiento?: number;
     stockActual?: number;
+    cantidadRegistrada?: number;
+    stockNuevoRegistrado?: number;
 };
 
 export type ValidacionMovimientosStock = {

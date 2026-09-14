@@ -1,4 +1,4 @@
-import { FieldPath } from "firebase-admin/firestore";
+import { FieldPath, FieldValue } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 import { adminDb } from "@/lib/firebase-admin";
@@ -27,7 +27,7 @@ const PRODUCTOS_COLLECTION = "productos";
 // };
 
 export async function GET(req: NextRequest) {
-    const { negocioId } = await obtenerUsuarioDesdeRequest(req);
+    const { negocioId, uid } = await obtenerUsuarioDesdeRequest(req);
 
 
     try {
@@ -170,17 +170,11 @@ export async function GET(req: NextRequest) {
 
         const inconsistencias: InconsistenciaStock[] = [];
 
-        for (const [
-            productoId,
-            movimientos,
-        ] of movimientosPorProducto) {
-
+        for (const [productoId, movimientos] of movimientosPorProducto) {
             // 4.1 Validar cada movimiento individualmente
-
             for (const movimiento of movimientos) {
-                const diferencia =
-                    movimiento.stockNuevo -
-                    movimiento.stockAnterior;
+                
+                const diferencia = movimiento.stockNuevo - movimiento.stockAnterior;
 
                 if (diferencia !== movimiento.cantidad) {
                     inconsistencias.push({
@@ -189,6 +183,9 @@ export async function GET(req: NextRequest) {
                         tipo: "cantidad_incorrecta",
                         movimientoId: movimiento.id,
                         fechaMovimiento: movimiento.fecha ?? undefined,
+                        stockAnteriorRegistrado: movimiento.stockAnterior,
+                        cantidadRegistrada: movimiento.cantidad,
+                        stockNuevoRegistrado: movimiento.stockNuevo,
                         detalle:
                             `El movimiento indica una cantidad de ${movimiento.cantidad}, ` +
                             `pero el stock pasó de ${movimiento.stockAnterior} ` +
@@ -197,21 +194,11 @@ export async function GET(req: NextRequest) {
                     });
                 }
             }
-
             // 4.2 Validar continuidad entre movimientos
-
-            for (
-                let i = 1;
-                i < movimientos.length;
-                i++
-            ) {
-                const anterior =
-                    movimientos[i - 1];
-
+            for (let i = 1; i < movimientos.length; i++) {
+                const anterior = movimientos[i - 1];
                 const actual = movimientos[i];
-
                 const esCorreccionAuditoria = actual.esCorreccionAuditoria === true;
-
                 if (!esCorreccionAuditoria && anterior.stockNuevo !== actual.stockAnterior) {
                     inconsistencias.push({
                         productoId,
@@ -231,20 +218,10 @@ export async function GET(req: NextRequest) {
                     });
                 }
             }
-
             //  4.3 Comparar contra stock actual
-
-            const productoActual =
-                productos.get(productoId);
-
-            const ultimoMovimiento =
-                movimientos[movimientos.length - 1];
-
-            if (
-                productoActual &&
-                productoActual.stock !==
-                ultimoMovimiento.stockNuevo
-            ) {
+            const productoActual = productos.get(productoId);
+            const ultimoMovimiento = movimientos[movimientos.length - 1];
+            if (productoActual && productoActual.stock !== ultimoMovimiento.stockNuevo) {
                 inconsistencias.push({
                     productoId,
                     productoNombre: productoActual.nombre,
@@ -261,14 +238,31 @@ export async function GET(req: NextRequest) {
                 });
             }
         }
+        const consistente = inconsistencias.length === 0;
 
+        const tipoValidacion = productoIdFiltro ? "producto" : "todo";
+
+        await adminDb
+            .collection("configuracionStock")
+            .doc(negocioId)
+            .update({
+                ultimaValidacion: {
+                    fecha: FieldValue.serverTimestamp(),
+                    usuarioId: uid,
+                    tipo: tipoValidacion,
+                    productoId: productoIdFiltro ?? null,
+                    consistente,
+                    productosRevisados: productosSnapshot.size,
+                    movimientosRevisados: movimientosSnapshot.size,
+                    inconsistencias: inconsistencias.length,
+                },
+            });
         // 5. Respuesta
-
         return NextResponse.json({
             success: true,
-            productoId: productoIdFiltro,
+            productoId: productoIdFiltro ?? null,
             inicioAuditoria: inicioAuditoria.toDate().toISOString(),
-            consistente: inconsistencias.length === 0,
+            consistente,
             productosRevisados: productosSnapshot.size,
             movimientosRevisados: movimientosSnapshot.size,
             inconsistencias,

@@ -513,13 +513,99 @@ export function MovimientosStockManager() {
                             ).toLocaleString("es-AR")}
                         </div>
                     )}
+                {!isLoadingAuditoria && auditoriaData?.ultimaValidacion && (
+                    <div className="neo-card mb-4 p-3 sm:p-4">
+                        <h2 className="neo-heading text-base sm:text-lg">
+                            ÚLTIMA VALIDACIÓN
+                        </h2>
+
+                        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                            <div className="border-2 border-black p-2">
+                                <p className="text-xs font-semibold text-gray-600">
+                                    TIPO
+                                </p>
+
+                                <p className="mt-1 text-sm font-bold">
+                                    {auditoriaData.ultimaValidacion.tipo ===
+                                    "todo"
+                                        ? "TODO EL STOCK"
+                                        : "PRODUCTO"}
+                                </p>
+                            </div>
+
+                            <div className="border-2 border-black p-2">
+                                <p className="text-xs font-semibold text-gray-600">
+                                    RESULTADO
+                                </p>
+
+                                <p
+                                    className={`mt-1 text-sm font-bold ${
+                                        auditoriaData.ultimaValidacion
+                                            .consistente
+                                            ? "text-green-600"
+                                            : "text-red-600"
+                                    }`}
+                                >
+                                    {auditoriaData.ultimaValidacion.consistente
+                                        ? "CONSISTENTE"
+                                        : "CON INCONSISTENCIAS"}
+                                </p>
+                            </div>
+
+                            <div className="border-2 border-black p-2">
+                                <p className="text-xs font-semibold text-gray-600">
+                                    INCONSISTENCIAS
+                                </p>
+
+                                <p className="mt-1 text-xl font-bold">
+                                    {
+                                        auditoriaData.ultimaValidacion
+                                            .inconsistencias
+                                    }
+                                </p>
+                            </div>
+
+                            <div className="border-2 border-black p-2">
+                                <p className="text-xs font-semibold text-gray-600">
+                                    MOVIMIENTOS
+                                </p>
+
+                                <p className="mt-1 text-xl font-bold">
+                                    {
+                                        auditoriaData.ultimaValidacion
+                                            .movimientosRevisados
+                                    }
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-3 text-xs text-gray-500">
+                            {auditoriaData.ultimaValidacion.fecha && (
+                                <p>
+                                    Validado el{" "}
+                                    {new Date(
+                                        auditoriaData.ultimaValidacion.fecha,
+                                    ).toLocaleString("es-AR")}
+                                </p>
+                            )}
+
+                            <p>
+                                Productos revisados:{" "}
+                                {
+                                    auditoriaData.ultimaValidacion
+                                        .productosRevisados
+                                }
+                            </p>
+                        </div>
+                    </div>
+                )}
 
                 {/*Validacion*/}
                 <div className="neo-card p-3 sm:p-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <h2 className="neo-heading text-base sm:text-lg">
-                                VALIDACIÓN DE STOCK
+                                AUDITORÍA DE STOCK
                             </h2>
 
                             <p className="mt-1 text-xs text-gray-600">
@@ -532,9 +618,14 @@ export function MovimientosStockManager() {
                             <Button
                                 variant="outline"
                                 type="button"
-                                onClick={() => {
+                                onClick={async () => {
                                     setTipoValidacion("todo");
-                                    validarStock();
+                                    await validarStock();
+                                    await queryClient.invalidateQueries({
+                                        queryKey: [
+                                            "configuracionAuditoriaStock",
+                                        ],
+                                    });
                                 }}
                                 disabled={
                                     isValidandoStock || isValidandoProducto
@@ -548,16 +639,21 @@ export function MovimientosStockManager() {
                                         VALIDANDO...
                                     </>
                                 ) : (
-                                    "VALIDAR STOCK"
+                                    "AUDITAR STOCK"
                                 )}
                             </Button>
 
                             <Button
                                 variant="outline"
                                 type="button"
-                                onClick={() => {
+                                onClick={async () => {
                                     setTipoValidacion("producto");
-                                    validarProductoStock();
+                                    await validarProductoStock();
+                                    await queryClient.invalidateQueries({
+                                        queryKey: [
+                                            "configuracionAuditoriaStock",
+                                        ],
+                                    });
                                 }}
                                 disabled={
                                     !productoId ||
@@ -573,7 +669,7 @@ export function MovimientosStockManager() {
                                         VALIDANDO...
                                     </>
                                 ) : (
-                                    "VALIDAR PRODUCTO"
+                                    "AUDITAR PRODUCTO"
                                 )}
                             </Button>
                         </div>
@@ -671,12 +767,35 @@ export function MovimientosStockManager() {
                                                             }
                                                         </p>
 
-                                                        <span className="shrink-0 text-xs font-bold uppercase">
+                                                        {/* <span className="shrink-0 text-xs font-bold uppercase">
                                                             {inconsistencia.tipo.replace(
                                                                 /_/g,
                                                                 " ",
                                                             )}
-                                                        </span>
+                                                        </span> */}
+                                                        <div className="flex flex-wrap items-center gap-2">
+                                                            <span className="font-bold">
+                                                                {inconsistencia.tipo ===
+                                                                "stock_actual_incorrecto"
+                                                                    ? "STOCK ACTUAL INCORRECTO"
+                                                                    : inconsistencia.tipo ===
+                                                                        "ruptura_continuidad"
+                                                                      ? "RUPTURA DE CONTINUIDAD"
+                                                                      : "CANTIDAD INCORRECTA"}
+                                                            </span>
+
+                                                            {inconsistencia.tipo ===
+                                                            "stock_actual_incorrecto" ? (
+                                                                <span className="border-2 border-black bg-yellow-200 px-2 py-1 text-xs font-bold">
+                                                                    CORREGIBLE
+                                                                </span>
+                                                            ) : (
+                                                                <span className="border-2 border-black bg-gray-200 px-2 py-1 text-xs font-bold">
+                                                                    REQUIERE
+                                                                    REVISIÓN
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
 
                                                     <p className="mt-2 text-sm">
@@ -758,7 +877,7 @@ export function MovimientosStockManager() {
                     )}
                     {tipoValidacion === "producto" &&
                         validacionProductoData && (
-                            <div className="mt-4 border-2 border-black p-4">
+                            <div className="mt-4 border-2 border-black p-2">
                                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                     <div>
                                         <p className="text-xs font-semibold text-gray-600">
@@ -814,16 +933,80 @@ export function MovimientosStockManager() {
                                                     key={`${inconsistencia.movimientoId ?? "sin-id"}-${index}`}
                                                     className="border-2 border-black p-3"
                                                 >
-                                                    <p className="font-bold uppercase">
+                                                    {/* <p className="font-bold uppercase">
                                                         {inconsistencia.tipo.replace(
                                                             /_/g,
                                                             " ",
                                                         )}
-                                                    </p>
+                                                    </p> */}
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span className="font-bold">
+                                                            {inconsistencia.tipo ===
+                                                            "stock_actual_incorrecto"
+                                                                ? "STOCK ACTUAL INCORRECTO"
+                                                                : inconsistencia.tipo ===
+                                                                    "ruptura_continuidad"
+                                                                  ? "RUPTURA DE CONTINUIDAD"
+                                                                  : "CANTIDAD INCORRECTA"}
+                                                        </span>
+
+                                                        {inconsistencia.tipo ===
+                                                        "stock_actual_incorrecto" ? (
+                                                            <span className="border-2 border-black bg-yellow-200 px-2 py-1 text-xs font-bold">
+                                                                CORREGIBLE
+                                                            </span>
+                                                        ) : (
+                                                            <span className="border-2 border-black bg-gray-200 px-2 py-1 text-xs font-bold">
+                                                                REQUIERE
+                                                                REVISIÓN
+                                                            </span>
+                                                        )}
+                                                    </div>
 
                                                     <p className="mt-1 text-sm">
                                                         {inconsistencia.detalle}
                                                     </p>
+                                                    {inconsistencia.tipo ===
+                                                        "cantidad_incorrecta" && (
+                                                        <div className="mt-3 grid grid-cols-3 gap-2">
+                                                            <div className="border-2 border-black p-2">
+                                                                <p className="text-xs font-semibold text-gray-600">
+                                                                    STOCK
+                                                                    ANTERIOR
+                                                                </p>
+
+                                                                <p className="text-xl font-bold">
+                                                                    {
+                                                                        inconsistencia.stockAnteriorRegistrado
+                                                                    }
+                                                                </p>
+                                                            </div>
+
+                                                            <div className="border-2 border-black p-2">
+                                                                <p className="text-xs font-semibold text-gray-600">
+                                                                    CANTIDAD
+                                                                </p>
+
+                                                                <p className="text-xl font-bold">
+                                                                    {
+                                                                        inconsistencia.cantidadRegistrada
+                                                                    }
+                                                                </p>
+                                                            </div>
+
+                                                            <div className="border-2 border-black p-2">
+                                                                <p className="text-xs font-semibold text-gray-600">
+                                                                    STOCK NUEVO
+                                                                </p>
+
+                                                                <p className="text-xl font-bold">
+                                                                    {
+                                                                        inconsistencia.stockNuevoRegistrado
+                                                                    }
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                     {inconsistencia.tipo ===
                                                         "ruptura_continuidad" &&
                                                         inconsistencia.movimientoAnterior &&
@@ -1224,7 +1407,8 @@ export function MovimientosStockManager() {
                                                             </p>
                                                             {movimiento.esCorreccionAuditoria && (
                                                                 <p className="border-2 border-black p-1 text-xs font-bold">
-                                                                    CORRECCIÓN DE AUDITORÍA
+                                                                    CORRECCIÓN
+                                                                    DE AUDITORÍA
                                                                 </p>
                                                             )}
 

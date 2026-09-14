@@ -3,13 +3,12 @@ import { adminAuth, adminDb } from "@/lib/firebase-admin";
 import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario";
 import { UsuarioType } from "@/lib/types";
 import { NextResponse } from "next/server";
-import { registrarMovimientoStock } from '@/lib/helpers/movimientos-stock';
 
 const COLLECTION_NAME = "usuarios"
 
 export async function GET(req: Request) {
 
-  const { negocioId, uid } = await obtenerUsuarioDesdeRequest(req)
+  const { negocioId } = await obtenerUsuarioDesdeRequest(req)
 
   try {
     const usuariosRef = adminDb.collection(COLLECTION_NAME);
@@ -19,6 +18,8 @@ export async function GET(req: Request) {
       id: doc.id,
       ...doc.data()
     })) as UsuarioType[];
+
+    console.log(usuariosList)
 
     return NextResponse.json(usuariosList)
   } catch (error) {
@@ -34,12 +35,12 @@ export async function POST(req: Request) {
 
   const {nombre, email, rol, password } = await req.json();
 
-  // revisamos numero de usuarios creados - max 1
+  // revisamos numero de usuarios creados - max 3
   const usuariosRef = adminDb.collection(COLLECTION_NAME);
   const snapshot = await usuariosRef.where("negocioId", "==", negocioId).where("rol", "==", "vendedor").get();
 
   if (snapshot.size >= 3) {
-    return NextResponse.json({ success: false, error: "Solo se puede crear un vendedor por negocio." }, { status: 400 });
+    return NextResponse.json({ success: false, error: "Solo se puede crear un máximo de 3 vendedores por negocio." }, { status: 400 });
   }
   try{
     // 1. Crear usuario

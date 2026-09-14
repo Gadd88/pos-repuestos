@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { UsuarioType } from "../types";
-import { eliminarVendedorDB, generarUsuarioVendedor, obtenerUsuarios } from "@/services/usuarios-services";
+import { eliminarVendedorDB, generarUsuarioVendedor, obtenerUsuariosService } from "@/services/usuarios-services";
 import { toast } from "sonner";
 
 interface AuthState {
@@ -25,7 +25,7 @@ export const useUsuarioStore = create<AuthState>((set) => ({
 
     obtenerUsuarios: async () => {
         try {
-            const usuarios = await obtenerUsuarios();
+            const usuarios = await obtenerUsuariosService();
             set({ usuarios, loading: false });
         } catch (err: any) {
             set({ error: err.message, loading: false });
