@@ -17,13 +17,14 @@ export const useObtenerPresupuesto = (id: VentaType['id']) => {
 
 type GenerarPresupuestoInput = {
     carrito: ItemCarrito[],
-    tipo_venta: string
+    tipo_venta: string,
+    metodo_pago: string
 }
 
 export const useGenerarPresupuesto = () => {
     const queryClient = useQueryClient()
     return useMutation<VentaType, Error, GenerarPresupuestoInput>({
-        mutationFn: ({carrito, tipo_venta}) => crearPresupuestoService({carrito, tipo_venta}),
+        mutationFn: ({carrito, tipo_venta, metodo_pago}) => crearPresupuestoService({carrito, tipo_venta, metodo_pago}),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["ventas"]})
         }

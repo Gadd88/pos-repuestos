@@ -234,70 +234,72 @@ export function AdminDashboard() {
                             </Link>
                         </div>
                     </div>
-                    <div className="container border-2 p-4 bg-white shadow-[4px_4px_0_0_rgba(0,0,0,.7)]">
-                        <h2 className="neo-heading text-xl">AUDITORÍA</h2>
-                        <div className="grid grid-cols-1 gap-4">
-                            <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
-                                <div className="flex items-center gap-3">
-                                    <ArrowUpDown className="w-8 h-8 text-orange-500" />
-                                    <h2
-                                        className="neo-heading text-xl"
-                                        style={{
-                                            fontFamily:
-                                                "var(--font-montserrat)",
-                                        }}
-                                    >
-                                        Movimientos de Stock
-                                    </h2>
-                                </div>
-                                <p className="text-muted-foreground">
-                                    Detalle de los movimientos de stock
-                                    registrados.
-                                </p>
+                    { esAdmin && 
+                        <div className="container border-2 p-4 bg-white shadow-[4px_4px_0_0_rgba(0,0,0,.7)]">
+                            <h2 className="neo-heading text-xl">AUDITORÍA</h2>
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
+                                    <div className="flex items-center gap-3">
+                                        <ArrowUpDown className="w-8 h-8 text-orange-500" />
+                                        <h2
+                                            className="neo-heading text-xl"
+                                            style={{
+                                                fontFamily:
+                                                    "var(--font-montserrat)",
+                                            }}
+                                        >
+                                            Movimientos de Stock
+                                        </h2>
+                                    </div>
+                                    <p className="text-muted-foreground">
+                                        Detalle de los movimientos de stock
+                                        registrados.
+                                    </p>
 
-                                <Link href="/admin/movimientos-stock">
-                                    <Button
-                                        className="w-full neo-button font-bold bg-orange-600 hover:bg-orange-500"
-                                        style={{
-                                            fontFamily:
-                                                "var(--font-montserrat)",
-                                        }}
-                                    >
-                                        Ver Movimientos
-                                    </Button>
-                                </Link>
-                            </div>
-                            <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
-                                <div className="flex items-center gap-3">
-                                    <ChartCandlestick className="w-8 h-8 text-primary" />
-                                    <h2
-                                        className="neo-heading text-xl"
-                                        style={{
-                                            fontFamily:
-                                                "var(--font-montserrat)",
-                                        }}
-                                    >
-                                        Resumen de Caja
-                                    </h2>
+                                    <Link href="/admin/movimientos-stock">
+                                        <Button
+                                            className="w-full neo-button font-bold bg-orange-600 hover:bg-orange-500"
+                                            style={{
+                                                fontFamily:
+                                                    "var(--font-montserrat)",
+                                            }}
+                                        >
+                                            Ver Movimientos
+                                        </Button>
+                                    </Link>
                                 </div>
-                                <p className="text-muted-foreground">
-                                    Resumen de ventas diario.
-                                </p>
+                                <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
+                                    <div className="flex items-center gap-3">
+                                        <ChartCandlestick className="w-8 h-8 text-primary" />
+                                        <h2
+                                            className="neo-heading text-xl"
+                                            style={{
+                                                fontFamily:
+                                                    "var(--font-montserrat)",
+                                            }}
+                                        >
+                                            Resumen de Caja
+                                        </h2>
+                                    </div>
+                                    <p className="text-muted-foreground">
+                                        Resumen de ventas diario.
+                                    </p>
 
-                                <Link href="/admin/resumen-caja">
-                                    <Button
-                                        className="w-full neo-button font-bold bg-primary"
-                                        style={{
-                                            fontFamily:
-                                                "var(--font-montserrat)",
-                                        }}
-                                    >
-                                        Ver Resumen
-                                    </Button>
-                                </Link>
+                                    <Link href="/admin/resumen-caja">
+                                        <Button
+                                            className="w-full neo-button font-bold bg-primary"
+                                            style={{
+                                                fontFamily:
+                                                    "var(--font-montserrat)",
+                                            }}
+                                        >
+                                            Ver Resumen
+                                        </Button>
+                                    </Link>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
                 
                 <ProductosBajoStock productosBajoStock={productosBajoStock}/>

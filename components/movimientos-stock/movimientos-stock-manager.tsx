@@ -1407,8 +1407,7 @@ export function MovimientosStockManager() {
                                                             </p>
                                                             {movimiento.esCorreccionAuditoria && (
                                                                 <p className="border-2 border-black p-1 text-xs font-bold">
-                                                                    CORRECCIÓN
-                                                                    DE AUDITORÍA
+                                                                    CORRECCIÓN DE AUDITORÍA
                                                                 </p>
                                                             )}
 

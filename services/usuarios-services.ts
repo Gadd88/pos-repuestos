@@ -1,6 +1,7 @@
+import { UsuarioType } from "@/lib/types";
 import { tokenUsuario } from "./productos-services";
 
-export const obtenerUsuariosService = async () => {
+export const obtenerUsuariosService = async (): Promise<UsuarioType[]> => {
 
     const token = await tokenUsuario()
 
@@ -14,7 +15,10 @@ export const obtenerUsuariosService = async () => {
         console.error(`Error al obtener usuarios: ${errorText}`);
         throw new Error(`Error ${res.status}: ${errorText}`);
     }
-    return res.json();
+
+    const usuarios: UsuarioType[] = await res.json()
+    return usuarios
+
 }
 
 

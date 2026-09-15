@@ -19,8 +19,6 @@ export async function GET(req: Request) {
       ...doc.data()
     })) as UsuarioType[];
 
-    console.log(usuariosList)
-
     return NextResponse.json(usuariosList)
   } catch (error) {
     console.error(error)
