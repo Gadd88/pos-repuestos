@@ -27,7 +27,7 @@ export type VentaType = {
     totalGastado: number
     fecha: Date
     tipo_venta: 'minorista' | 'mayorista'
-    metodo_pago: 'efectivo' | 'tarjeta' | 'transferencia'
+    metodo_pago: 'efectivo' | 'tarjeta' | 'transferencia' | 'qr'
     cliente?: string
     vendedor_nombre: string
     vendedor_id: string
@@ -42,7 +42,7 @@ export type VentaType = {
 export type UsuarioType = {
     id: string
     uid?: string
-    nombre: string
+    nombreUsuario: string
     email: string
     negocioId: string
     nombreNegocio: string
@@ -62,3 +62,85 @@ export type NegocioType = {
     adminId: string
     creadoEn: Date
 }
+
+export type MovimientoStockTipo =
+    | "venta"
+    | "cancelacion_venta"
+    | "ajuste"
+    | "compra"
+    | "confirmacion_presupuesto";
+
+export type MovimientoStockType = {
+    id: string;
+    negocioId: string;
+    productoId: string;
+    productoNombre: string;
+    tipo: MovimientoStockTipo;
+    cantidad: number;
+    stockAnterior: number;
+    stockNuevo: number;
+    ventaId?: string;
+    usuarioId?: string;
+    usuarioNombre?: string;
+    motivo?: string;
+    creadoEn: Date;
+    esCorreccionAuditoria?: boolean;
+};
+
+export type InconsistenciaStock = {
+    productoId: string;
+    productoNombre: string;
+    tipo:
+    | "cantidad_incorrecta"
+    | "ruptura_continuidad"
+    | "stock_actual_incorrecto";
+    detalle: string;
+    movimientoId?: string;
+    fechaMovimiento?: string;
+    movimientoAnterior?: {
+        id: string;
+        stockNuevo: number;
+        fecha: string;
+    };
+    stockAnteriorRegistrado?: number;
+    stockUltimoMovimiento?: number;
+    stockActual?: number;
+    cantidadRegistrada?: number;
+    stockNuevoRegistrado?: number;
+};
+
+export type ValidacionMovimientosStock = {
+    success: boolean;
+    productoId?: string | null;
+    consistente: boolean;
+    productosRevisados: number;
+    movimientosRevisados: number;
+    inconsistencias: InconsistenciaStock[];
+    inicioAuditoria: string;
+};
+
+export type ResumenMovimientosStock = {
+    success: boolean;
+    desde: string;
+    hasta: string;
+    cantidadMovimientos: number;
+
+    resumen: {
+        ventas: number;
+        cancelaciones: number;
+        compras: number;
+        ajustes: number;
+        unidadesVendidas: number;
+        unidadesCanceladas: number;
+        unidadesCompradas: number;
+        unidadesAjustadas: number;
+        movimientoNeto: number;
+    };
+
+    vendedores: {
+        usuarioId: string;
+        nombre: string;
+        ventas: number;
+        unidadesVendidas: number;
+    }[];
+};

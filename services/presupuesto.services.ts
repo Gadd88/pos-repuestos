@@ -1,7 +1,7 @@
 import { ItemCarrito, VentaType } from "@/lib/types";
 import { tokenUsuario } from "./productos-services";
 
-export const crearPresupuestoService = async (presupuestoData: { carrito: ItemCarrito[]; tipo_venta: string }): Promise<VentaType> => {
+export const crearPresupuestoService = async (presupuestoData: { carrito: ItemCarrito[]; tipo_venta: string; metodo_pago: string}): Promise<VentaType> => {
     const token = await tokenUsuario()
 
     const transformarProducto = (producto: ItemCarrito) => {
@@ -18,7 +18,8 @@ export const crearPresupuestoService = async (presupuestoData: { carrito: ItemCa
     const presupuestoDataToSend = {
         tipo_venta: presupuestoData.tipo_venta,
         estado: "completada",
-        items
+        items,
+        metodo_pago: presupuestoData.metodo_pago
     }
 
     const response = await fetch("/api/ventas", {

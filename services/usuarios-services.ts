@@ -1,6 +1,7 @@
+import { UsuarioType } from "@/lib/types";
 import { tokenUsuario } from "./productos-services";
 
-export const obtenerUsuarios = async () => {
+export const obtenerUsuariosService = async (): Promise<UsuarioType[]> => {
 
     const token = await tokenUsuario()
 
@@ -14,11 +15,14 @@ export const obtenerUsuarios = async () => {
         console.error(`Error al obtener usuarios: ${errorText}`);
         throw new Error(`Error ${res.status}: ${errorText}`);
     }
-    return res.json();
+
+    const usuarios: UsuarioType[] = await res.json()
+    return usuarios
+
 }
 
 
-export const generarUsuarioVendedor = async (email: string, password: string) => {
+export const generarUsuarioVendedor = async (nombre: string, email: string, password: string) => {
     const token = await tokenUsuario();
     try {
         const res = await fetch("/api/auth/usuarios", {
@@ -27,7 +31,7 @@ export const generarUsuarioVendedor = async (email: string, password: string) =>
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ email, password, rol: "vendedor" })
+            body: JSON.stringify({ nombre, email, password, rol: "vendedor" })
         });
 
         if (!res.ok) {

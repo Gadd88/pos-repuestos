@@ -1,4 +1,5 @@
 import { adminDb } from "@/lib/firebase-admin";
+import { registrarMovimientoStock } from "@/lib/helpers/movimientos-stock";
 import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario";
 import { ItemCarrito, VentaType } from "@/lib/types";
 import { FieldPath, FieldValue, Timestamp } from "firebase-admin/firestore";
@@ -165,20 +166,65 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest, res: NextResponse) {
     const ventaData = await req.json();
-    const { negocioId } = await obtenerUsuarioDesdeRequest(req)
+    const { negocioId, uid } = await obtenerUsuarioDesdeRequest(req)
     const { items } = ventaData as { items: ItemCarrito[] }
     const { tipo_venta } = ventaData as { tipo_venta: 'minorista' | 'mayorista' }
-    const { estado } = ventaData
+    const { estado, metodo_pago } = ventaData
+
+    const usuarioSnap = adminDb.collection("usuarios").doc(uid).get();
+    if (!usuarioSnap) {
+        return NextResponse.json(
+            {
+                success: false,
+                error: "Usuario no encontrado"
+            },
+            {
+                status: 404
+            }
+        );
+    }
+
+    const usuarioData = (await usuarioSnap).data();
+
+    if (usuarioData?.negocioId !== negocioId) {
+        return NextResponse.json(
+            {
+                error: "Usuario no pertenece al negocio",
+            },
+            { status: 403 }
+        );
+    }
+
+    const vendedorNombre = usuarioData?.nombreUsuario ?? usuarioData?.email ?? uid;
+
+    //por si llegan productos repetidos, medio imposible, pero bueno...
+    const itemsConsolidados = Array.from(
+        items.reduce((map, item) => {
+            const existente = map.get(item.id);
+
+            if (existente) {
+                existente.cantidad += item.cantidad;
+            } else {
+                map.set(item.id, {
+                    ...item,
+                    cantidad: item.cantidad,
+                });
+            }
+
+            return map;
+        }, new Map<string, ItemCarrito>()).values()
+    );
 
     try {
         const resultado = await adminDb.runTransaction(async (tx) => {
             // 1. PRIMERO TODAS LAS LECTURAS
-            const productosRefs = await adminDb.collection("productos").where(FieldPath.documentId(), "in", items.map((item) => item.id)).get().then(snapshot => {
-                if (snapshot.empty) {
-                    throw new Error("No se encontraron productos para los IDs proporcionados.");
-                }
-                return snapshot.docs.map(doc => doc.ref);
-            });
+            // const productosRefs = await adminDb.collection("productos").where(FieldPath.documentId(), "in", items.map((item) => item.id)).get().then(snapshot => {
+            //     if (snapshot.empty) {
+            //         throw new Error("No se encontraron productos para los IDs proporcionados.");
+            //     }
+            //     return snapshot.docs.map(doc => doc.ref);
+            // });
+            const productosRefs = itemsConsolidados.map((item) => adminDb.collection("productos").doc(item.id));
 
             const productosSnaps = await Promise.all(
                 productosRefs.map((ref) => tx.get(ref))
@@ -192,26 +238,28 @@ export async function POST(req: NextRequest, res: NextResponse) {
             let total = 0;
             let totalGastado = 0;
 
-            const productosData = items.map((item) => {
+            // const productosData = items.map((item) => {
+            const productosData = itemsConsolidados.map((item) => {
                 const snap = productosMap.get(item.id)
                 if (!snap || !snap.exists) {
                     throw new Error(`Producto no encontrado: ID - ${item.nombre}`);
                 }
                 const producto = snap.data()!;
                 const ref = snap.ref;
-                if (producto.stock < item.cantidad) {
+                if (typeof producto.stock !== "number" || producto.stock < item.cantidad) {
                     throw new Error(`Sin stock suficiente: PRODUCTO - ${item.nombre}`);
                 }
+                const cantidad = item.cantidad
 
                 const precio_unitario: number =
                     tipo_venta === "mayorista"
                         ? producto.precio_venta_mayorista
                         : producto.precio_venta_minorista;
 
-                total += precio_unitario * item.cantidad;
-                totalGastado += item.precio_compra * item.cantidad;
+                total += precio_unitario * cantidad;
+                totalGastado += item.precio_compra * cantidad;
 
-                return { ref, data: { ...producto, precio_unitario, total, stock: producto.stock as number } };
+                return { ref, data: { ...producto, precio_unitario, stock: producto.stock as number }, nombre: item.nombre, cantidad };
             });
 
             // 2. LUEGO TODAS LAS ESCRITURAS
@@ -221,12 +269,16 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 fecha: FieldValue.serverTimestamp(),
                 tipo_venta,
                 negocioId,
+                vendedorId: uid,
+                vendedor_nombre: vendedorNombre,
+                cliente: ventaData.cliente || null,
+                metodo_pago: metodo_pago || null,
                 total: +total.toFixed(2),
                 totalGastado: +totalGastado.toFixed(2),
                 creadoEn: FieldValue.serverTimestamp(),
                 ganancia: +((total - totalGastado)).toFixed(2),
                 estado: estado,
-                items: items.map((item, i) => ({
+                items: productosData.map((item, i) => ({
                     idProducto: productosData[i].ref.id,
                     nombre: item.nombre,
                     cantidad: item.cantidad,
@@ -234,10 +286,38 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 }))
             });
 
-            if (estado == "completada") {
-                for (let i = 0; i < items.length; i++) {
-                    tx.update(productosData[i].ref, {
-                        stock: productosData[i].data.stock - items[i].cantidad,
+            // if (estado == "completada") {
+            //     for (let i = 0; i < items.length; i++) {
+            //         tx.update(productosData[i].ref, {
+            //             stock: productosData[i].data.stock - items[i].cantidad,
+            //         });
+            //     }
+            // }
+            if (estado === "completada") {
+                for (let i = 0; i < itemsConsolidados.length; i++) {
+                    const item = itemsConsolidados[i];
+                    const producto = productosData[i];
+
+                    const stockAnterior = producto.data.stock;
+                    const stockNuevo = stockAnterior - producto.cantidad;
+
+                    tx.update(producto.ref, {
+                        stock: stockNuevo,
+                    });
+
+                    registrarMovimientoStock({
+                        tx,
+                        negocioId,
+                        productoId: producto.ref.id,
+                        productoNombre: producto.nombre,
+                        tipo: "venta",
+                        cantidad: -producto.cantidad,
+                        stockAnterior,
+                        stockNuevo,
+                        ventaId: ventaRef.id,
+                        usuarioId: uid,
+                        usuarioNombre: vendedorNombre,
+                        motivo: "Venta realizada"
                     });
                 }
             }

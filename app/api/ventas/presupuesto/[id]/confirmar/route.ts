@@ -2,14 +2,37 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario";
 import { FieldValue } from "firebase-admin/firestore";
+import { registrarMovimientoStock } from "@/lib/helpers/movimientos-stock";
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
     const { id } = await params;
-    const { negocioId } = await obtenerUsuarioDesdeRequest(req);
+    const { negocioId, uid } = await obtenerUsuarioDesdeRequest(req);
 
-    // if (data?.negocioId !== negocioId) {
-    //     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
-    // }
+    const usuarioSnap = adminDb.collection("usuarios").doc(uid).get();
+    if (!usuarioSnap) {
+        return NextResponse.json(
+            {
+                success: false,
+                error: "Usuario no encontrado"
+            },
+            {
+                status: 404
+            }
+        );
+    }
+
+    const usuarioData = (await usuarioSnap).data();
+
+    if (usuarioData?.negocioId !== negocioId) {
+        return NextResponse.json(
+            {
+                error: "Usuario no pertenece al negocio",
+            },
+            { status: 403 }
+        );
+    }
+
+    const vendedorNombre = usuarioData?.nombreUsuario ?? usuarioData?.email ?? uid;
 
     try {
         const resultado = await adminDb.runTransaction(async (tx) => {
@@ -30,7 +53,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
                 throw new Error("El documento no es un presupuesto o ya fue confirmado");
             }
 
-            // Opcional: si manejás vencimiento de presupuestos
+            // Opcional: vencimiento de presupuestos
             // if (ventaData.expiracion?.toDate() < new Date()) {
             //     throw new Error("El presupuesto está vencido");
             // }
@@ -59,7 +82,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
                 if (producto.stock < items[i].cantidad) {
                     throw new Error(`Sin stock suficiente: ${items[i].nombre}`);
                 }
-                return { ref: snap.ref, stock: producto.stock as number };
+                return { ref: snap.ref, stock: producto.stock as number, nombre: producto.nombre, cantidad: items[i].cantidad };
             });
 
             // 2. TODAS LAS ESCRITURAS
@@ -67,13 +90,30 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
                 tx.update(producto.ref, {
                     stock: producto.stock - items[i].cantidad,
                 });
+                registrarMovimientoStock({
+                    tx,
+                    negocioId,
+                    productoId: producto.ref.id,
+                    productoNombre: producto.nombre,
+                    tipo: "venta",
+                    cantidad: -producto.cantidad,
+                    stockAnterior: producto.stock,
+                    stockNuevo: producto.stock - producto.cantidad,
+                    ventaId: ventaRef.id,
+                    usuarioId: uid,
+                    usuarioNombre: vendedorNombre,
+                    motivo: "Confirmación de presupuesto"
+                });
             });
 
             tx.update(ventaRef, {
                 estado: "completada",
+                metodo_pago: ventaData.metodo_pago ?? "efectivo",
                 confirmadoEn: FieldValue.serverTimestamp(),
                 actualizadoEn: FieldValue.serverTimestamp(),
+                confirmadoPor: uid
             });
+
 
             return { id: ventaRef.id, ...ventaData, estado: "completada" };
         });

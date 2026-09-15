@@ -31,35 +31,40 @@ export async function POST(req: Request) {
   const { negocioId } = await obtenerUsuarioDesdeRequest(req)
 
 
-  const { email, rol, password } = await req.json();
+  const {nombre, email, rol, password } = await req.json();
 
-  // revisamos numero de usuarios creados - max 1
+  // revisamos numero de usuarios creados - max 3
   const usuariosRef = adminDb.collection(COLLECTION_NAME);
   const snapshot = await usuariosRef.where("negocioId", "==", negocioId).where("rol", "==", "vendedor").get();
 
   if (snapshot.size >= 3) {
-    return NextResponse.json({ success: false, error: "Solo se puede crear un vendedor por negocio." }, { status: 400 });
+    return NextResponse.json({ success: false, error: "Solo se puede crear un máximo de 3 vendedores por negocio." }, { status: 400 });
+  }
+  try{
+    // 1. Crear usuario
+    const nuevoUsuario = await adminAuth.createUser({ email, password });
+  
+    // 2. Claims
+    await adminAuth.setCustomUserClaims(nuevoUsuario.uid, {
+      rol,
+      negocioId,
+    });
+  
+    // 3. Firestore
+    await adminDb.collection("usuarios").doc(nuevoUsuario.uid).set({
+      nombreUsuario: nombre,
+      email,
+      rol,
+      negocioId,
+      activo: true,
+      creadoEn: new Date(),
+    });
+  
+    return Response.json({ success: true, usuario: nuevoUsuario });
+  }catch(error){
+    return NextResponse.json({ success: false, error: `Error al crear el usuario: ${error}` }, { status: 500 });
   }
 
-  // 1. Crear usuario
-  const nuevoUsuario = await adminAuth.createUser({ email, password });
-
-  // 2. Claims
-  await adminAuth.setCustomUserClaims(nuevoUsuario.uid, {
-    rol,
-    negocioId,
-  });
-
-  // 3. Firestore
-  await adminDb.collection("usuarios").doc(nuevoUsuario.uid).set({
-    email,
-    rol,
-    negocioId,
-    activo: true,
-    creadoEn: new Date(),
-  });
-
-  return Response.json({ success: true, usuario: nuevoUsuario });
 }
 
 export async function DELETE(req: Request) {

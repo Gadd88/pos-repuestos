@@ -10,21 +10,25 @@ import {
     Receipt,
     User,
     Users,
+    ArrowUpDown,
+    ChartCandlestick,
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useListarProductos } from "@/features/productos/useProductos";
+import { ProductosBajoStock } from "./productos-bajo-stock";
 
 export function AdminDashboard() {
-    const { data: productos = [], isLoading } =
-        useListarProductos();
+    const { data: productos = [], isLoading } = useListarProductos();
 
     const { usuario } = useAuthStore();
 
+    const productosBajoStock = useMemo(
+        () => productos.filter((producto) => producto.stock <= 2),
+        [productos],
+    );
 
-    const productosBajoStock = useMemo(() => productos.filter(producto => producto.stock <= 2), [productos]) 
-    
     const valorTotal = useMemo(
         () =>
             productos?.reduce(
@@ -73,7 +77,7 @@ export function AdminDashboard() {
                             className="w-full bg-sky-500 neo-button font-bold flex justify-center items-center py-6 overflow-hidden text-white hover:text-black"
                             style={{ fontFamily: "var(--font-montserrat)" }}
                         >
-                            <Plus className="size-12 sm:size-20 stroke-2 rounded-full border"   />
+                            <Plus className="size-12 sm:size-20 stroke-2 rounded-full border" />
                             Nueva Venta
                         </Button>
                     </Link>
@@ -154,116 +158,152 @@ export function AdminDashboard() {
                     </div>
                 </div>
 
-                <div
-                    className={`grid grid-cols-1 ${!esAdmin ? "md:grid-cols-2" : "md:grid-cols-3"} gap-6`}
-                >
-                    {usuario?.rol === "admin" && (
-                        <div className="neo-card p-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 cursor-default">
+                    <div className={`grid grid-cols-1 ${!esAdmin ? "md:grid-cols-2" : "md:grid-cols-2"} gap-4`}>
+                        {usuario?.rol === "admin" && (
+                            <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
+                                <div className="flex items-center gap-3">
+                                    <Users className="w-8 h-8 text-purple-500" />
+                                    <h2 className="neo-heading text-xl">
+                                        Vendedores
+                                    </h2>
+                                </div>
+                                <p className="text-muted-foreground">
+                                    Administra tus vendedores
+                                </p>
+
+                                <Link href="/admin/usuarios">
+                                    <Button className="w-full neo-button font-bold bg-purple-600 hover:bg-purple-500">
+                                        Gestionar
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
+                        <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
                             <div className="flex items-center gap-3">
-                                <Users className="w-8 h-8 text-purple-500" />
-                                <h2 className="neo-heading text-xl">
-                                    Vendedores
+                                <Package className="w-8 h-8 text-sky-500" />
+                                <h2
+                                    className="neo-heading text-xl"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    Administrar Stock
                                 </h2>
                             </div>
                             <p className="text-muted-foreground">
-                                Administra tus vendedores
+                                Revisa, edita y borra productos de tu inventario
                             </p>
-
-                            <Link href="/admin/usuarios">
-                                <Button className="w-full neo-button font-bold bg-purple-600">
-                                    Gestionar
+                            <Link href="/admin/stock">
+                                <Button
+                                    className="w-full neo-button font-bold bg-sky-600 hover:bg-sky-500"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    Abrir Stock
                                 </Button>
                             </Link>
                         </div>
-                    )}
-                    <div className="neo-card p-6 space-y-4 hover:shadow-[6px_6px_0px_0px_theme(colors.border)] transition-all duration-200">
-                        <div className="flex items-center gap-3">
-                            <Package className="w-8 h-8 text-sky-500" />
-                            <h2
-                                className="neo-heading text-xl"
-                                style={{
-                                    fontFamily: "var(--font-montserrat)",
-                                }}
-                            >
-                                Administrar Stock
-                            </h2>
+                        <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
+                            <div className="flex items-center gap-3">
+                                <Receipt className="w-8 h-8 text-green-500" />
+                                <h2
+                                    className="neo-heading text-xl"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    Histórico de ventas
+                                </h2>
+                            </div>
+                            <p className="text-muted-foreground">
+                                Revisa el histórico de ventas realizadas y sus
+                                detalles
+                            </p>
+
+                            <Link href="/admin/ventas">
+                                <Button
+                                    className="w-full neo-button font-bold bg-green-600 hover:bg-green-500"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    Ver Ventas
+                                </Button>
+                            </Link>
                         </div>
-                        <p className="text-muted-foreground">
-                            Revisa, edita y borra productos de tu inventario
-                        </p>
-                        <Link href="/admin/stock">
-                            <Button
-                                className="w-full neo-button font-bold bg-sky-500"
-                                style={{
-                                    fontFamily: "var(--font-montserrat)",
-                                }}
-                            >
-                                Abrir Stock
-                            </Button>
-                        </Link>
                     </div>
-                    <div className="neo-card p-6 space-y-4">
-                        <div className="flex items-center gap-3">
-                            <Receipt className="w-8 h-8 text-green-500" />
-                            <h2
-                                className="neo-heading text-xl"
-                                style={{
-                                    fontFamily: "var(--font-montserrat)",
-                                }}
-                            >
-                                Histórico de ventas
-                            </h2>
+                    { esAdmin && 
+                        <div className="container border-2 p-4 bg-white shadow-[4px_4px_0_0_rgba(0,0,0,.7)]">
+                            <h2 className="neo-heading text-xl">AUDITORÍA</h2>
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
+                                    <div className="flex items-center gap-3">
+                                        <ArrowUpDown className="w-8 h-8 text-orange-500" />
+                                        <h2
+                                            className="neo-heading text-xl"
+                                            style={{
+                                                fontFamily:
+                                                    "var(--font-montserrat)",
+                                            }}
+                                        >
+                                            Movimientos de Stock
+                                        </h2>
+                                    </div>
+                                    <p className="text-muted-foreground">
+                                        Detalle de los movimientos de stock
+                                        registrados.
+                                    </p>
+
+                                    <Link href="/admin/movimientos-stock">
+                                        <Button
+                                            className="w-full neo-button font-bold bg-orange-600 hover:bg-orange-500"
+                                            style={{
+                                                fontFamily:
+                                                    "var(--font-montserrat)",
+                                            }}
+                                        >
+                                            Ver Movimientos
+                                        </Button>
+                                    </Link>
+                                </div>
+                                <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
+                                    <div className="flex items-center gap-3">
+                                        <ChartCandlestick className="w-8 h-8 text-primary" />
+                                        <h2
+                                            className="neo-heading text-xl"
+                                            style={{
+                                                fontFamily:
+                                                    "var(--font-montserrat)",
+                                            }}
+                                        >
+                                            Resumen de Caja
+                                        </h2>
+                                    </div>
+                                    <p className="text-muted-foreground">
+                                        Resumen de ventas diario.
+                                    </p>
+
+                                    <Link href="/admin/resumen-caja">
+                                        <Button
+                                            className="w-full neo-button font-bold bg-primary"
+                                            style={{
+                                                fontFamily:
+                                                    "var(--font-montserrat)",
+                                            }}
+                                        >
+                                            Ver Resumen
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
                         </div>
-                        <p className="text-muted-foreground">
-                            Revisa el histórico de ventas realizadas y sus
-                            detalles
-                        </p>
-
-                        <Link href="/admin/ventas">
-                            <Button
-                                className="w-full neo-button font-bold bg-green-600"
-                                style={{
-                                    fontFamily: "var(--font-montserrat)",
-                                }}
-                            >
-                                Ver Ventas
-                            </Button>
-                        </Link>
-                    </div>
+                    }
                 </div>
-
-                <div className="neo-card p-6 space-y-4 max-h-64">
-                    <div className="flex items-center gap-3">
-                        <AlertTriangle className="w-8 h-8 text-yellow-500" />
-                        <h2
-                            className="neo-heading text-xl"
-                            style={{
-                                fontFamily: "var(--font-montserrat)",
-                            }}
-                        >
-                            Productos con Bajo Stock
-                        </h2>
-                    </div>
-
-                    {productosBajoStock.length > 0 ? (
-                        <ul className="text-sm text-muted-foreground mb-4 overflow-auto flex flex-wrap gap-1 max-h-60">
-                            {productosBajoStock.map((prod) => (
-                                <li key={prod.id} className="font-semibold">
-                                    <Badge
-                                        variant="secondary"
-                                        className="bg-yellow-400 text-black border-black"
-                                    >
-                                        {prod.nombre} - {prod.stock}u.
-                                    </Badge>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="text-muted-foreground">
-                            Todos los productos con stock mínimo o suficiente.
-                        </p>
-                    )}
-                </div>
+                
+                <ProductosBajoStock productosBajoStock={productosBajoStock}/>
+                
             </div>
         </div>
     );

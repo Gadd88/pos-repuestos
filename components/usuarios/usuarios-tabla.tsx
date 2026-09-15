@@ -1,5 +1,4 @@
 "use client";
-import { useUsuarioStore } from "@/lib/stores/usuarios-store";
 import { Button } from "../ui/button";
 import { Trash2 } from "lucide-react";
 import {
@@ -10,13 +9,22 @@ import {
     TableHeader,
     TableRow,
 } from "../ui/table";
+import { UsuarioType } from "@/lib/types";
+import { Dispatch, SetStateAction } from "react";
 
-export function UsuariosTabla() {
-    const { usuarios, eliminarVendedor, obtenerUsuarios } = useUsuarioStore();
+type UsuariosTablaType = {
+    usuarios: UsuarioType[]
+    seleccionarUsuario: Dispatch<SetStateAction<UsuarioType | null>>
+}
 
-    const handleDelete = async (id: string) => {
-        await eliminarVendedor(id);
-        await obtenerUsuarios();
+export function UsuariosTabla({ usuarios, seleccionarUsuario }: UsuariosTablaType) {
+    // const { usuarios, eliminarVendedor, obtenerUsuarios } = useUsuarioStore();
+
+    const handleDelete = async (usuario: UsuarioType) => {
+        seleccionarUsuario(usuario)
+        // await eliminarUsuario(id)
+        // await eliminarVendedor(id);
+        // await obtenerUsuarios();
     }
 
     return (
@@ -28,9 +36,11 @@ export function UsuariosTabla() {
                 <TableHeader className="bg-black">
                     <TableRow>
                         <TableHead className="text-white font-bold border-e-2">
+                            Nombre
+                        </TableHead>
+                        <TableHead className="text-white font-bold border-e-2">
                             Email
                         </TableHead>
-
                         <TableHead className="text-white font-bold">
                             Acciones
                         </TableHead>
@@ -39,12 +49,13 @@ export function UsuariosTabla() {
                 <TableBody>
                     {usuarios?.map((usuario) => (
                         <TableRow key={usuario?.id ?? usuario?.uid}>
+                            <TableCell>{usuario?.nombreUsuario}</TableCell>
                             <TableCell>{usuario?.email}</TableCell>
                             <TableCell className="text-center">
                                 <Button
                                     variant="destructive"
                                     size="sm"
-                                    onClick={() => handleDelete(usuario.id ?? usuario.uid)}
+                                    onClick={() => handleDelete(usuario)}
                                     className="neo-button font-semibold"
                                     style={{
                                         fontFamily: "var(--font-montserrat)",

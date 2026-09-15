@@ -1,20 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Plus } from "lucide-react";
-import { useUsuarioStore } from "@/lib/stores/usuarios-store";
 import { UsuariosTabla } from "@/components/usuarios/usuarios-tabla";
 import { UsuarioNuevoModal } from "@/components/usuarios/usuarios-modal";
 import Link from "next/link";
+import { useObtenerUsuarios } from "@/features/usuarios/useUsuarios";
+import { UsuarioType } from "@/lib/types";
+import { UsuarioDeleteDialog } from "@/components/usuarios/usuario-delete-modal";
 
 export default function UsuariosPage() {
-    const { obtenerUsuarios, loading } = useUsuarioStore();
     const [openModal, setOpenModal] = useState(false);
-
-    useEffect(() => {
-        obtenerUsuarios();
-    }, []);
+    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<UsuarioType | null>(null);
+    const { data: usuarios = [], isLoading } = useObtenerUsuarios();
 
     return (
         <>
@@ -49,17 +48,26 @@ export default function UsuariosPage() {
                     </Button>
                 </div>
 
-                {loading ? (
+                {isLoading ? (
                     <div className="container">
                         <p>Cargando usuarios...</p>
                     </div>
                 ) : (
-                    <UsuariosTabla />
+                    <UsuariosTabla
+                        usuarios={usuarios}
+                        seleccionarUsuario={setUsuarioSeleccionado}
+                    />
                 )}
             </div>
 
             {openModal && (
                 <UsuarioNuevoModal onClose={() => setOpenModal(false)} />
+            )}
+            {usuarioSeleccionado && (
+                <UsuarioDeleteDialog
+                    usuario={usuarioSeleccionado}
+                    onClose={() => setUsuarioSeleccionado(null)}
+                />
             )}
         </>
     );
