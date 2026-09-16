@@ -11,7 +11,6 @@ import { useGenerarPresupuesto } from "@/features/presupuestos/usePresupuesto";
 import { ProductoType } from "@/lib/types";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Span } from "next/dist/trace";
 import { Input } from "../ui/input";
 
 export const Carrito = () => {

@@ -36,9 +36,7 @@ export function VentasTable() {
         limit?: number;
         desde?: string;
         hasta?: string;
-    }>({
-        limit: 10,
-    });
+    }>({limit: 10});
 
     const {
         data,

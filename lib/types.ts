@@ -30,10 +30,11 @@ export type VentaType = {
     metodo_pago: 'efectivo' | 'tarjeta' | 'transferencia' | 'qr'
     cliente?: string
     vendedor_nombre: string
-    vendedor_id: string
+    vendedorId: string
     negocioId: string
     creadoEn: Date
-    actualizadoEn: Date
+    actualizadoEn?: Date
+    fechaVenta?: Date | null
     estado: "completada" | "cancelada" | "presupuesto"
     canceladoEn?: Date
     expiracion?: Date
@@ -143,4 +144,54 @@ export type ResumenMovimientosStock = {
         ventas: number;
         unidadesVendidas: number;
     }[];
+};
+
+
+export type ResumenCajaResponse = {
+    success: boolean;
+    desde: string;
+    hasta: string;
+
+    resumen: {
+        cantidadVentas: number;
+        totalGenerado: number;
+        ganancia: number;
+        unidadesVendidas: number;
+    };
+
+    metodosPago: {
+        efectivo: {
+            cantidadVentas: number;
+            total: number;
+        };
+        tarjeta: {
+            cantidadVentas: number;
+            total: number;
+        };
+        transferencia: {
+            cantidadVentas: number;
+            total: number;
+        };
+        qr: {
+            cantidadVentas: number;
+            total: number;
+        };
+        total: number;
+    };
+
+    vendedores: {
+        vendedorId: string;
+        vendedorNombre: string;
+        cantidadVentas: number;
+        totalGenerado: number;
+        ganancia: number;
+        unidadesVendidas: number;
+    }[];
+
+    controles: {
+        totalPorMetodoPago: number;
+        totalPorVendedor: number;
+        metodosPagoCoinciden: boolean;
+        vendedoresCoinciden: boolean;
+    };
 };

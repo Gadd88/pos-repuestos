@@ -1,4 +1,4 @@
-import { ItemCarrito, VentaType } from "@/lib/types";
+import { ItemCarrito, ResumenCajaResponse, VentaType } from "@/lib/types";
 import { tokenUsuario } from "./productos-services";
 
 
@@ -111,3 +111,38 @@ export const cancelarVenta = async (id: VentaType['id']) => {
     if (!response.ok) throw new Error(result.error || `Ocurrió un error al cancelar la venta`);
     return result;
 }
+
+
+
+export type ObtenerResumenCajaParams = {
+    desde: string;
+    hasta: string;
+};
+
+export const obtenerResumenCaja = async ({
+    desde,
+    hasta,
+}: ObtenerResumenCajaParams): Promise<ResumenCajaResponse> => {
+    const params = new URLSearchParams({
+        desde,
+        hasta,
+    });
+    
+    const token = await tokenUsuario()
+
+    const response = await fetch(`/api/ventas/resumen?${params.toString()}`,{
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+        throw new Error(
+            data.error || "Error al obtener el resumen de caja"
+        );
+    }
+
+    return data;
+};

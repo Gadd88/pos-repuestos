@@ -40,7 +40,8 @@ export const useConfirmarPresupuesto = () => {
                 const item = _data.items.find((i) => i.idProducto === producto.id);
                 return item ? { ...producto, stock: producto.stock - item.cantidad } : producto;
             }));
-            queryClient.invalidateQueries({ queryKey: ["ventas"] });
+            queryClient.invalidateQueries({ queryKey: ["ventas"]});
+            queryClient.invalidateQueries({ queryKey: ["resumenCaja"]})
         },
     });
 };

@@ -12,13 +12,11 @@ import {
 import { InputBusqueda } from "@/components/input-busqueda";
 import { useCarritoState } from "@/lib/stores/carrito-store";
 import { Carrito } from "@/components/carrito/carrito";
-import { useAuthStore } from "@/lib/stores/auth-store";
 import { toast } from "sonner";
 import { useBusquedaProductos } from "@/hooks/useBusquedaProducto";
 
 export default function NuevaVenta() {
     const { agregarItemCarrito, carrito } = useCarritoState();
-    const { usuario } = useAuthStore();
     const { query, setQuery, filteredProducts, productos, isLoading, error } =
         useBusquedaProductos();
 
