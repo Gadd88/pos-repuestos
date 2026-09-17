@@ -4,6 +4,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { obtenerUsuarioDesdeRequest } from "@/lib/helpers/usuario";
 
 import { ProductoType } from "@/lib/types";
+import { registrarMovimientoStock } from "@/lib/helpers/movimientos-stock";
 
 const COLLECTION_NAME = "productos"
 
@@ -30,7 +31,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-    const { negocioId, rol } = await obtenerUsuarioDesdeRequest(req)
+    const { negocioId, rol, uid } = await obtenerUsuarioDesdeRequest(req)
 
     try {
         const body = await req.json();
@@ -46,10 +47,36 @@ export async function POST(req: Request) {
         if (rol !== "admin") {
             return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
         }
+        
+        // creo el producto - genero ID
+        const docRef = await adminDb.collection(COLLECTION_NAME).doc()
 
-        const docRef = await adminDb.collection(COLLECTION_NAME).add(newProducto);
-        const createdProducto = { id: docRef.id, ...body, creadoEn: new Date(), actualizadoEn: new Date() } as ProductoType;
-        return NextResponse.json(createdProducto, { status: 201 });
+        const resultado = await adminDb.runTransaction(async (tx) => {
+            // const docRef = await adminDb.collection(COLLECTION_NAME).add(newProducto);
+
+            //genero transaccion
+            tx.set(docRef, {
+                ...newProducto
+            });
+
+            registrarMovimientoStock({
+                tx,
+                negocioId,
+                productoId: docRef.id,
+                productoNombre: newProducto.nombre,
+                tipo: "compra",
+                cantidad: newProducto.stock,
+                stockAnterior: 0,
+                stockNuevo: newProducto.stock,
+                usuarioId: uid,
+                usuarioNombre: uid,
+                motivo: "Nuevo producto agregado",
+            });
+
+            return {id: docRef.id, ...newProducto, creadoEn: new Date().toLocaleString("es-AR"), actualizadoEn: new Date().toLocaleString("es-AR")} as ProductoType
+
+        });
+        return NextResponse.json(resultado, { status: 201 });
     }
     catch (error) {
         console.error(error);
@@ -105,7 +132,7 @@ export async function PUT(req: Request) {
 
         await bulkWriter.close();
 
-        return NextResponse.json({sucess: true})
+        return NextResponse.json({ sucess: true })
 
     } catch (error) {
         console.error(error)

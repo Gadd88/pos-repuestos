@@ -11,10 +11,14 @@ import { useGenerarPresupuesto } from "@/features/presupuestos/usePresupuesto";
 import { ProductoType } from "@/lib/types";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Span } from "next/dist/trace";
 import { Input } from "../ui/input";
+import { ContenidoCarrito } from "./contenido-carrito";
 
-export const Carrito = () => {
+interface CarritoProps {
+    desktop?: boolean
+}
+
+export const Carrito = ({desktop = false}: CarritoProps) => {
     const {
         carrito,
         eliminarItem,
@@ -116,8 +120,19 @@ export const Carrito = () => {
         setIsOpen(true);
     };
 
+    if (desktop) {
+        return (
+            <aside className="hidden lg:flex lg:flex-col lg:w-105 xl:w-115 shrink-0 neo-card bg-background h-[calc(100vh-200px)] relative mt-5">
+                <div className="neo-card border-e-4 border-b-4 border-black">
+                    <h2 className="neo-heading text-2xl text-center">CARRITO</h2>
+                </div>
+                <ContenidoCarrito carrito={carrito} esMayorista={esMayorista} totalProductos={totalProductos} totalVenta={totalVenta} editarCantidad={editarCantidad} metodoPago={metodoPago} isLoading={isLoading} isPending={isPending} eliminarItem={eliminarItem} vaciarCarrito={vaciarCarrito} setEsMayorista={setEsMayorista} setMetodoPago={setMetodoPago} handleVaciar={handleVaciar} handleVenta={handleVenta} handlePresupuesto={handlePresupuesto}  />
+            </aside>
+        );
+    }
+
     return (
-        <section className="fixed right-5 bottom-20 z-50">
+        <section className="lg:hidden fixed right-5 bottom-20 z-50">
             {!isOpen && (
                 <Button
                     className="neo-button relative flex items-center justify-center w-11 h-11 me-3 bg-primary text-primary-foreground hover:shadow-[6px_6px_0px_0px_theme(--color-border)] transition-all duration-200"
@@ -156,9 +171,10 @@ export const Carrito = () => {
                                           <X className="w-4 h-4" />
                                       </button>
                                   </div>
+                                  <ContenidoCarrito carrito={carrito} esMayorista={esMayorista} totalProductos={totalProductos} totalVenta={totalVenta} editarCantidad={editarCantidad} metodoPago={metodoPago} isLoading={isLoading} isPending={isPending} eliminarItem={eliminarItem} vaciarCarrito={vaciarCarrito} setEsMayorista={setEsMayorista} setMetodoPago={setMetodoPago} handleVaciar={handleVaciar} handleVenta={handleVenta} handlePresupuesto={handlePresupuesto}  />
 
                                   {/* Cart Section */}
-                                  <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                                  {/* <div className="flex-1 overflow-y-auto p-4 space-y-2">
                                       {carrito.length === 0 ? (
                                           <p className="text-center text-muted-foreground py-8">
                                               El carrito está vacío
@@ -169,7 +185,6 @@ export const Carrito = () => {
                                                   key={item.id}
                                                   className="neo-card flex items-center justify-between gap-3 p-3 bg-card"
                                               >
-                                                  {/* Nombre */}
                                                   <h3
                                                       className="flex-1 font-bold text-sm truncate"
                                                       style={{
@@ -179,8 +194,6 @@ export const Carrito = () => {
                                                   >
                                                       {item.nombre}
                                                   </h3>
-
-                                                  {/* Controles de cantidad */}
                                                   <div className="flex items-center border-2 border-border shrink-0">
                                                       <button
                                                           onClick={() =>
@@ -216,8 +229,6 @@ export const Carrito = () => {
                                                           +
                                                       </button>
                                                   </div>
-
-                                                  {/* Eliminar */}
                                                   <button
                                                       onClick={() => {
                                                           eliminarItem(item.id);
@@ -240,8 +251,6 @@ export const Carrito = () => {
                                           ))
                                       )}
                                   </div>
-
-                                  {/* Footer con totales y botón */}
                                   <div className="shrink-0 border-t-2 border-border p-4 space-y-3 bg-card">
                                       <div className="flex justify-between items-center text-sm">
                                           <span
@@ -409,7 +418,7 @@ export const Carrito = () => {
                                               VACIAR CARRITO
                                           </Button>
                                       </div>
-                                  </div>
+                                  </div> */}
                               </div>
                           </div>
                       </>,

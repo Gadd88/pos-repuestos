@@ -272,10 +272,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 vendedorId: uid,
                 vendedor_nombre: vendedorNombre,
                 cliente: ventaData.cliente || null,
-                metodo_pago: metodo_pago || null,
+                metodo_pago: metodo_pago || "efectivo",
                 total: +total.toFixed(2),
                 totalGastado: +totalGastado.toFixed(2),
                 creadoEn: FieldValue.serverTimestamp(),
+                fechaVenta: estado === "completada" ? FieldValue.serverTimestamp() : null,
                 ganancia: +((total - totalGastado)).toFixed(2),
                 estado: estado,
                 items: productosData.map((item, i) => ({

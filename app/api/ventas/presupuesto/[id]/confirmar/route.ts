@@ -110,6 +110,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
                 estado: "completada",
                 metodo_pago: ventaData.metodo_pago ?? "efectivo",
                 confirmadoEn: FieldValue.serverTimestamp(),
+                fechaVenta: FieldValue.serverTimestamp(),
                 actualizadoEn: FieldValue.serverTimestamp(),
                 confirmadoPor: uid
             });

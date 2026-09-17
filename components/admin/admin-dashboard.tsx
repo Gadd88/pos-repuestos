@@ -14,7 +14,6 @@ import {
     ChartCandlestick,
 } from "lucide-react";
 import Link from "next/link";
-import { Badge } from "../ui/badge";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useListarProductos } from "@/features/productos/useProductos";
 import { ProductosBajoStock } from "./productos-bajo-stock";
@@ -158,9 +157,11 @@ export function AdminDashboard() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 cursor-default">
-                    <div className={`grid grid-cols-1 ${!esAdmin ? "md:grid-cols-2" : "md:grid-cols-2"} gap-4`}>
-                        {usuario?.rol === "admin" && (
+                <div className={`grid grid-cols-1 ${esAdmin ? "lg:grid-cols-2" : ""} gap-4 cursor-default`}>
+                    <div
+                        className={`grid grid-cols-1 ${esAdmin ? "md:grid-cols-2": "md:grid-cols-3"} gap-4`}
+                    >
+                        {esAdmin && (
                             <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
                                 <div className="flex items-center gap-3">
                                     <Users className="w-8 h-8 text-purple-500" />
@@ -188,7 +189,7 @@ export function AdminDashboard() {
                                         fontFamily: "var(--font-montserrat)",
                                     }}
                                 >
-                                    Administrar Stock
+                                    Stock
                                 </h2>
                             </div>
                             <p className="text-muted-foreground">
@@ -233,8 +234,35 @@ export function AdminDashboard() {
                                 </Button>
                             </Link>
                         </div>
+                        <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
+                            <div className="flex items-center gap-3">
+                                <ChartCandlestick className="w-8 h-8 text-primary" />
+                                <h2
+                                    className="neo-heading text-xl"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    Resumen de Caja
+                                </h2>
+                            </div>
+                            <p className="text-muted-foreground">
+                                Resumen de ventas diario.
+                            </p>
+
+                            <Link href="/admin/resumen-caja">
+                                <Button
+                                    className="w-full neo-button font-bold bg-primary"
+                                    style={{
+                                        fontFamily: "var(--font-montserrat)",
+                                    }}
+                                >
+                                    Ver Resumen
+                                </Button>
+                            </Link>
+                        </div>
                     </div>
-                    { esAdmin && 
+                    {esAdmin && (
                         <div className="container border-2 p-4 bg-white shadow-[4px_4px_0_0_rgba(0,0,0,.7)]">
                             <h2 className="neo-heading text-xl">AUDITORÍA</h2>
                             <div className="grid grid-cols-1 gap-4">
@@ -268,42 +296,12 @@ export function AdminDashboard() {
                                         </Button>
                                     </Link>
                                 </div>
-                                <div className="neo-card p-4 space-y-4 hover:shadow-[6px_6px_0px_0px_var(--color-border)] transition-all duration-200 grid grid-rows-3">
-                                    <div className="flex items-center gap-3">
-                                        <ChartCandlestick className="w-8 h-8 text-primary" />
-                                        <h2
-                                            className="neo-heading text-xl"
-                                            style={{
-                                                fontFamily:
-                                                    "var(--font-montserrat)",
-                                            }}
-                                        >
-                                            Resumen de Caja
-                                        </h2>
-                                    </div>
-                                    <p className="text-muted-foreground">
-                                        Resumen de ventas diario.
-                                    </p>
-
-                                    <Link href="/admin/resumen-caja">
-                                        <Button
-                                            className="w-full neo-button font-bold bg-primary"
-                                            style={{
-                                                fontFamily:
-                                                    "var(--font-montserrat)",
-                                            }}
-                                        >
-                                            Ver Resumen
-                                        </Button>
-                                    </Link>
-                                </div>
                             </div>
                         </div>
-                    }
+                    )}
                 </div>
-                
-                <ProductosBajoStock productosBajoStock={productosBajoStock}/>
-                
+
+                <ProductosBajoStock productosBajoStock={productosBajoStock} />
             </div>
         </div>
     );

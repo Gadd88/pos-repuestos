@@ -1,3 +1,4 @@
+import ResumenCaja from "@/components/admin/resumen-caja";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -45,8 +46,8 @@ export default function ResumenCajaPage() {
                     </div>
                 </div>
             </div>
-            <div className="text-center italic flex items-center justify-center h-full">
-                ESTA FUNCIONALIDAD AUN NO ESTÁ OPERATIVA
+            <div className="text-center flex items-center justify-center">
+                <ResumenCaja />
             </div>
         </div>
     );
