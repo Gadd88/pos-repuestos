@@ -46,7 +46,7 @@ export default function ResumenCajaPage() {
                     </div>
                 </div>
             </div>
-            <div className="text-center flex items-center justify-center h-full">
+            <div className="text-center flex items-center justify-center">
                 <ResumenCaja />
             </div>
         </div>

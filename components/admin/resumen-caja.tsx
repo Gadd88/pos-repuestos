@@ -12,6 +12,7 @@ import {
     TableRow,
 } from "../ui/table";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { Input } from "../ui/input";
 
 const formatearMoneda = (valor: number) => {
     return new Intl.NumberFormat("es-AR", {
@@ -84,11 +85,11 @@ export default function ResumenCaja() {
     } = data;
 
     return (
-        <div className="space-y-4 p-4">
+        <div className="w-full max-w-full space-y-4 overflow-hidden p-3 sm:p-4 mt-2">
             {/* Encabezado */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-xl font-semibold">
+                    <h1 className="text-xl font-semibold sm:text-2xl">
                         Resumen de caja
                     </h1>
 
@@ -97,11 +98,12 @@ export default function ResumenCaja() {
                     </p>
                 </div>
 
-                <input
+                <Input
                     type="date"
                     value={fecha}
                     onChange={(e) => setFecha(e.target.value)}
-                    className="rounded-md border px-3 py-2 text-sm"
+                    // className="rounded-md border px-3 py-2 text-sm"
+                    className="w-full rounded-md border px-3 py-2 text-sm sm:w-auto"
                 />
             </div>
 
@@ -172,7 +174,7 @@ export default function ResumenCaja() {
                             </p>
                         </div>
 
-                        <p className="font-semibold">
+                        <p className="shrink-0 font-semibold text-right">
                             {formatearMoneda(
                                 metodosPago.efectivo.total
                             )}
@@ -190,7 +192,7 @@ export default function ResumenCaja() {
                             </p>
                         </div>
 
-                        <p className="font-semibold">
+                        <p className="shrink-0 font-semibold text-right">
                             {formatearMoneda(
                                 metodosPago.tarjeta.total
                             )}
@@ -208,7 +210,7 @@ export default function ResumenCaja() {
                             </p>
                         </div>
 
-                        <p className="font-semibold">
+                        <p className="shrink-0 font-semibold text-right">
                             {formatearMoneda(
                                 metodosPago.transferencia.total
                             )}
@@ -226,7 +228,7 @@ export default function ResumenCaja() {
                             </p>
                         </div>
 
-                        <p className="font-semibold">
+                        <p className="shrink-0 font-semibold text-right">
                             {formatearMoneda(
                                 metodosPago.qr.total
                             )}
@@ -260,8 +262,8 @@ export default function ResumenCaja() {
                         No hay ventas para esta fecha.
                     </p>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <Table className="w-full text-sm">
+                    <div className="w-full overflow-x-auto">
+                        <Table className="min-w-162.5 w-full text-sm">
                             <TableHeader>
                                 <TableRow className="border-b text-left">
                                     <TableHead className="p-4 font-semibold uppercase">
@@ -330,7 +332,7 @@ export default function ResumenCaja() {
                             </TableBody>
 
                             <TableFooter>
-                                <TableRow className="bg-gray-50  text-lg">
+                                <TableRow className="bg-gray-50 text-base sm:text-lg">
                                     <TableCell
                                         colSpan={3}
                                         className="p-4 font-semibold"
@@ -343,8 +345,6 @@ export default function ResumenCaja() {
                                             controles.totalPorVendedor
                                         )}
                                     </TableCell>
-
-                                    <td />
                                 </TableRow>
                             </TableFooter>
                         </Table>
