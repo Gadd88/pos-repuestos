@@ -34,7 +34,7 @@ export function AdminHeader() {
                                         >
                                             <div className="w-8 h-8 bg-sky-500 neo-button"></div>
                                             <span
-                                                className="neo-heading text-xl max-w-[50vw] sm:max-w-none break-words whitespace-normal leading-tight line-clamp-2"
+                                                className="neo-heading text-xl max-w-[50vw] sm:max-w-none wrap-break-words whitespace-normal leading-tight line-clamp-2"
                                                 style={{
                                                     fontFamily:
                                                         "var(--font-montserrat)",
@@ -48,26 +48,26 @@ export function AdminHeader() {
                                             <Link href="/admin/stock">
                                                 <Button
                                                     variant="ghost"
-                                                    className="neo-button font-semibold bg-transparent"
+                                                    className="neo-button font-semibold bg-white border-black border-2 overflow-hidden"
                                                     style={{
                                                         fontFamily:
                                                             "var(--font-montserrat)",
                                                     }}
                                                 >
-                                                    <Package className="w-4 h-4 mr-2" />
+                                                    <Package className="size-12 border-2 rounded-full p-2 border-black" />
                                                     INVENTARIO
                                                 </Button>
                                             </Link>
                                             <Link href="/admin/ventas/nueva-venta">
                                                 <Button
                                                     variant="ghost"
-                                                    className="neo-button font-semibold bg-sky-500"
+                                                    className="neo-button font-semibold bg-sky-500 text-white overflow-hidden"
                                                     style={{
                                                         fontFamily:
                                                             "var(--font-montserrat)",
                                                     }}
                                                 >
-                                                    <Plus className="w-4 h-4 mr-2" />
+                                                    <Plus className="size-12 border-2 rounded-full text-white" />
                                                     NUEVA VENTA
                                                 </Button>
                                             </Link>

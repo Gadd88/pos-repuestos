@@ -1,5 +1,5 @@
 "use client";
-import { Loader2, Plus } from "lucide-react";
+import { ArrowLeft, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -14,6 +14,8 @@ import { useCarritoState } from "@/lib/stores/carrito-store";
 import { Carrito } from "@/components/carrito/carrito";
 import { toast } from "sonner";
 import { useBusquedaProductos } from "@/hooks/useBusquedaProducto";
+import Link from "next/link";
+import { TablaProductosVenta } from "@/components/producto/tabla-productos-venta";
 
 export default function NuevaVenta() {
     const { agregarItemCarrito, carrito } = useCarritoState();
@@ -37,7 +39,17 @@ export default function NuevaVenta() {
         <>
             <div className="container mx-auto px-4 py-8 min-h-screen">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
+                    <Link href="/admin">
+                        <Button
+                            variant="outline"
+                            className="neo-button font-semibold bg-transparent"
+                            style={{ fontFamily: "var(--font-montserrat)" }}
+                        >
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            VOLVER AL DASHBOARD
+                        </Button>
+                    </Link>
+                    <div className="ms-auto">
                         <h1
                             className="neo-heading text-4xl mb-2"
                             style={{ fontFamily: "var(--font-montserrat)" }}
@@ -46,83 +58,25 @@ export default function NuevaVenta() {
                         </h1>
                     </div>
                 </div>
-                <InputBusqueda
-                    filteredProducts={filteredProducts}
-                    query={query}
-                    productos={productos}
-                    handleInputChange={(e) => setQuery(e.target.value)}
-                    isPending={isLoading}
-                />
-                <div className="neo-card overflow-auto">
-                    <Table
-                        className="px-4 py-3 bg-primary text-primary uppercase overflow-x-auto"
-                        style={{ fontFamily: "var(--font-montserrat)" }}
-                    >
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="text-white font-bold border-e-2">
-                                    Acciones
-                                </TableHead>
-                                <TableHead className="text-white font-bold border-e-2">
-                                    Producto
-                                </TableHead>
-                                <TableHead className="text-white font-bold border-e-2">
-                                    Precio Un. Mayorista
-                                </TableHead>
-                                <TableHead className="text-white font-bold border-e-2">
-                                    Precio Un. Minorista
-                                </TableHead>
-                                <TableHead className="text-white font-bold">
-                                    Stock
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredProducts.map((producto) => (
-                                <TableRow
-                                    key={producto.id}
-                                    className="text-sm text-black font-semibold bg-secondary cursor-default"
-                                >
-                                    <TableCell className="text-center border-e-2">
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="neo-button h-8 w-8 p-0 bg-sky-400 border-sky-400 cursor-pointer"
-                                            onClick={() => {
-                                                producto.stock > 0
-                                                    ? agregarItemCarrito(
-                                                          producto,
-                                                      )
-                                                    : toast.error(
-                                                          "Producto sin stock suficiente",
-                                                      );
-                                            }}
-                                        >
-                                            <Plus className="w-4 h-4" />
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell className="border-e-2">
-                                        {producto?.nombre}
-                                    </TableCell>
-                                    <TableCell className="text-center border-e-2">
-                                        $
-                                        {producto?.precio_venta_mayorista.toFixed(
-                                            2,
-                                        )}
-                                    </TableCell>
-                                    <TableCell className="text-center border-e-2">
-                                        $
-                                        {producto?.precio_venta_minorista.toFixed(
-                                            2,
-                                        )}
-                                    </TableCell>
-                                    <TableCell className="text-end lowercase">
-                                        {producto?.stock}u.
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="lg:flex lg:gap-6 lg:w-full overflow-auto">
+                        <div className="min-w-0 flex-1 my-5">
+                            <InputBusqueda
+                                filteredProducts={filteredProducts}
+                                query={query}
+                                productos={productos}
+                                handleInputChange={(e) =>
+                                    setQuery(e.target.value)
+                                }
+                                isPending={isLoading}
+                            />
+                            <TablaProductosVenta
+                                productos={filteredProducts}
+                                agregarItemCarrito={agregarItemCarrito}
+                            />
+                        </div>
+                        <Carrito desktop />
+                    </div>
                 </div>
             </div>
             <Carrito />
